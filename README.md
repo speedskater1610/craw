@@ -1,2 +1,10 @@
 # craw
-A compiled langauge which compiles into X86-64
+
+##how to run and download
+####run
+`gcc make.c -o make
+./make`
+
+
+####download source code 
+
