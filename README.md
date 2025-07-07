@@ -2,8 +2,10 @@
 
 ## how to run and download
 #### run
-`gcc make.c -o make`
-`./make`
+```bash
+gcc make.c -o make
+./make
+```
 this will run a script to compile all of the compiler so that you have craw ready to use. 
 
 
