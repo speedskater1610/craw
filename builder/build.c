@@ -73,9 +73,9 @@ void build_exe_from_asm(const char *exeFile) {
 
     char gcc[256];
     if (!strstr(exeFile, ".exe")) {
-        snprintf(gcc, sizeof(gcc), "gcc hold.obj -o \"%s.exe\"", exeFile);
+        snprintf(gcc, sizeof(gcc), "gcc -O2 hold.obj -o \"%s.exe\"", exeFile);
     } else {
-        snprintf(gcc, sizeof(gcc), "gcc hold.obj -o \"%s\"", exeFile);
+        snprintf(gcc, sizeof(gcc), "gcc -O2 hold.obj -o \"%s\"", exeFile);
     }
 
     int gcc_result = system(gcc);
