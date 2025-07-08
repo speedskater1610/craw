@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 int main() {
-    const char *command = "g++ main.c read/read.c write/write.c builder/build.c std_compile/std.cpp -o craw.exe";
+    const char *command = "g++ -O2 main.c read/read.c write/write.c builder/build.c std_compile/std.cpp -o craw.exe";
 
     int result = system(command);
 
