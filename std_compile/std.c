@@ -5,6 +5,9 @@
 #include <string.h>
 
 
+// WARNING/MESSAGE this file is never used and is just old code that I wrote but was to afraid to give up on and delete
+
+
 // helper fucntion
 char **split_string(const char *str, char delim, int *count) {
     if (!str) {
