@@ -1,5 +1,7 @@
 # craw
 
+## see knew changes and why it wont work currently at the bottom under `craw_v11`
+
 ## how to run and download
 #### run
 ```bash
@@ -99,3 +101,5 @@ you might notice a `compilerVarible_format_ln` varible which and a few others ge
 
 ## craw_v11
 still in production the only thing changing is the std_compile folder.; formated some code better and tried to add a bunch of new number types and `mut` and `const` to varible types sop you can have `mut str[10] = "hello";` or `const str[10] = "hello";` and consts are declared inside of `.data` and muts are inside of `.bss`
+
+this came with the addition of some errors if you use those types so either look inot commit history and choose a older version or dont use numbers and strings
