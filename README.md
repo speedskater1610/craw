@@ -95,3 +95,7 @@ you might notice a `compilerVarible_format_ln` varible which and a few others ge
     compilerVarible_format_no_ln db "%s", 0
 ```
 
+
+
+## craw_v11
+still in production the only thing changing is the std_compile folder.; formated some code better and tried to add a bunch of new number types and `mut` and `const` to varible types sop you can have `mut str[10] = "hello";` or `const str[10] = "hello";` and consts are declared inside of `.data` and muts are inside of `.bss`
