@@ -1,4 +1,4 @@
-name: Build craw Compiler
+name: build craw Compiler
 
 on:
   push:
@@ -6,14 +6,44 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-22.04, archlinux, windows-latest]
 
     steps:
-      - name: Checkout Repo
+      - name: ckeckout the repo
         uses: actions/checkout@v4
 
-      - name: Install build tools
-        run: sudo apt-get update && sudo apt-get install -y build-essential
+      # Install build tools per OS
+      - name: install the build tools per OS
+        run: |
+          if [[ "${{ runner.os }}" == "Linux" ]]; then
+            if [ "$(uname -s)" = "Linux" ]; then
+              if grep -q "Arch" /etc/os-release; then
+                sudo pacman -Sy --noconfirm base-devel
+              else
+                sudo apt-get update
+                sudo apt-get install -y build-essential
+              fi
+            fi
+          elif [[ "${{ runner.os }}" == "Windows" ]]; then
+            choco install mingw -y
+            refreshenv
+          fi
 
-      - name: Build project
-        run: make -f Makefile.mk all
+      - name: build the project on all of the OSes
+        run: |
+          if [[ "${{ runner.os }}" == "Windows" ]]; then
+            mingw32-make -f Makefile.mk all
+          else
+            make -f Makefile.mk all
+          fi
+
+      - name: upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: craw-binary-${{ runner.os }}
+          path: |
+            craw
+            craw.exe
