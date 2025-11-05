@@ -4,6 +4,7 @@
 #include "globals.h"
 #include "read.h"
 #include "lexer/lexer.h" 
+#include "flags/flag.h"
 
 bool has_at_least_one_error = false;
 
