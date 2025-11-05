@@ -13,7 +13,7 @@
 #include "token.h"
 #include "vector.h"
 #include "result.h"
-#include "throwErr.h"
+#include "../throwErr.h"
 
 #include "f32.h"
 #include "f64.h"
