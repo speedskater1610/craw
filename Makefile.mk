@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -g
 TARGET = craw
-SOURCES = src/main.c src/f32.c src/f64.c src/lexer.c src/throwErr.c src/token.c src/vector.c
+SOURCES = src/main.c src/throwErr.c src/lexer/token.c src/lexer/vector.c src/lexer/f32.c src/lexer/f64.c src/lexer/lexer.c
 OBJECTS = $(SOURCES:.c=.o) # Automatically creates object files
 
 all: $(TARGET)
