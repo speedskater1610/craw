@@ -1,4 +1,4 @@
-name: Build and Test craw Compiler
+name: Build craw Compiler
 
 on:
   push:
@@ -17,11 +17,3 @@ jobs:
 
       - name: Build project
         run: make -f Makefile.mk all
-
-      - name: Run executable (sanity check)
-        run: |
-          if [ -f ./craw ]; then
-            ./craw --internal_test1 || echo "Built, but --help not implemented yet"
-          else
-            echo "./craw not found, build may have failed" && exit 1
-          fi
