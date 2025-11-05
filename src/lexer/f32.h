@@ -7,7 +7,7 @@
 #include <float.h> 
 #include <limits.h>
 #include <stdio.h>
-#include "throwErr.h"
+#include "../throwErr.h"
 
 // TODO: add type size checks
 bool check_f32 (const char *str_f32, 
