@@ -3,7 +3,7 @@
 
 #include "globals.h"
 #include "read.h"
-#include "lexer.h" 
+#include "lexer/lexer.h" 
 
 bool has_at_least_one_error = false;
 
