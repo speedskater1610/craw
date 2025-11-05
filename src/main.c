@@ -7,8 +7,11 @@
 
 bool has_at_least_one_error = false;
 
-int main () {
-    printf("RUNS PROPERLY");
+int main (int argc, char *argv[]) {
+    for (int i = 1; i < argc; i++) {
+        printf("%s", argv[i]);
+    }
+    
     if (has_at_least_one_error) return 1;
     else return 0;
 }
