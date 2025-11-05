@@ -6,7 +6,7 @@
 #include <stddef.h>
 
 #include "token.h"
-#include "throwErr.h"
+#include "../throwErr.h"
 
 
 typedef struct {
