@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
-#include "throwErr.h"
+#include "../throwErr.h"
 
 // TODO: add type size checks
 bool check_f64 (const char *str_f64, 
