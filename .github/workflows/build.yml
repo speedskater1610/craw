@@ -1,4 +1,4 @@
-name: build craw Compiler
+name: Build craw Compiler
 
 on:
   push:
@@ -6,33 +6,32 @@ on:
 
 jobs:
   build:
+    # get all of the OSes for it to test on
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, ubuntu-22.04, archlinux, windows-latest]
+        os: [ubuntu-latest, ubuntu-22.04, windows-latest]
 
+    # all of the tests to run through
+    # - install build tools
+    # - the build the project with those tools
+    # - finally upload them for further testing     
     steps:
-      - name: ckeckout the repo
+      - name: Checkout the repo
         uses: actions/checkout@v4
 
-      # Install build tools per OS
-      - name: install the build tools per OS
+      - name: Install build tools per OS
         run: |
           if [[ "${{ runner.os }}" == "Linux" ]]; then
-            if [ "$(uname -s)" = "Linux" ]; then
-              if grep -q "Arch" /etc/os-release; then
-                sudo pacman -Sy --noconfirm base-devel
-              else
-                sudo apt-get update
-                sudo apt-get install -y build-essential
-              fi
-            fi
+            sudo apt-get update
+            sudo apt-get install -y build-essential
           elif [[ "${{ runner.os }}" == "Windows" ]]; then
             choco install mingw -y
             refreshenv
+            setx PATH "%PATH%;C:\tools\mingw64\bin"
           fi
 
-      - name: build the project on all of the OSes
+      - name: Build the project
         run: |
           if [[ "${{ runner.os }}" == "Windows" ]]; then
             mingw32-make -f Makefile.mk all
@@ -40,10 +39,9 @@ jobs:
             make -f Makefile.mk all
           fi
 
-      - name: upload artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
           name: craw-binary-${{ runner.os }}
           path: |
-            craw
-            craw.exe
+            craw*
