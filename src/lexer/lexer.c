@@ -43,33 +43,92 @@ ResultSigTok next_token(Lexer* self) {
     char ch = current_char(self);
 
     switch (ch) {
-        case '(':
-            advance(self);
-            return return_next_token(Token_new(LeftParen, "(", start_line, start_column));
-        case ')':
-            advance(self);
-            return return_next_token(Token_new(RightParen, ")", start_line, start_column));
-        case '{':
-            advance(self);
-            return return_next_token(Token_new(LeftBrace, "{", start_line, start_column));
-        case '}':
-            advance(self);
-            return return_next_token(Token_new(RightBrace, "}", start_line, start_column));
-        case '[':
-            advance(self);
-            return return_next_token(Token_new(LeftBracket, "[", start_line, start_column));
-        case ']':
-            advance(self);
-            return return_next_token(Token_new(RightBracket, "]", start_line, start_column));
-        default:
-            // handle identifiers/numbers later
-            break;
-    }
+        case '(': advance(self); return return_next_token(Token_new(LeftParen, "(", start_line, start_column));
+        case ')': advance(self); return return_next_token(Token_new(RightParen, ")", start_line, start_column));
+        case '{': advance(self); return return_next_token(Token_new(LeftBrace, "{", start_line, start_column));
+        case '}': advance(self); return return_next_token(Token_new(RightBrace, "}", start_line, start_column));
+        case '[': advance(self); return return_next_token(Token_new(LeftBracket, "[", start_line, start_column));
+        case ']': advance(self); return return_next_token(Token_new(RightBracket, "]", start_line, start_column));
+        case ';': advance(self); return return_next_token(Token_new(Semicolon, ";", start_line, start_column));
+        case ',': advance(self); return return_next_token(Token_new(Comma, ",", start_line, start_column));
+        case '.': advance(self); return return_next_token(Token_new(Dot, ".", start_line, start_column));
+        case ':': advance(self); return return_next_token(Token_new(Colon, ":", start_line, start_column));
+        case '#': advance(self); return return_next_token(Token_new(Hash, "#", start_line, start_column));
+        case '+': advance(self); return return_next_token(Token_new(Plus, "+", start_line, start_column));
+        case '*': advance(self); return return_next_token(Token_new(Star, "*", start_line, start_column));
+        case '/': advance(self); return return_next_token(Token_new(Slash, "/", start_line, start_column));
+        case '%': advance(self); return return_next_token(Token_new(Percent, "%", start_line, start_column));
+        case '&': advance(self); return return_next_token(Token_new(BitwiseAnd, "&", start_line, start_column));
+        case '|': advance(self); return return_next_token(Token_new(BitwiseOr, "|", start_line, start_column));
+        case '^': advance(self); return return_next_token(Token_new(BitwiseXor, "^", start_line, start_column));
+        case '~': advance(self); return return_next_token(Token_new(BitwiseNot, "~", start_line, start_column));
 
-    ResultSigTok result = {};
-    result.token = *Token_new(Error, "", start_line, start_column);
-    result.Error = true;
-    return result;
+        case '-':
+            advance(self);
+            if (current_char(self) == '>') {
+                advance(self);
+                return return_next_token(Token_new(Arrow, "->", start_line, start_column));
+            } else {
+                return return_next_token(Token_new(Minus, "-", start_line, start_column));
+            }
+
+        case '<':
+            advance(self);
+            if (current_char(self) == '<') {
+                advance(self);
+                return return_next_token(Token_new(LeftShift, "<<", start_line, start_column));
+            } else if (current_char(self) == '=') {
+                advance(self);
+                return return_next_token(Token_new(LessEqual, "<=", start_line, start_column));
+            } else {
+                return return_next_token(Token_new(LessThan, "<", start_line, start_column));
+            }
+
+        case '>':
+            advance(self);
+            if (current_char(self) == '>') {
+                advance(self);
+                return return_next_token(Token_new(RightShift, ">>", start_line, start_column));
+            } else if (current_char(self) == '=') {
+                advance(self);
+                return return_next_token(Token_new(GreaterEqual, ">=", start_line, start_column));
+            } else {
+                return return_next_token(Token_new(GreaterThan, ">", start_line, start_column));
+            }
+
+        case '=':
+            advance(self);
+            if (current_char(self) == '=') {
+                advance(self);
+                return return_next_token(Token_new(Equal, "==", start_line, start_column));
+            } else {
+                return return_next_token(Token_new(Assign, "=", start_line, start_column));
+            }
+
+        case '!':
+            advance(self);
+            if (current_char(self) == '=') {
+                advance(self);
+                return return_next_token(Token_new(NotEqual, "!=", start_line, start_column));
+            } else {
+                return return_next_token(Token_new(Not, "!", start_line, start_column));
+            }
+
+        case '\'':
+            return read_char_literal(self, start_line, start_column);
+
+        case '"':
+            return read_string_literal(self, start_line, start_column);
+
+        default:
+            if (isalpha(ch) || ch == '_') {
+                return read_identifier_or_keyword(self, start_line, start_column);
+            } else if (is_numeric(ch)) {
+                return read_number(self, start_line, start_column);
+            } else {
+                return return_next_token(Token_new(Error, "", start_line, start_column));
+            }
+    }
 }
 
 ResultSigTok read_identifier_or_keyword (Lexer* self, unsigned int start_line, unsigned int start_column) {
