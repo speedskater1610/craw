@@ -35,16 +35,11 @@ bool is_at_end (Lexer* self);
 void advance (Lexer* self);
 char current_char(Lexer* self);
 void skip_whitespace(Lexer* self);
-ResultSigTok read_string_literal (Lexer* self, 
-                            unsigned int start_line, 
-                            unsigned int start_column);
-ResultSigTok read_char_literal (Lexer* self, 
-                            unsigned int start_line,
-                            unsigned int start_column);
-ResultSigTok read_number (Lexer* self, 
-                    unsigned int start_line, 
-                    unsigned int start_column);
 ResultSigTok next_token(Lexer* self);
+ResultSigTok read_identifier_or_keyword(Lexer* self, unsigned int start_line, unsigned int start_column);
+ResultSigTok read_number(Lexer* self, unsigned int start_line, unsigned int start_column);
+ResultSigTok read_char_literal(Lexer* self, unsigned int start_line, unsigned int start_column);
+ResultSigTok read_string_literal(Lexer* self, unsigned int start_line, unsigned int start_column);
 Vector tokenize(Lexer* self);
 
 #endif // LEXER_H
