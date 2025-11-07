@@ -52,16 +52,10 @@ enum TokenType from_keyword (char *s) {
         rtrn = F64; 
     } else if (!strcmp(s, "char")) {
         rtrn = Char; 
-    } else if (!strcmp(s, "auto")) {
-        rtrn = Auto; 
     } else if (!strcmp(s, "structinstance")) {
         rtrn = StructInstance; 
     } else if (!strcmp(s, "defstruct")) {
         rtrn = DefStruct; 
-    } else if (!strcmp(s, "obj")) {
-        rtrn = Obj; 
-    } else if (!strcmp(s, "class")) {
-        rtrn = Class; 
     } else if (!strcmp(s, "void")) {
         rtrn = Void; 
     } else if (!strcmp(s, "and")) {

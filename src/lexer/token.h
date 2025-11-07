@@ -28,11 +28,8 @@ enum TokenType {
     F32,
     F64,
     Char,
-    Auto,
     StructInstance,
     DefStruct,
-    Obj,
-    Class,
     Void,
 
     // Type modifiers
