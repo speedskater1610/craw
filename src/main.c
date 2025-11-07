@@ -5,8 +5,10 @@
 #include "read.h"
 #include "lexer/lexer.h"
 #include "tag/tag.h"
+#include "ansiColor.h"
 
 bool has_at_least_one_error = false;
+bool debug_mode_enables = false;
 
 int main(int argc, char *argv[]) {
     bool debug_mode = false;
@@ -24,8 +26,9 @@ int main(int argc, char *argv[]) {
     }
 
     if (debug_mode) {
-        printf("[DEBUG] Debug mode enabled.\n");
-        printf("[DEBUG] Input file: %s\n", input_file);
+        printf( B_RED "[DEBUG]" RESET B_CYAN " Debug mode enabled.\n" RESET);
+        printf(B_RED "[DEBUG]" RESET B_CYAN " Input file: %s\n" RESET, input_file);
+        debug_mode_enables = true;
     }
 
     // TODO: Pass input_file to your lexer/reader here
