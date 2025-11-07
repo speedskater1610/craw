@@ -51,7 +51,22 @@ Example:
 - For errors:
   - Use `Err()` function to print lexer errors
     - & use fprintf(stderr, ...) for compiler errors
-  - Or return a `ResultSigTok` with `Error = true`
+    - When throwing a error message use these colors & format 
+        ```c
+            Err (
+    "\e[31m\e[1m\e[4m\e[40mERROR ERROR - \e[0m" 
+    " \e[4m\e[36m\e[40mmsg after\e[0m" 
+    " \e[37m\e[40m final msg\e[0m" 
+    "\n\t\e[0m" 
+    "\e[4mAt line \e[0m" 
+    "\e[1m\e[33m\e[40m%d\e[0m" 
+    "\e[4m , and Column \e[0m" 
+    "\e[1m\e[33m\e[40m%d\e[0m\n",
+        line_number,
+        column_number
+            );
+        ```
+  - And return a `ResultSigTok` with `Error = true` 
 
 ---
 
