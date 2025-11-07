@@ -5,7 +5,7 @@
 #include "read.h"
 #include "lexer/lexer.h"
 #include "tag/tag.h"
-#include "ansiColor.h"
+#include "ansiColors.h"
 
 bool has_at_least_one_error = false;
 bool debug_mode_enables = false;
