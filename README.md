@@ -12,4 +12,5 @@ if for any reason you want to uninstall the craw compiler run
 `make clean`, this will remove all of the object files and target exacutable(s)
 
 ## Progress
-- as of right now the lexer is done unless anyother problems arrise or new features get added in the future. 
+- as of right now the lexer is done unless anyother problems arrise or new features get added in the future.
+- the next task that we are will be completing is finishing the tag system for compiling craw programs and then starting the preprocessor. 
