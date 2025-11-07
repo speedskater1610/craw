@@ -97,28 +97,28 @@ enum TokenType {
 
 typedef struct {
     enum TokenType tokenType;
-    char* lexeme;
+    char *lexeme;
     unsigned int line;
     unsigned int column;
 } Token;
 
 // Constructor
-Token* Token_new(enum TokenType tokenType, char* lexeme, unsigned int line, unsigned int column);
+Token* Token_new(enum TokenType tokenType, char *lexeme, unsigned int line, unsigned int column);
 
 // get the value functions
-enum TokenType get_tokenType(const Token* s);
+enum TokenType get_tokenType(const Token *s);
 enum TokenType from_keyword (char *s);
-char* get_lexeme(const Token* s);
-unsigned int get_line(const Token* s);
-unsigned int get_column(const Token* s);
+char* get_lexeme(const Token *s);
+unsigned int get_line(const Token *s);
+unsigned int get_column(const Token *s);
 
 // set the value functions
-void set_tokenType(Token* s, enum TokenType new_value);
-void set_lexeme(Token* s, char* new_value);
-void Token_set_line(Token* s, unsigned int new_value);
-void Token_set_column(Token* s, unsigned int new_value);
+void set_tokenType(Token *s, enum TokenType new_value);
+void set_lexeme(Token *s, char *new_value);
+void Token_set_line(Token *s, unsigned int new_value);
+void Token_set_column(Token *s, unsigned int new_value);
 
 // Destructor
-void Token_free(Token* s);
+void Token_free(Token *s);
 
 #endif // TOKEN_H

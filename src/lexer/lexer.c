@@ -2,7 +2,7 @@
 
     
 // constructor
-Lexer* Lexer_new(char* input) {
+Lexer* Lexer_new(char *input) {
     Lexer* s = (Lexer*)malloc(sizeof(Lexer));
     if (s != NULL) {
         s->input = input;
@@ -13,7 +13,7 @@ Lexer* Lexer_new(char* input) {
     return s;
 }
 
-Vector tokenize(Lexer* self) { 
+Vector tokenize(Lexer *self) { 
     Vector tokens = {0};
 
     while (!is_at_end(self)) { 
@@ -24,20 +24,20 @@ Vector tokenize(Lexer* self) {
         push(&tokens, result.token);
     } 
 
-    Token* eof_token = Token_new(Eof, "", self->line, self->column);
+    Token *eof_token = Token_new(Eof, "", self->line, self->column);
     push(&tokens, *eof_token);
 
     return tokens;
 }
 
-ResultSigTok return_next_token(Token* return_token) {
+ResultSigTok return_next_token(Token *return_token) {
     ResultSigTok result = {};
     result.token = *return_token;
     result.Error = false;
     return result;
 }
 
-ResultSigTok next_token(Lexer* self) {
+ResultSigTok next_token(Lexer *self) {
     unsigned int start_line = self->line;
     unsigned int start_column = self->column;
     char ch = current_char(self);
@@ -131,7 +131,7 @@ ResultSigTok next_token(Lexer* self) {
     }
 }
 
-ResultSigTok read_identifier_or_keyword (Lexer* self, unsigned int start_line, unsigned int start_column) {
+ResultSigTok read_identifier_or_keyword (Lexer *self, unsigned int start_line, unsigned int start_column) {
     char *identifier = NULL;
     char ch = current_char(self);
     
@@ -142,7 +142,7 @@ ResultSigTok read_identifier_or_keyword (Lexer* self, unsigned int start_line, u
 
     // check for type modifers like a<type> or p<type>
     if ((strcmp(identifier, "p") == 0 || strcmp(identifier, "a") == 0) && current_char(self) == '<') {
-        char* modifier = identifier;
+        char *modifier = identifier;
         advance(self); // eat <
         
         // read the inner type
@@ -169,7 +169,7 @@ ResultSigTok read_identifier_or_keyword (Lexer* self, unsigned int start_line, u
                 token_type = Pointer;
             }
             // token
-            Token* return_token = Token_new(token_type, full_type, start_line, start_column);
+            Token *return_token = Token_new(token_type, full_type, start_line, start_column);
         
             // result
             ResultSigTok return_result = {};
@@ -206,7 +206,7 @@ ResultSigTok read_identifier_or_keyword (Lexer* self, unsigned int start_line, u
     "\e[1m\e[33m\e[40m%d\e[0m\n",
         start_line, start_column
     );
-    Token* return_token = Token_new(keyword_type, identifier, start_line, start_column);
+    Token *return_token = Token_new(keyword_type, identifier, start_line, start_column);
         
     // result
     ResultSigTok return_result = {};
@@ -215,7 +215,7 @@ ResultSigTok read_identifier_or_keyword (Lexer* self, unsigned int start_line, u
     return return_result;
 }
 
-ResultSigTok read_number (Lexer* self, 
+ResultSigTok read_number (Lexer *self, 
                     unsigned int start_line, 
                     unsigned int start_column) {
     char *number = NULL;
@@ -281,7 +281,7 @@ ResultSigTok read_number (Lexer* self,
             bool works_f64 = check_f64(number, start_line, start_column);
             if (works_f64) {
                 // token
-                Token* return_token = Token_new(FloatLiteral, number, start_line, start_column);
+                Token *return_token = Token_new(FloatLiteral, number, start_line, start_column);
         
                 // result
                 ResultSigTok return_result = {};
@@ -305,7 +305,7 @@ ResultSigTok read_number (Lexer* self,
         }
     } else {
         // token
-        Token* return_token = Token_new(IntLiteral, number, start_line, start_column);
+        Token *return_token = Token_new(IntLiteral, number, start_line, start_column);
         
         // result
         ResultSigTok return_result = {};
@@ -315,7 +315,7 @@ ResultSigTok read_number (Lexer* self,
     }
     // most likely an error happened so lets return Error
     // token
-    Token* return_token = Token_new(Error, "", start_line, start_column);
+    Token *return_token = Token_new(Error, "", start_line, start_column);
         
     // result
     ResultSigTok return_result = {};
@@ -428,11 +428,11 @@ ResultSigTok read_char_literal (Lexer* self,
     
     advance(self); // consume closing '
     
-    char* string = NULL;
+    char *string = NULL;
     append_char(string, ch);
     
     // token
-    Token* return_token = Token_new(CharLiteral, string, start_line, start_column);
+    Token *return_token = Token_new(CharLiteral, string, start_line, start_column);
         
     // result
     ResultSigTok return_result = {};
@@ -442,12 +442,12 @@ ResultSigTok read_char_literal (Lexer* self,
 }
 
 
-ResultSigTok read_string_literal (Lexer* self, 
+ResultSigTok read_string_literal (Lexer *self, 
                             unsigned int start_line, 
                             unsigned int start_column) {
     advance(self);
     
-    char* string = NULL;
+    char *string = NULL;
     
     while (!is_at_end(self) && current_char(self) != '"') {
         if (current_char(self) == '\\') {
@@ -504,7 +504,7 @@ ResultSigTok read_string_literal (Lexer* self,
     
     
     // token
-    Token* return_token = Token_new(StringLiteral, string, start_line, start_column);
+    Token *return_token = Token_new(StringLiteral, string, start_line, start_column);
         
     // result
     ResultSigTok return_result = {};
@@ -514,7 +514,7 @@ ResultSigTok read_string_literal (Lexer* self,
 }
 
 
-void skip_whitespace (Lexer* self) {
+void skip_whitespace (Lexer *self) {
     while (!is_at_end(self)) {
         switch (current_char(self)) {
             case ' ':
@@ -534,7 +534,7 @@ void skip_whitespace (Lexer* self) {
     }
 }
 
-char current_char(Lexer* self) {
+char current_char(Lexer *self) {
     if (is_at_end(self)) {
         return '\0';
     } else {
@@ -542,7 +542,7 @@ char current_char(Lexer* self) {
     }
 }
 
-void advance (Lexer* self) {
+void advance (Lexer *self) {
     if (!is_at_end(self)) {
         if (self->input[self->position] == '\n') {
             self->line += 1;
@@ -554,7 +554,7 @@ void advance (Lexer* self) {
     }
 }
 
-bool is_at_end (Lexer* self) {
+bool is_at_end (Lexer *self) {
     return (self->position >= strlen(self->input)); 
 }
 

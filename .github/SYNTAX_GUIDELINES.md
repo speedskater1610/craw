@@ -26,9 +26,9 @@ Example:
 
 ## 2. Naming Conventions
 
-| Item                  | Convention  | Example                    |
+| Item                  | Convention  | Example                     |
 |-----------------------|-------------|-----------------------------|
-| Filenames             | camelCase   | lexer.c, tokenizer.c        |
+| Filenames             | camelCase   | lexer.c, throwErr.c         |
 | Structs / Types       | PascalCase  | Lexer, ResultSigTok         |
 | Functions / Variables | snake_case  | next_token(), current_char  |
 | Constants / Enums     | ALL_CAPS    | Eof, LeftParen              |
@@ -49,15 +49,16 @@ Example:
 - Use `malloc` / `realloc` carefully; always check for `NULL`
 - Free dynamically allocated memory when no longer needed
 - For errors:
-  - Use `Err()` function to print lexer/compiler errors
+  - Use `Err()` function to print lexer errors
+    - & use fprintf(stderr, ...) for compiler errors
   - Or return a `ResultSigTok` with `Error = true`
 
 ---
 
 ## 5. Functions
 
-- Constructors: `Type* Type_new(...)`
-- Token processing: `ResultSigTok next_token(Lexer* self)`
+- Constructors: `Type *Type_new(...)`
+- Token processing: `ResultSigTok next_token(Lexer *self)`
 - Modifiers: functions that modify structs or buffers take pointers
 - Functions should avoid side effects outside their intended scope
 
@@ -90,8 +91,8 @@ Example:
 
 ### Constructor
 ```c
-    Lexer* Lexer_new(char* input) {
-        Lexer* s = (Lexer*)malloc(sizeof(Lexer));
+    Lexer *Lexer_new(char *input) {
+        Lexer *s = (Lexer*)malloc(sizeof(Lexer));
         if (s != NULL) {
             s->input = input;
             s->position = 0;
@@ -103,7 +104,7 @@ Example:
 ```
 ### Tokenizer
 ```c
-    Vector tokenize(Lexer* self) {
+    Vector tokenize(Lexer *self) {
         Vector tokens = {0};
 
         while (!is_at_end(self)) {
@@ -114,7 +115,7 @@ Example:
             push(&tokens, result.token);
         }
 
-        Token* eof_token = Token_new(Eof, "", self->line, self->column);
+        Token *eof_token = Token_new(Eof, "", self->line, self->column);
         push(&tokens, *eof_token);
 
         return tokens;
@@ -122,7 +123,7 @@ Example:
 ```
 ### Conditional & Loop Example
 ```c
-    char current_char(Lexer* self) {
+    char current_char(Lexer *self) {
         if (is_at_end(self)) {
             return '\0';
         } else {
@@ -130,7 +131,7 @@ Example:
         }
     }
 
-    void advance(Lexer* self) {
+    void advance(Lexer *self) {
         if (!is_at_end(self)) {
             if (self->input[self->position] == '\n') {
                 self->line += 1;

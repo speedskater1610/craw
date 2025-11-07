@@ -6,10 +6,10 @@
 #include <stdlib.h> 
 #include <string.h> 
 
-char* read_file(char* filePath) {
+char *read_file(char *filePath) {
     FILE *fptr;
     int ch;
-    char* fileContents = NULL;
+    char *fileContents = NULL;
     long fileSize = 0;
     long currentPos = 0;
 

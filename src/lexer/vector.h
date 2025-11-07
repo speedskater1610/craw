@@ -16,12 +16,12 @@ typedef struct {
 } Vector;
 
 // create a new vector
-Vector* create_vector();
+Vector *create_vector();
 //  add an element to the vector (push_back)
-void push(Vector* vector, Token value);
+void push(Vector *vector, Token value);
 // rm last element
-void pop(Vector* vector);
+void pop(Vector *vector);
 // fn to access an element at a specific index (vector_at)
-Token vector_at(Vector* vector, unsigned int index);
+Token vector_at(Vector *vector, unsigned int index);
 
 #endif
