@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
         debug_mode_enables = true;
     }
 
-    // TODO: Pass input_file to your lexer/reader here
+    // TODO: Pass input_file to lexer/reader here
     // read_file(input_file);
 
     return has_at_least_one_error ? 1 : 0;
