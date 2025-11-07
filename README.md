@@ -11,5 +11,5 @@ this will make a new exacutable for the program
 if for any reason you want to uninstall the craw compiler run
 `make clean`, this will remove all of the object files and target exacutable(s)
 
-## To use the craw compiler
-at the current time of me writing this (~8am Nov 5), the craw compiler is still in the early stages of development and the lexer is the only part remotly close to being done
+## Progress
+- as of right now the lexer is done unless anyother problems arrise or new features get added in the future. 
