@@ -12,61 +12,32 @@ Token *Token_new(enum TokenType tokenType, char* lexeme, unsigned int line, unsi
     return s;
 }
 
-enum TokenType from_keyword (char *s) {
-    enum TokenType rtrn;
-    if (!strcmp(s, "let")) {
-        rtrn = Let; 
-    } else if (!strcmp(s, "fn")) {
-        rtrn = Fn; 
-    } else if (!strcmp(s, "return")) {
-        rtrn = Return; 
-    } else if (!strcmp(s, "if")) {
-        rtrn = If;
-    } else if (!strcmp(s, "goto")) {
-        rtrn = Goto; 
-    } else if (!strcmp(s, "lbl")) {
-        rtrn = Lbl; 
-    } else if (!strcmp(s, "new")) {
-        rtrn = New; 
-    } else if (!strcmp(s, "this")) {
-        rtrn = This; 
-    } else if (!strcmp(s, "asm")) {
-        rtrn = Asm; 
-    } else if (!strcmp(s, "use")) {
-        rtrn = Use; 
-    } else if (!strcmp(s, "i16")) {
-        rtrn = I16; 
-    } else if (!strcmp(s, "i32")) {
-        rtrn = I32; 
-    } else if (!strcmp(s, "i64")) {
-        rtrn = I64; 
-    } else if (!strcmp(s, "u16")) {
-        rtrn = U16; 
-    } else if (!strcmp(s, "u32")) {
-        rtrn = U32; 
-    } else if (!strcmp(s, "u64")) {
-        rtrn = U64;
-    } else if (!strcmp(s, "f32")) {
-        rtrn = F32; 
-    } else if (!strcmp(s, "f64")) {
-        rtrn = F64; 
-    } else if (!strcmp(s, "char")) {
-        rtrn = Char; 
-    } else if (!strcmp(s, "structinstance")) {
-        rtrn = StructInstance; 
-    } else if (!strcmp(s, "defstruct")) {
-        rtrn = DefStruct; 
-    } else if (!strcmp(s, "void")) {
-        rtrn = Void; 
-    } else if (!strcmp(s, "and")) {
-        rtrn = And; 
-    } else if (!strcmp(s, "or")) {
-        rtrn = Or; 
-    } else {
-        rtrn = Error; 
-    }
-    
-    return rtrn;
+enum TokenType from_keyword(const char *s) {
+    if (!strcmp(s, "let")) return Let;
+    else if (!strcmp(s, "fn")) return Fn;
+    else if (!strcmp(s, "return")) return Return;
+    else if (!strcmp(s, "if")) return If;
+    else if (!strcmp(s, "goto")) return Goto;
+    else if (!strcmp(s, "lbl")) return Lbl;
+    else if (!strcmp(s, "new")) return New;
+    else if (!strcmp(s, "this")) return This;
+    else if (!strcmp(s, "asm")) return Asm;
+    else if (!strcmp(s, "use")) return Use;
+    else if (!strcmp(s, "i16")) return I16;
+    else if (!strcmp(s, "i32")) return I32;
+    else if (!strcmp(s, "i64")) return I64;
+    else if (!strcmp(s, "u16")) return U16;
+    else if (!strcmp(s, "u32")) return U32;
+    else if (!strcmp(s, "u64")) return U64;
+    else if (!strcmp(s, "f32")) return F32;
+    else if (!strcmp(s, "f64")) return F64;
+    else if (!strcmp(s, "char")) return Char;
+    else if (!strcmp(s, "structinstance")) return StructInstance;
+    else if (!strcmp(s, "defstruct")) return DefStruct;
+    else if (!strcmp(s, "void")) return Void;
+    else if (!strcmp(s, "and")) return And;
+    else if (!strcmp(s, "or")) return Or;
+    else return Error;
 }
 
 // get the value functions
