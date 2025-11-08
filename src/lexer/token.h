@@ -104,7 +104,7 @@ Token* Token_new(enum TokenType tokenType, char *lexeme, unsigned int line, unsi
 
 // get the value functions
 enum TokenType get_tokenType(const Token *s);
-enum TokenType from_keyword (char *s);
+enum TokenType from_keyword (const char *s);
 char* get_lexeme(const Token *s);
 unsigned int get_line(const Token *s);
 unsigned int get_column(const Token *s);
