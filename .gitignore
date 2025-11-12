@@ -1,5 +1,6 @@
 # Compiled files
-*.out # a.out
+# a.out
+*.out 
 *.o
 *.exe
 *.class
@@ -17,4 +18,5 @@ Thumbs.db
 
 # Environment variables
 .env
+
 
