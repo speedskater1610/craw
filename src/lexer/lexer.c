@@ -133,7 +133,6 @@ ResultSigTok next_token(Lexer *self) {
 
 ResultSigTok read_identifier_or_keyword (Lexer *self, unsigned int start_line, unsigned int start_column) {
     char *identifier = NULL;
-    char ch = current_char(self);
     
     while (!is_at_end(self) && (isalnum(current_char(self)) || current_char(self) == '_')) {
         append_char(identifier, current_char(self));
