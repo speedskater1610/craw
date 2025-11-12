@@ -12,11 +12,12 @@
 .DS_Store
 Thumbs.db
 
-# IDE/project files
+# IDE & project files
 .vscode/
 .idea/
 
 # Environment variables
 .env
+
 
 
