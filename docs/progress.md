@@ -17,4 +17,5 @@ assignees: speedskater1610
 - [x] Lexer  
 - [X] Assembler  
 - [ ] Parser  
-- [ ] Codegen  
+- [ ] Codegen
+- [ ] optimization   
