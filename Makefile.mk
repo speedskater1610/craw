@@ -15,7 +15,7 @@ C_SOURCES = src/main.c \
             src/lexer/f64.c \
             src/lexer/lexer.c \
             src/tag/tag.c \
-            src/preprocessor.c   # Make sure this matches your actual filename
+            src/preprocess/preprocesser.c
 
 CXX_SOURCES = src/assembler/assembler.cpp \
               src/assembler/emit.cpp \
