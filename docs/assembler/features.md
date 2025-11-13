@@ -1,4 +1,4 @@
-# crasm x86 Assembler
+# crasm x86 Assembler features
 
 A minimal x86 assembler written in C++ that can assemble a subset of 32-bit x86 instructions and output a runnable ELF executable on Linux.
 
