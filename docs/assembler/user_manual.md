@@ -1,1 +1,50 @@
+# CRASM assembler user manual
+*if you do not already have the crasm assembler installed follow this [guide](https://github.com/speedskater1610/craw/blob/main/docs/assembler/build.md)*
 
+# instructions
+1. [mov](https://github.com/speedskater1610/craw/tree/main/docs/assembler/instructions/mov.md)
+2. [add](https://github.com/speedskater1610/craw/tree/main/docs/assembler/instructions/add.md)
+3. sub
+4. xor
+5. and
+6. or
+7. cmp
+8. test
+9. inc
+10. dec
+11. push
+12. pop
+13. call
+14. ret
+15. jmp
+16. je
+17. jne
+18. jg
+19. jl
+20. jge
+21. jle
+22. int
+23. nop
+24. lea
+25. imul
+26. idiv
+27. shl
+28. shr
+
+#  Registers
+1. eax
+2. ebx
+3. ecx
+4. edx
+5. esi
+6. edi
+7. esp
+8. ebp
+9. al
+10. bl
+11. cl
+12. dl
+13. ah
+14. ab
+15. ch
+16. dh
