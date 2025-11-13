@@ -6,47 +6,51 @@ on:
 
 jobs:
   build:
+    # Define matrix OSes
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os:
-          - ubuntu-latest
-          - ubuntu-22.04
-          - windows-latest
+        os: [ubuntu-latest, ubuntu-22.04, windows-latest]
 
     steps:
+      # 1. Checkout the repo
       - name: Checkout the repo
         uses: actions/checkout@v4
 
-      # Linux build tools
+      # 2. Install build tools on Linux
       - name: Install build tools on Linux
         if: runner.os != 'Windows'
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential
 
-      # Windows build tools
+      # 3. Install build tools on Windows
       - name: Install build tools on Windows
         if: runner.os == 'Windows'
+        shell: powershell
         run: |
           choco install mingw -y
           refreshenv
-          echo "::add-path::C:\tools\mingw64\bin"
+          # Add mingw64 to PATH for the current session
+          $env:PATH = "C:\ProgramData\mingw64\mingw64\bin;$env:PATH"
 
-      # Build project
-      - name: Build project
-        run: |
-          if [ "${{ runner.os }}" == "Windows" ]; then \
-            mingw32-make -f Makefile.mk all; \
-          else \
-            make -f Makefile.mk all; \
-          fi
 
-      # Upload build artifacts
+      # 4. Build project on Linux
+      - name: Build project on Linux
+        if: runner.os != 'Windows'
+        run: make -f Makefile.mk all
+
+      # 5. Build project on Windows
+      - name: Build project on Windows
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: mingw32-make -f Makefile.mk all
+
+
+      # 6. Upload artifacts with unique names
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: craw-binary-${{ matrix.os }}
           path: |
-            craw.exe
-            craw
+            craw*
