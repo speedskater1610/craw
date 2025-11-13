@@ -1,4 +1,6 @@
 #include "preprocesser.h"
+#include <stdlib.h>
+
 
 char *preprocess(char *source) {
 
@@ -12,13 +14,13 @@ char *escape_char_for_output(char c) {
       case '\t': return "\\t";
       case '\0': return "\\0";
       case '\\': return "\\\\";
-      case '\'': return "\\'"
+      case '\'': return "\\'";
       default:  
           break;
     }
   
     char *charPtr;
-    charPtr = (char *)malloc(sizeof(char) * 2);
+    charPtr = (char*)malloc(sizeof(char) * 2);
     charPtr[0] = c;
     charPtr[1] = '\0';
     return;
