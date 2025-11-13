@@ -1,10 +1,8 @@
-# compilers and flags
 CC = gcc
-CPP = g++
-CFLAGS = -Wall -g
-CPPFLAGS = -Wall -g
+CXX = g++
+CFLAGS = -Wall -g -std=c11
+CXXFLAGS = -Wall -g -std=c++17
 
-# Target and source files
 TARGET = craw
 
 C_SOURCES = src/main.c \
@@ -17,32 +15,28 @@ C_SOURCES = src/main.c \
             src/tag/tag.c \
             src/preprocesser.c
 
-CPP_SOURCES = src/assembler/assembler.cpp
+CXX_SOURCES = src/assembler/assembler.cpp \
+              src/assembler/emit.cpp \
+              src/assembler/encode.cpp \
+              src/assembler/mainAssembler.cpp \
+              src/assembler/parse.cpp
 
 
-# Automatically create object from file lists
 C_OBJECTS = $(C_SOURCES:.c=.o)
-CPP_OBJECTS = $(CPP_SOURCES:.cpp=.o)
+CXX_OBJECTS = $(CXX_SOURCES:.cpp=.o)
+OBJECTS = $(C_OBJECTS) $(CXX_OBJECTS)
 
-# Combine all objects for linking
-OBJECTS = $(C_OBJECTS) $(CPP_OBJECTS)
-
-# Default target
 all: $(TARGET)
 
-# linking the final executable
 $(TARGET): $(OBJECTS)
-	$(CPP) $(CPPFLAGS) $(OBJECTS) -o $(TARGET)
+	$(CXX) $(CXXFLAGS) $(OBJECTS) -o $(TARGET)
 
-# compiling C files
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# compiling C++ files
 %.o: %.cpp
-	$(CPP) $(CPPFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Phony target for cleaning
 .PHONY: clean
 clean:
 	rm -f $(TARGET) $(OBJECTS)
