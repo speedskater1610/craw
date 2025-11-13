@@ -12,7 +12,7 @@
 
 
 class Assembler {
-private:
+public:
     std::map<std::string, uint32_t> labels;
     std::vector<uint8_t> code;
     uint32_t current_address;
@@ -34,7 +34,14 @@ private:
         int32_t disp;
         std::string label_name;
     };
-    
+
+    void write_to_file(const char* filename) {
+        std::ofstream out(filename, std::ios::binary);
+        out.write(reinterpret_cast<const char*>(code.data()), code.size());
+        out.close();
+    }
+
+
     void emit_byte(uint8_t byte);
     void emit_word(uint16_t word);
     void emit_dword(uint32_t dword);
@@ -75,7 +82,6 @@ private:
     
     void resolve_labels();
     
-public:
     Assembler() : current_address(0x08048000) {}
     
     void assemble(const std::string& source) {
