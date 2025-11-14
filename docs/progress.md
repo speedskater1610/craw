@@ -18,4 +18,5 @@ assignees: speedskater1610
 - [X] Assembler  
 - [ ] Parser  
 - [ ] Codegen
-- [ ] optimization   
+- [ ] optimization
+- [ ] standard libarary
