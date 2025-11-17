@@ -1,11 +1,16 @@
-                        CRAW public license
+                         CRAW public license
                   Copyright (c) 2025 Russel Einsla
 
 
 You may view, reference, or learn from this code for educational purposes.
 However, you mat not copy, redistribute, modify, or use any portion of this code 
 in your own projects or competitions without explicit written permission from the 
-authors, maintainers, or owners. 
+authors, maintainers, or owners. Although one may reuse code from a project with the 
+CRAW public license - without explicit written permission from the authors, maintainers, 
+or owners - if they meet the following conditions: use the CRAW public license on that 
+project, If the project has a readme you must explicitly state the project that you are 
+reusing code from, if you include a readme in the directory of the reuses code stating 
+which files contained the reused code and where it came from.  
 
 
                       CC BY-NC-ND 4.0
