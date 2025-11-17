@@ -1,7 +1,5 @@
+; this should print `Hi`
 _start:
-    jmp setup
-
-setup:
     ; as ascii vals
     push 0x0A21
     push 0x6948
