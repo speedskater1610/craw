@@ -1,3 +1,9 @@
+    ; How to test - 
+    ; `./crasm malloc.asm malloc`
+    ; `./malloc`
+    ; `echo $?`
+        ; this should print 210
+        ; which is `1234 % 265`
 ; test start
 _start:
     push 10
