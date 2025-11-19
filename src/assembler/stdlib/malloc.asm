@@ -4,6 +4,7 @@
     ; `echo $?`
         ; this should print 210
         ; which is `1234 % 265`
+        ; this is because it only reads the lower 8 bits
 ; test start
 _start:
     push 10
