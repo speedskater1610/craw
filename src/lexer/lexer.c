@@ -549,24 +549,41 @@ bool is_at_end (Lexer *self) {
     return (self->position >= strlen(self->input)); 
 }
 
-char *append_char_impl(char *str, char c) {
+// string util: append_char and append_string
+void append_char(char **s, char c) {
     size_t len = 0;
 
-    if (str != NULL) {
-        len = strlen(str);
+    if (*s != NULL) {
+        len = strlen(*s);
     }
 
-    // allocate or expand
-    char *new_str = realloc(str, len + 2);
+    // Reallocate: +1 for new char, +1 for null
+    char *new_str = realloc(*s, len + 2);
     if (!new_str) {
-        free(str);
-        fprintf(stderr, "append_char_impl: memory allocation failed\n");
-        exit(EXIT_FAILURE);
-     }
+        return; // Handle out-of-memory however you want
+    }
 
     new_str[len] = c;
     new_str[len + 1] = '\0';
-    return new_str;
+
+    *s = new_str;
+}
+
+// this isnt used anymore I will add it to the archive when I make one
+// TODO: make a archive folder and add this function
+void append_str(char **s, const char *extra) {
+    size_t old_len = 0;
+    if (*s)
+        old_len = strlen(*s);
+
+    size_t add_len = strlen(extra);
+
+    char *new_str = realloc(*s, old_len + add_len + 1);
+    if (!new_str)
+        return;
+
+    memcpy(new_str + old_len, extra, add_len + 1);
+    *s = new_str;
 }
 
 
