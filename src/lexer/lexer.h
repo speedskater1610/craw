@@ -1,8 +1,6 @@
 #ifndef LEXER_H
 #define LEXER_H
 
-#define append_char(str, c) (str = append_char_impl(str, c))
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
