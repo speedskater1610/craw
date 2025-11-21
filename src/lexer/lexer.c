@@ -513,25 +513,17 @@ ResultSigTok read_string_literal (Lexer *self,
 }
 
 
-void skip_whitespace (Lexer *self) {
-    while (!is_at_end(self)) {
-        switch (current_char(self)) {
-            case ' ':
-                advance(self);
-                break;
-            case '\t':
-                advance(self);
-                break;
-            case '\r':
-                advance(self);
-                break;
-            case '\n':
-                advance(self);
-                break;
-            default : break;
-        }
+void skip_whitespace(Lexer *self) {
+    while (!is_at_end(self) && 
+           (current_char(self) == ' '  ||
+            current_char(self) == '\t' ||
+            current_char(self) == '\r' ||
+            current_char(self) == '\n')) 
+    {
+        advance(self);
     }
 }
+
 
 char current_char(Lexer *self) {
     if (is_at_end(self)) {
