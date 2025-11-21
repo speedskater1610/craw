@@ -4,6 +4,7 @@
 #include "globals.h"
 #include "read.h"
 #include "lexer/lexer.h"
+#include "preprocess/preprocessor.h"
 #include "tag/tag.h"
 #include "ansiColors.h"
 
