@@ -135,7 +135,7 @@ ResultSigTok read_identifier_or_keyword (Lexer *self, unsigned int start_line, u
     char *identifier = NULL;
     
     while (!is_at_end(self) && (isalnum(current_char(self)) || current_char(self) == '_')) {
-        append_char(identifier, current_char(self));
+        append_char(&identifier, current_char(self));
         advance(self);
     }
 
@@ -147,7 +147,7 @@ ResultSigTok read_identifier_or_keyword (Lexer *self, unsigned int start_line, u
         // read the inner type
         char* inner_type = NULL;
         while(!is_at_end(self) && current_char(self) !=  '>') {
-            append_char(inner_type, current_char(self));
+            append_char(&inner_type, current_char(self));
             advance(self);
         }
 
@@ -237,7 +237,7 @@ ResultSigTok read_number (Lexer *self,
             is_float = 1;
         }
         
-        append_char(number, current_char(self));
+        append_char(&number, current_char(self));
         advance(self);
     }
 
@@ -428,7 +428,7 @@ ResultSigTok read_char_literal (Lexer* self,
     advance(self); // consume closing '
     
     char *string = NULL;
-    append_char(string, ch);
+    append_char(&string, ch);
     
     // token
     Token *return_token = Token_new(CharLiteral, string, start_line, start_column);
@@ -477,9 +477,9 @@ ResultSigTok read_string_literal (Lexer *self,
                 default : escaped = current_char(self); break;
             } 
             
-            append_char(string, escaped);
+            append_char(&string, escaped);
         } else {
-            append_char(string, current_char(self));
+            append_char(&string, current_char(self));
         }
         advance(self);
         
