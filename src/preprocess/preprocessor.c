@@ -246,12 +246,21 @@ static char *preprocess_once(const char *src, int *err) {
 
 // repeats until stable text
 char *preprocess(const char *source) {
+    if (!source) return NULL;
+
     char *prev = NULL;
     char *cur = strdup(source);
+    if (!cur) return NULL;
 
     for (;;) {
         int err = 0;
         char *next = preprocess_once(cur, &err);
+
+        if (!next) {
+            free(cur);
+            free(prev);
+            return NULL;
+        }
 
         if (prev && strcmp(prev, next) == 0) {
             free(prev);
@@ -264,8 +273,13 @@ char *preprocess(const char *source) {
 
         free(cur);
         cur = strdup(prev);
+        if (!cur) {
+            free(prev);
+            return NULL;
+        }
     }
 }
+
 
 void free_preprocessed(char *s) {
     free(s);
