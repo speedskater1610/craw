@@ -1,3 +1,5 @@
+#define _POSIX_C_SOURCE 200809L 
+// above: for strdup 
 #include "preprocessor.h"
 #include <stdio.h>
 #include <stdlib.h>
