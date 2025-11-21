@@ -26,7 +26,8 @@ typedef struct {
 
 
 int to_digit(char c, int radix);
-char *append_char_impl(char *str, char c);
+void append_char(char **s, char c);
+void append_str(char **s, const char *extra);
 bool is_numeric(char s);
 Lexer* Lexer_new (char *input);
 bool is_at_end (Lexer *self);
