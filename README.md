@@ -1,21 +1,36 @@
-# craw
+# CRAW
 
-## To get the craw compiler
-to get the repository first run 
-`git clone "https://github.com/speedskater1610/craw"`.
+CRAW is a compiler and assembler toolchain designed to simplify programming and assembly for ELF binaries.
 
-Next compile the program by running the following: 
-`make all`.
-This will make a new exacutable for the program.
+---
 
-if for any reason you want to uninstall the craw compiler run
-`make clean`, this will remove all of the object files and target exacutable(s)
+## Getting the CRAW Compiler
 
-## how to get the craw assembler, crasm. 
-- to get the repository first run `git clone "https://github.com/speedskater1610/craw"`.
-- then go into the assembler files `cd /src/assembler/`
-- finally use make to build the project `make -f Assembler.mk`
-- then you can use the assembler like this `./crasm input.asm output`
-- finally refer to the [docs](https://github.com/speedskater1610/craw/tree/main/docs/assembler)
-- *Note: This assembler currently only produces ELF-format binaries.*
+1. Clone the repository:
+```bash
+   git clone https://github.com/speedskater1610/craw
+```
+3. Compile the compiler:
+```bash
+make all
+```  
+   This will generate an executable for the compiler.
+   
+5. To uninstall the compiler and clean up generated files:
+```bash
+make clean
+```  
+   This removes all object files and the compiler executable.
 
+---
+
+## Getting the CRAW Assembler (`crasm`)
+
+1. Clone the repository (if you haven’t already): `git clone https://github.com/speedskater1610/craw`
+2. Navigate to the assembler directory: `cd src/assembler/`
+3. Build the assembler: `make -f Assembler.mk`
+4. Use the assembler: `./crasm input.asm output`
+
+> **Note:** Currently, the assembler only produces ELF-format binaries.
+
+5. For detailed usage and documentation, see the [Assembler Docs](https://github.com/speedskater1610/craw/tree/main/docs/assembler)
