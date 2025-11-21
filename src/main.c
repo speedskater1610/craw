@@ -31,8 +31,20 @@ int main(int argc, char *argv[]) {
         debug_mode_enables = true;
     }
 
-    // TODO: Pass input_file to lexer/reader here
-    // read_file(input_file);
+    char *src = read_file(input_file);
+    
+    if (!src) {
+        fprintf(stderr, "Error: Cannot read input file.\n");
+        return 1;
+    }
+
+    char *processed = preprocess(src);
+
+    // TODO: pass it into the lexer but just print for now
+    printf("%s\n", processed);
+
+    free(src);
+    free_preprocessed(processed);
 
     return has_at_least_one_error ? 1 : 0;
 }
