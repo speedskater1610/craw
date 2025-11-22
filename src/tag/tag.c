@@ -11,7 +11,7 @@ static void print_help(void) {
 }
 
 static void print_version(void) {
-    printf("craw compiler version 0.1.0\n");
+    printf("craw compiler version 0.0.0\n"); // TODO : update this as time goes on and versions change
 }
 
 int get_tag(char *tag, bool *debug_mode, char **input_file) {
@@ -36,3 +36,4 @@ int get_tag(char *tag, bool *debug_mode, char **input_file) {
         return 0;
     }
 }
+
