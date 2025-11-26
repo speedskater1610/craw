@@ -23,5 +23,7 @@ void push(Vector *vector, Token value);
 void pop(Vector *vector);
 // fn to access an element at a specific index (vector_at)
 Token vector_at(Vector *vector, unsigned int index);
+// free the tokens when they are no longer needed
+void vector_free(Vector *vector);
 
 #endif
