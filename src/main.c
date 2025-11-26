@@ -3,10 +3,11 @@
 
 #include "globals.h"
 #include "read.h"
-#include "lexer/lexer.h"
-#include "preprocess/preprocessor.h"
 #include "tag/tag.h"
 #include "ansiColors.h"
+#include "preprocess/preprocessor.h"
+#include "lexer/lexer.h" // for implemting the lexer and then passing it to the parser I need
+#include "lexer/vector.h"
 
 bool has_at_least_one_error = false;
 bool debug_mode_enables = false;
@@ -41,11 +42,17 @@ int main(int argc, char *argv[]) {
 
     char *processed = preprocess(src);
 
-    // TODO: pass it into the lexer but just print for now
-    printf("%s\n", processed);
+    // pass it into the lexer to get a vector of tokens
+    if (debug_mode) {
+        printf("%s\n", processed);
+    }
+    Lexer* lexer = Lexer_new(processed);
+    Vector tokens = tokenize(lexer);
 
+    
     free(src);
     free_preprocessed(processed);
-
+    vector_free(&tokens); 
+    
     return has_at_least_one_error ? 1 : 0;
 }
