@@ -1,4 +1,5 @@
     ; How to test - 
+        ; Make sure to uncomment main
     ; `./crasm malloc.asm malloc`
     ; `./malloc`
     ; `echo $?`
@@ -6,23 +7,23 @@
         ; which is `1234 % 265`
         ; this is because it only reads the lower 8 bits
 ; test start
-_start:
-    push 10
-    call malloc
-    add esp, 4
-    mov ebx, eax        ; save pointer in ebx
+;_start:
+;    push 10
+;    call malloc
+;    add esp, 4
+;    mov ebx, eax        ; save pointer in ebx
+;
+;    ; store a known value (example: 1234)
+;    mov eax, 1234
+;    mov [ebx], eax
+;
+;    ; load it back to eax
+;    mov eax, [ebx]
 
-    ; store a known value (example: 1234)
-    mov eax, 1234
-    mov [ebx], eax
-
-    ; load it back to eax
-    mov eax, [ebx]
-
-    ; exit with that value so we can check it
-    mov ebx, eax
-    mov eax, 1          ; sys_exit
-    int 0x80
+;    ; exit with that value so we can check it
+;    mov ebx, eax
+;    mov eax, 1          ; sys_exit
+;    int 0x80
 
 ; ----------------------------
 ; malloc:
