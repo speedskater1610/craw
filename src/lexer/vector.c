@@ -1,5 +1,27 @@
 #include "vector.h"
 
+void vector_free(Vector *vector) {
+    if (!vector) return;
+
+    if (vector->data) {
+        // Free each Token's lexeme if it is dynamically allocated
+        for (size_t i = 0; i < vector->size; i++) {
+            free(vector->data[i].lexeme);
+        }
+
+        // Free the data array
+        free(vector->data);
+    }
+
+    // Reset the vector fields
+    vector->data = NULL;
+    vector->size = 0;
+    vector->capacity = 0;
+
+    // Finally, free the Vector structure itself
+    free(vector);
+}
+
 // create a new vector
 Vector *create_vector() {
     // Allocate memory for the Vector structure
