@@ -25,7 +25,7 @@ make clean
 
 ---
 
-## Getting the CRAW Assembler (`crasm`)
+## Getting the CRAW Assembler (`crasm_cpp`)
 
 1. Clone the repository (if you haven’t already): `git clone https://github.com/speedskater1610/craw`
 2. Navigate to the assembler directory: `cd src/assembler/`
@@ -35,3 +35,4 @@ make clean
 > **Note:** Currently, the assembler only produces ELF-format binaries.
 
 5. For detailed usage and documentation, see the [Assembler Docs](https://github.com/speedskater1610/craw/tree/main/docs/assembler)
+*IN the future I will write a more complete assembler in rust or haskell and use that this is more of a toy assembler rather than anything that will be used*
