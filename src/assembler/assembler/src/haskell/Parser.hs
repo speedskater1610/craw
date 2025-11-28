@@ -93,6 +93,7 @@ parseDirective state =
                 "dw" -> DirDW exprs
                 "dd" -> DirDD exprs
                 "dq" -> DirDD exprs
+                _ -> DirDB exprs
           state'' <- consumeNewline state'
           Right (Just (StmtDir dir loc), state'')
     
@@ -105,6 +106,7 @@ parseDirective state =
                 "resw" -> DirResW expr
                 "resd" -> DirResD expr
                 "resq" -> DirResD expr
+                _ -> DirResB expr
           state' <- consumeNewline (state { parserTokens = rest })
           Right (Just (StmtDir dir loc), state')
     
