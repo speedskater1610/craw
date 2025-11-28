@@ -42,7 +42,7 @@ make clean
 
 ### crasm
 *This can be built from the make file in src/assembler/assembler/Makefile*
-1. Clone the repository (if you haven’t already): `git clone https://github.com/speedskater1610/craw`
+1. Clone the repository (if you haven’t already): `git clone https://github.com/speedskater1610/craw` then go into the repo `cd craw`
 2. Navigate to the assembler directory: `cd src/assembler/assembler`
 3. Build the assembler: `make`
 4. Use the assembler: `./crasm input.asm output`
