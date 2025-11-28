@@ -45,5 +45,6 @@ make clean
 1. Clone the repository (if you haven’t already): `git clone https://github.com/speedskater1610/craw` then go into the repo `cd craw`
 2. Navigate to the assembler directory: `cd src/assembler/assembler`
 3. Build the assembler: `make`
-4. Use the assembler: `./crasm input.asm output`
-5. Link the resulting object file `ld -m elf_i386 output.o -o output`
+4. make it a global variable `sudo mv crasm /usr/local/bin/`
+5. Use the assembler: `crasm input.asm output`
+6. Link the resulting object file `ld -m elf_i386 output.o -o output`
