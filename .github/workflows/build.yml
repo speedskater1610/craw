@@ -45,10 +45,13 @@ jobs:
         shell: powershell
         run: mingw32-make -f Makefile.mk all
 
-      # 6. Build CRASM assembler on Linux
+      # 6. Build CRASM on Linux
       - name: Build CRASM on Linux
         if: runner.os != 'Windows'
-        run: make -f src/assembler/assembler/Makefile all
+        run: |
+          cd src/assembler/assembler
+          make all
+
 
       # 7. Build CRASM assembler on Windows
       - name: Build CRASM on Windows
@@ -74,3 +77,4 @@ jobs:
           name: crasm-binary-${{ matrix.os }}
           path: |
             src/assembler/assembler/crasm
+
