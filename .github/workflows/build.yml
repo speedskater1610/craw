@@ -58,10 +58,10 @@ jobs:
         if: runner.os == 'Windows'
         shell: powershell
         run: |
-          set PATH=%PATH%;C:\Users\runneradmin\AppData\Local\Programs\GHC\bin
-          set PATH=%PATH%;C:\Users\runneradmin\.cargo\bin
+          refreshenv
           cd src/assembler/assembler
           mingw32-make -f Makefile all
+
 
       # 8. Upload craw artifact
       - name: Upload craw artifact
@@ -78,5 +78,6 @@ jobs:
           name: crasm-binary-${{ matrix.os }}
           path: |
             src/assembler/assembler/crasm
+
 
 
