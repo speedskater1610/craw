@@ -209,6 +209,8 @@ parseTerm state =
       Right (NumLit (fromIntegral n), state { parserTokens = rest })
     (TokIdent name : rest) -> 
       Right (Ident name, state { parserTokens = rest })
+    (TokDollar : rest) ->
+      Right (Ident "$", state { parserTokens = rest })
     (TokMinus : rest) -> do
       (expr, state') <- parseTerm (state { parserTokens = rest })
       Right (UnOp Neg expr, state')
