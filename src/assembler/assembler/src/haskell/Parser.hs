@@ -65,6 +65,17 @@ parseDirective state =
       state' <- consumeNewline (state { parserTokens = rest })
       Right (Just (StmtDir dir loc), state')
     
+    (TokKeyword "section" : TokKeyword name : rest) -> do
+      let loc = SourceLoc (parserFile state) (parserLine state) 1
+          dir = DirSection name
+      state' <- consumeNewline (state { parserTokens = rest })
+      Right (Just (StmtDir dir loc), state')
+    
+    _ -> parseDirectiveWithLabel state
+
+parseDirectiveWithLabel :: ParserState -> Either AsmError (Maybe Statement, ParserState)
+parseDirectiveWithLabel state =
+  case parserTokens state of
     (TokIdent label : TokKeyword "equ" : rest) -> do
       (expr, state') <- parseExpression (state { parserTokens = rest })
       let loc = SourceLoc (parserFile state) (parserLine state) 1
