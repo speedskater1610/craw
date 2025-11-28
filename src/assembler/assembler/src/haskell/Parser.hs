@@ -200,7 +200,19 @@ parseMemoryExpr state base index scale disp =
     _ -> Right (base, index, scale, disp, state)
 
 parseExpression :: ParserState -> Either AsmError (Expr, ParserState)
-parseExpression state = parseTerm state
+parseExpression state = parseAddSub state
+
+parseAddSub :: ParserState -> Either AsmError (Expr, ParserState)
+parseAddSub state = do
+  (left, state') <- parseTerm state
+  case parserTokens state' of
+    (TokPlus : rest) -> do
+      (right, state'') <- parseAddSub (state' { parserTokens = rest })
+      Right (BinOp Add left right, state'')
+    (TokMinus : rest) -> do
+      (right, state'') <- parseAddSub (state' { parserTokens = rest })
+      Right (BinOp Sub left right, state'')
+    _ -> Right (left, state')
 
 parseTerm :: ParserState -> Either AsmError (Expr, ParserState)
 parseTerm state = 
