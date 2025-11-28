@@ -1,4 +1,4 @@
-name: Build craw Compiler
+name: Build craw Compiler and CRASM Assembler
 
 on:
   push:
@@ -6,7 +6,6 @@ on:
 
 jobs:
   build:
-    # Define matrix OSes
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -22,7 +21,7 @@ jobs:
         if: runner.os != 'Windows'
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential
+          sudo apt-get install -y build-essential ghc cabal-install rustc cargo
 
       # 3. Install build tools on Windows
       - name: Install build tools on Windows
@@ -30,27 +29,48 @@ jobs:
         shell: powershell
         run: |
           choco install mingw -y
+          choco install ghc cabal -y
+          choco install rust -y
           refreshenv
-          # Add mingw64 to PATH for the current session
           $env:PATH = "C:\ProgramData\mingw64\mingw64\bin;$env:PATH"
 
-
-      # 4. Build project on Linux
-      - name: Build project on Linux
+      # 4. Build craw compiler on Linux
+      - name: Build craw on Linux
         if: runner.os != 'Windows'
         run: make -f Makefile.mk all
 
-      # 5. Build project on Windows
-      - name: Build project on Windows
+      # 5. Build craw compiler on Windows
+      - name: Build craw on Windows
         if: runner.os == 'Windows'
         shell: powershell
         run: mingw32-make -f Makefile.mk all
 
+      # 6. Build CRASM assembler on Linux
+      - name: Build CRASM on Linux
+        if: runner.os != 'Windows'
+        run: make -f src/assembler/assembler/Makefile all
 
-      # 6. Upload artifacts with unique names
-      - name: Upload build artifact
+      # 7. Build CRASM assembler on Windows
+      - name: Build CRASM on Windows
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          set PATH=%PATH%;C:\Users\runneradmin\AppData\Local\Programs\GHC\bin
+          set PATH=%PATH%;C:\Users\runneradmin\.cargo\bin
+          mingw32-make -f src/assembler/assembler/Makefile all
+
+      # 8. Upload craw artifact
+      - name: Upload craw artifact
         uses: actions/upload-artifact@v4
         with:
           name: craw-binary-${{ matrix.os }}
           path: |
             craw*
+
+      # 9. Upload CRASM artifact
+      - name: Upload CRASM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: crasm-binary-${{ matrix.os }}
+          path: |
+            src/assembler/assembler/crasm
