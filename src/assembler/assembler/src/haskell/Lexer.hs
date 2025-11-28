@@ -116,7 +116,9 @@ lexIdentifier (LexState input file line col) =
       tok = if ident `elem` keywords
             then TokKeyword ident
             else TokIdent ident
-  in Right (Just tok, LexState rest file line (col + length ident))
+  in if null ident
+     then Left $ AsmError (SourceLoc file line col) "Empty identifier"
+     else Right (Just tok, LexState rest file line (col + length ident))
 
 keywords :: [String]
 keywords = 
