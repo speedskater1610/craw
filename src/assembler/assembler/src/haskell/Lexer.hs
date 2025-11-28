@@ -17,6 +17,7 @@ data Token
   | TokStar
   | TokSlash
   | TokPercent
+  | TokDollar
   | TokNewline
   | TokEOF
   | TokKeyword String
@@ -63,6 +64,63 @@ lexOne state@(LexState (c:cs) file line col)
   | c == '-' = Right (Just TokMinus, advance state)
   | c == '*' = Right (Just TokStar, advance state)
   | c == '/' = Right (Just TokSlash, advance state)
+  | c == '
+
+advance :: LexState -> LexState
+advance (LexState (_:cs) f l c) = LexState cs f l (c + 1)
+advance state = state
+
+lexDirectiveOrReg :: LexState -> Either AsmError (Maybe Token, LexState)
+lexDirectiveOrReg state@(LexState input file line col) =
+  let (word, rest) = span isAlphaNum (tail input)
+      newCol = col + 1 + length word
+  in if null word
+     then Right (Just TokPercent, advance state)
+     else Right (Just (TokKeyword ('%':word)), 
+                LexState rest file line newCol)
+
+lexString :: Char -> LexState -> Either AsmError (Maybe Token, LexState)
+lexString quote (LexState (_:cs) file line col) =
+  case readString cs [] of
+    Nothing -> Left $ AsmError (SourceLoc file line col) "Unterminated string"
+    Just (str, rest) -> 
+      Right (Just (TokString str), 
+             LexState rest file line (col + length str + 2))
+  where
+    readString [] _ = Nothing
+    readString (c:cs) acc
+      | c == quote = Just (reverse acc, cs)
+      | c == '\\' && not (null cs) = readString (tail cs) (head cs : acc)
+      | otherwise = readString cs (c : acc)
+
+lexNumber :: LexState -> Either AsmError (Maybe Token, LexState)
+lexNumber state@(LexState input file line col) =
+  let (numStr, rest) = span isAlphaNum input
+      num = if "0x" `isPrefixOf` numStr || "0X" `isPrefixOf` numStr
+            then read ("0x" ++ drop 2 numStr) :: Integer
+            else if last numStr == 'h' || last numStr == 'H'
+            then read ("0x" ++ init numStr) :: Integer
+            else read numStr :: Integer
+  in Right (Just (TokNumber num), 
+           LexState rest file line (col + length numStr))
+
+lexIdentifier :: LexState -> Either AsmError (Maybe Token, LexState)
+lexIdentifier (LexState input file line col) =
+  let (ident, rest) = span (\c -> isAlphaNum c || c == '_' || c == '.') input
+      tok = if ident `elem` keywords
+            then TokKeyword ident
+            else TokIdent ident
+  in Right (Just tok, LexState rest file line (col + length ident))
+
+keywords :: [String]
+keywords = 
+  [ "byte", "word", "dword", "qword"
+  , "db", "dw", "dd", "dq"
+  , "resb", "resw", "resd", "resq"
+  , "equ", "align", "section"
+  , "global", "extern"
+  , "short", "near", "far"
+  ] = Right (Just TokDollar, advance state)
   | c == '%' = lexDirectiveOrReg state
   | c == '\'' || c == '"' = lexString c state
   | isDigit c = lexNumber state
