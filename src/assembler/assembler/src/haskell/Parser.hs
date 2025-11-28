@@ -38,9 +38,11 @@ parseStatement state =
       let loc = SourceLoc (parserFile state) (parserLine state) 1
           newState = state { parserTokens = rest }
       Right (Just (StmtLabel label loc), newState)
-    (TokKeyword kw : rest)
+    (TokKeyword kw : _)
       | kw `elem` ["db", "dw", "dd", "dq", "resb", "resw", "resd", "resq", 
                    "equ", "align", "section", "global", "extern"] -> 
+          parseDirective state
+    (TokIdent _ : TokKeyword "equ" : _) ->
           parseDirective state
     tokens -> parseInstruction state
 
