@@ -7,7 +7,11 @@
 GHC = ghc
 RUSTC = rustc
 GHC_FLAGS = -O2 -outputdir build/haskell -i./src/haskell
-RUST_FLAGS = --crate-type staticlib -C opt-level=2
+ifeq ($(OS),Windows_NT)
+    RUST_FLAGS = --crate-type staticlib -C opt-level=2 -C embed-bitcode=no -C lto=no
+else
+    RUST_FLAGS = --crate-type staticlib -C opt-level=2
+endif
 
 # Directories
 BUILD_DIR = build
