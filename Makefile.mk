@@ -1,8 +1,8 @@
 # Compilers and flags
 CC = gcc
 CXX = g++
-CFLAGS = -Wall -g -std=c11
-CXXFLAGS = -Wall -g -std=c++17
+CFLAGS = -Wall -Wextra -g -std=c11
+CXXFLAGS = -Wall -Wextra -g -std=c++17
  
 TARGET = craw
 
