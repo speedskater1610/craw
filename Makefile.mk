@@ -17,11 +17,11 @@ C_SOURCES = src/main.c \
             src/tag/tag.c \
             src/preprocess/preprocessor.c
 
-CXX_SOURCES = src/assembler/assembler_cpp/assembler.cpp \
-              src/assembler/assembler_cpp/emit.cpp \
-              src/assembler/assembler_cpp/encode.cpp \
-              src/assembler/assembler_cpp/mainAssembler.cpp \
-              src/assembler/assembler_cpp/parse.cpp
+CXX_SOURCES = src/assembler/assembler.cpp \
+              src/assembler/emit.cpp \
+              src/assembler/encode.cpp \
+              src/assembler/mainAssembler.cpp \
+              src/assembler/parse.cpp
 
 # Object files
 C_OBJECTS = $(C_SOURCES:.c=.o)
