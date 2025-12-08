@@ -12,45 +12,26 @@ jobs:
         os: [ubuntu-latest, ubuntu-22.04, windows-latest]
 
     steps:
-      # 1. Checkout the repo
+      # Checkout the repo
       - name: Checkout the repo
         uses: actions/checkout@v4
 
-      # 2. Install build tools on Linux
+      # Install build tools on Linux
       - name: Install build tools on Linux
         if: runner.os != 'Windows'
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential ghc cabal-install rustc cargo
+          sudo apt-get install -y build-essential
 
-      # 4. Build craw compiler on Linux
+      # Build craw compiler on Linux
       - name: Build craw on Linux
         if: runner.os != 'Windows'
         run: make -f Makefile.mk all
 
-      # 6. Build CRASM on Linux
-      - name: Build CRASM on Linux
-        if: runner.os != 'Windows'
-        run: |
-          cd src/assembler/assembler
-          make all
-
-      # 8. Upload craw artifact
+      # Upload craw artifact
       - name: Upload craw artifact
         uses: actions/upload-artifact@v4
         with:
           name: craw-binary-${{ matrix.os }}
           path: |
             craw*
-
-      # 9. Upload CRASM artifact
-      - name: Upload CRASM artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: crasm-binary-${{ matrix.os }}
-          path: |
-            src/assembler/assembler/crasm
-
-
-
-
