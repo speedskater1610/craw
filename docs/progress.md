@@ -12,8 +12,8 @@ assignees: speedskater1610
 - the next task that we are will be completing is finishing the tag system for compiling craw programs and then starting the preprocessor.
 
 
-- [ ] Preprocessor (started)
-- [ ] tag system (started)
+- [x] Preprocessor
+- [x] tag system (will aways be changing as new progress comes along)
 - [x] Lexer  
 - [X] Assembler  
 - [ ] Parser  

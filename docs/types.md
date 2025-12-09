@@ -59,7 +59,7 @@ let Struct : defstruct = {
     let num2 : u64,
 };
 
-let instance : structinstance = new Struct;     // "new" means on heap
+let instance : structinstance = new Struct;     // "new" means allocate on the heap
 instance.num1 = 5;
 instance.num2 = 7;
 ```
