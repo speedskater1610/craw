@@ -22,6 +22,23 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential
+      #  install build tools on windows
+      - name: Install build tools on Windows
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
+            Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+          }
+          choco install cmake --global -y
+          choco install make --global -y
+          choco install git --global -y
+          
+
+      # Build craw compiler on Windows
+      - name: Build craw on Windows
+        if: runner.os == 'Windows'
+        run: make -f Makefile.mk all
 
       # Build craw compiler on Linux
       - name: Build craw on Linux
