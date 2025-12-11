@@ -26,25 +26,15 @@ make clean
 ---
 
 ## Getting the CRAW Assembler 
-### crasm_cpp
+### crasm
 
+> Either find the assmebler in releases or make it youself with the following steps : 
 1. Clone the repository (if you haven’t already): `git clone https://github.com/speedskater1610/craw`
 2. Navigate to the assembler directory: `cd src/assembler/assembler_cpp`
 3. Build the assembler: `make -f Assembler.mk`
-4. Use the assembler: `./crasm input.asm output`
+5. Use the assembler: `./crasm input.asm output`
 
 > **Note:** Currently, the assembler only produces ELF-format binaries.
 
 5. For detailed usage and documentation, see the [Assembler Docs](https://github.com/speedskater1610/craw/tree/main/docs/assembler)
-*IN the future I will write a more complete assembler in rust or haskell and use that this is more of a toy assembler rather than anything that will be used*
-
 ---
-
-### crasm
-*This can be built from the make file in src/assembler/assembler/Makefile*
-1. Clone the repository (if you haven’t already): `git clone https://github.com/speedskater1610/craw` then go into the repo `cd craw`
-2. Navigate to the assembler directory: `cd src/assembler/assembler`
-3. Build the assembler: `make`
-4. make it a global variable `sudo mv crasm /usr/local/bin/`
-5. Use the assembler: `crasm input.asm output`
-6. Link the resulting object file `ld -m elf_i386 output.o -o output`
