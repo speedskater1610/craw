@@ -3,7 +3,7 @@ CC = gcc
 CXX = g++
 CFLAGS = -Wall -Wextra -g -std=c11
 CXXFLAGS = -Wall -Wextra -g -std=c++17
- 
+
 TARGET = craw
 
 # C and C++ source files
