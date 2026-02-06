@@ -1,6 +1,12 @@
-#include "AST_vector.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
 
-void vector_free(AST_vector*vector) {
+#include "AST_node.h"
+#include "../throwErr.h"
+#include "../lexer/token.h"
+
+void vector_free(AST_vector *vector) {
     if (!vector) return;
 
     if (vector->data) {
@@ -23,9 +29,9 @@ void vector_free(AST_vector*vector) {
 }
 
 // create a new vector
-AST_vector*create_vector() {
+AST_vector *create_vector() {
     // Allocate memory for the AST_vectorstructure
-    AST_vector*AST_vector= (Vector*)malloc(sizeof(Vector));
+    AST_vector *vector = (Vector*)malloc(sizeof(Vector));
     
     vector->data = NULL;   // set data pointer to NULL -> indicating empty vector
     vector->size = 0;     // init the size to 0 (no elements in the vector)
@@ -35,7 +41,7 @@ AST_vector*create_vector() {
 
 
 //  add an element to the AST_vector(push_back)
-void push(AST_vector*vector, Ast_node value) {
+void push(AST_vector *vector, Ast_node value) {
     if (vector->data == NULL) {
         // if the AST_vectoris empty -> allocate memory for one element
         vector->data = (Token*)malloc(sizeof(Token) * 1);
@@ -53,14 +59,14 @@ void push(AST_vector*vector, Ast_node value) {
 }
 
 // rm last element
-void pop(AST_vector*vector) {
-    // unless the AST_vectoris empty  
+void pop(AST_vector *vector) {
+    // unless the AST_vector is empty  
     // decrement the size to remove the last element
     if (vector->size > 0) vector->size--;
 }
 
 // fn to access an element at a specific index (vector_at)
-Token vector_at(AST_vector*vector, unsigned int index) {
+Token vector_at(AST_vector *vector, unsigned int index) {
     if (index >= vector->size) {
         // Check if the provided index is out of bounds
         fprintf(
