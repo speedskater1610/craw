@@ -5,24 +5,24 @@
 #include <stdlib.h>
 #include <stddef.h>
 
-#include "token.h"
+#include "AST_node.h"
 #include "../throwErr.h"
 
 typedef struct {
-    Token* data;            // Pointer to the array of data
+    Ast_node* data;            // Pointer to the array of data
     unsigned int size;      // Current number of elements in the vector
     unsigned int capacity;  // Total capacity of the vector
-} Vector;
+} AST_vector;
 
 // create a new vector
-Vector *create_vector();
-//  add an element to the vector (push_back)
-void push(Vector *vector, Token value);
+AST_vector*create_vector();
+//  add an element to the AST_vector(push_back)
+void push(AST_vector*vector, Ast_node value);
 // rm last element
-void pop(Vector *vector);
+void pop(AST_vector*vector);
 // fn to access an element at a specific index (vector_at)
-Token vector_at(Vector *vector, unsigned int index);
+Token vector_at(AST_vector*vector, unsigned int index);
 // free the tokens when they are no longer needed
-void vector_free(Vector *vector);
+void vector_free(AST_vector*vector);
 
 #endif
