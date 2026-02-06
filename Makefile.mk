@@ -16,7 +16,7 @@ C_SOURCES = src/main.c \
             src/lexer/lexer.c \
             src/tag/tag.c \
             src/preprocess/preprocessor.c\
-            src/parse/AST_vector.c \
+            src/parser/AST_vector.c \
             src/parser/AST.c \
             src/parser/hashmap.c \
             src/parser/parser.c 
