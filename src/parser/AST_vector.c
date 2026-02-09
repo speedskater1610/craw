@@ -3,6 +3,7 @@
 #include <stddef.h>
 
 #include "AST_node.h"
+#include "AST_vector.h"
 #include "../throwErr.h"
 #include "../lexer/token.h"
 
