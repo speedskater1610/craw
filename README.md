@@ -2,7 +2,7 @@
 
 CRAW is a compiler and assembler toolchain designed to simplify programming and assembly for ELF binaries.
 ![Progect](https://repobeats.axiom.co/api/embed/5f415f92daddb36bceccae1c71675c76c02de222.svg "Repobeats analytics image")
-## *NOTE THE CRASM assemnbler in `src/assembler/assembler/` is what this branch is made to work on since it doesn't work feel free to contribute to it if ou know any rust or haskell.*
+## *NOTE THE CRASM assemnbler in `src/assembler/assembler/` is what this branch is made to work on since it doesn't work feel free to contribute to it if you know any rust or haskell.*
 ---
 
 ## Getting the CRAW Compiler
