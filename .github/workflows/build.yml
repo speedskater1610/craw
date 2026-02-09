@@ -9,7 +9,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, ubuntu-22.04, windows-latest]
+        os: [ubuntu-latest, windows-latest]
 
     steps:
       # Checkout the repo
@@ -51,3 +51,4 @@ jobs:
           name: craw-binary-${{ matrix.os }}
           path: |
             craw*
+
