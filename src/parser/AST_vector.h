@@ -26,4 +26,4 @@ Token vector_at(AST_vector *vector, unsigned int index);
 // free the tokens when they are no longer needed
 void vector_free(AST_vector *vector);
 
-#endif
+#endif // VECTOR_H

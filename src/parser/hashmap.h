@@ -25,4 +25,4 @@ bool hashmap_insert(HashMap *map, const char *key, void *value);
 void *hashmap_get(HashMap *map, const char *key);
 bool hashmap_remove(HashMap *map, const char *key);
 
-#endif
+#endif // HASHMAP_H

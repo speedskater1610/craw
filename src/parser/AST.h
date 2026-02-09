@@ -8,4 +8,4 @@ typedef struct {
 
 } AST;
 
-#endif AST_H
+#endif // AST_H

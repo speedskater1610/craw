@@ -9,4 +9,4 @@ typedef struct {
     AST_vector *children;
 } Ast_node;
 
-#endif AST_NODE_H
+#endif // AST_NODE_H
