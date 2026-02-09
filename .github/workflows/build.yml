@@ -43,7 +43,7 @@ jobs:
       - name: Build craw on Linux
         if: runner.os != 'Windows'
         run: make -f Makefile.mk all
-
+      
       # Upload craw artifact
       - name: Upload craw artifact
         uses: actions/upload-artifact@v4
