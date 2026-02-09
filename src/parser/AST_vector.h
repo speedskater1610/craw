@@ -5,15 +5,20 @@
 #include <stdlib.h>
 #include <stddef.h>
 
-#include "AST_node.h"
 #include "../throwErr.h"
 #include "../lexer/token.h"
 
-typedef struct {
+typedef struct Ast_node {
+    Token *token;
+    Ast_node *parent;
+    AST_vector *children;
+};
+
+typedef struct AST_vector {
     Ast_node* data;            // Pointer to the array of data
     unsigned int size;      // Current number of elements in the vector
     unsigned int capacity;  // Total capacity of the vector
-} AST_vector;
+};
 
 // create a new vector
 AST_vector *create_vector();
