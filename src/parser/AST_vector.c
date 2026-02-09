@@ -6,7 +6,7 @@
 #include "../lexer/token.h"
 #include "AST_vector.h"
 
-void vector_free(AST_vector *vector) {
+void AST_vector_free(AST_vector *vector) {
     if (!vector) return; // NULL case
 
     if (vector->data) {
@@ -27,7 +27,7 @@ void vector_free(AST_vector *vector) {
 }
 
 // create a new vector
-AST_vector *create_vector() {
+AST_vector *AST_create_vector() {
     AST_vector *vector = (AST_vector*)malloc(sizeof(AST_vector));
     
     vector->data = NULL;
