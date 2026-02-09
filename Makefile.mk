@@ -15,7 +15,11 @@ C_SOURCES = src/main.c \
             src/lexer/f64.c \
             src/lexer/lexer.c \
             src/tag/tag.c \
-            src/preprocess/preprocessor.c
+            src/preprocess/preprocessor.c\
+            src/parser/AST_vector.c \
+            src/parser/AST.c \
+            src/parser/hashmap.c \
+            src/parser/parser.c 
 
 CXX_SOURCES = src/assembler/assembler.cpp \
               src/assembler/emit.cpp \

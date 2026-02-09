@@ -64,10 +64,10 @@ Token vector_at(Vector *vector, unsigned int index) {
     if (index >= vector->size) {
         // Check if the provided index is out of bounds
         fprintf(
-        stderr,
-    "\e[31m\e[1m\e[4m\e[40mCOMPILER ERROR - \e[0m" 
-    " \e[4m\e[36m\e[40mInternal (vector_at function)\e[0m" 
-    " \e[37m\e[40m Index out of bounds\e[0m" 
+            stderr,
+            "\e[31m\e[1m\e[4m\e[40mCOMPILER ERROR - \e[0m" 
+            " \e[4m\e[36m\e[40mInternal (vector_at function)\e[0m" 
+            " \e[37m\e[40m Index out of bounds\e[0m" 
         );
         exit(1);
     }

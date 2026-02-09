@@ -8,7 +8,6 @@
 #include "token.h"
 #include "../throwErr.h"
 
-
 typedef struct {
     Token* data;            // Pointer to the array of data
     unsigned int size;      // Current number of elements in the vector
