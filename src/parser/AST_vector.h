@@ -27,6 +27,7 @@ type - `Ast_node`
 #### members
 parent - pointer to the parent of that node
 children - type `AST_vector`; holds member `data` (type `Ast_node`) of all of the children
+---
 */
 
 typedef struct Ast_node {
