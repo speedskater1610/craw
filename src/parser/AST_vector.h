@@ -8,6 +8,9 @@
 #include "../throwErr.h"
 #include "../lexer/token.h"
 
+typedef struct Ast_node Ast_node;
+typedef struct AST_vector AST_vector;
+
 typedef struct Ast_node {
     Token *token;
     Ast_node *parent;
