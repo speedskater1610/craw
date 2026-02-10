@@ -6,7 +6,7 @@
 #include "tag/tag.h"
 #include "ansiColors.h"
 #include "preprocess/preprocessor.h"
-#include "lexer/lexer.h" // for implemting the lexer and then passing it to the parser I need
+#include "lexer/lexer.h"
 #include "lexer/vector.h"
 
 bool has_at_least_one_error = false;
