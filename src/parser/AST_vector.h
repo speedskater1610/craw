@@ -9,19 +9,7 @@
 #include "../lexer/token.h"
 
 typedef struct Ast_node Ast_node;
-
-typedef struct {
-    Ast_node *data; // pointer array
-    unsigned int size;
-    unsigned int capacity;
-} AST_vector;
-
-typedef struct {
-    Token *token;
-    Ast_node *parent;
-    AST_vector *children;
-} Ast_node;
-
+typedef struct AST_vector AST_vector;
 
 /*
 ---
@@ -41,5 +29,17 @@ parent - pointer to the parent of that node
 children - type `AST_vector`; holds member `data` (type `Ast_node`) of all of the children
 ---
 */
+
+typedef struct Ast_node {
+    Token *token;
+    Ast_node *parent;
+    AST_vector *children;
+};
+
+typedef struct AST_vector {
+    Ast_node *data; // pointer array
+    unsigned int size;
+    unsigned int capacity;
+};
 
 #endif // AST_VECTOR_H
