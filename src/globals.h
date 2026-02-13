@@ -5,5 +5,6 @@
 
 extern bool has_at_least_one_error;
 extern bool debug_mode_enables;
+extern bool is_assembling;
 
 #endif  // GLOBAL_H
