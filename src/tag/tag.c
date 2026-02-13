@@ -15,22 +15,22 @@ static void print_version(void) {
     printf("craw compiler version 0.0.0\n"); // TODO : update this as time goes on and versions change
 }
 
-#define tag(s, f) (strcmp(tag, s) == 0 || strcmp(tag, f) ==);
+#define tag(s, f) (strcmp(tag, s) == 0 || strcmp(tag, f) == 0);
 
 int get_tag(char *tag, bool *debug_mode, bool* is_assembling, char **input_file) {
-    if tag("-h", "--help") {
+    if (tag("-h", "--help")) {
         print_help();
         return 0;
     }
-    else if tag("-v", "--version") {
+    else if (tag("-v", "--version")) {
         print_version();
         return 0;
     }
-    else if tag("-d", "--debug") {
+    else if (tag("-d", "--debug")) {
         *debug_mode = true;
         return 0;
     }
-    else if tag("-a", "--assemble") {
+    else if (tag("-a", "--assemble")) {
         *is_assembling = true;
     }
     else if (tag[0] == '-') {
