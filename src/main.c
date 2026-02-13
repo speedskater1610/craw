@@ -8,16 +8,18 @@
 #include "preprocess/preprocessor.h"
 #include "lexer/lexer.h"
 #include "lexer/vector.h"
+#include "assembler/mainAssemblerC.h"
 
 bool has_at_least_one_error = false;
 bool debug_mode_enables = false;
+bool is_assembling = false;
 
 int main(int argc, char *argv[]) {
     bool debug_mode = false;
     char *input_file = NULL;
 
     for (int i = 1; i < argc; i++) {
-        int result = get_tag(argv[i], &debug_mode, &input_file);
+        int result = get_tag(argv[i], &debug_mode, &is_assembling, &input_file);
         if (result != 0)
             return result; 
     }
@@ -40,19 +42,27 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    char *processed = preprocess(src);
+    if (!is_assembling) {
+        char *processed = preprocess(src);
 
-    // pass it into the lexer to get a vector of tokens
-    if (debug_mode) {
-        printf("%s\n", processed);
+        // pass it into the lexer to get a vector of tokens
+        if (debug_mode) {
+            printf("%s\n", processed);
+        }
+        Lexer* lexer = Lexer_new(processed);
+        Vector tokens = tokenize(lexer);
+
+    
+        free(src);
+        free_preprocessed(processed);
+        vector_free(&tokens); 
+    } else {
+#ifdef _WIN32
+        assemble_from_string(src, "out_s.exe");
+#else
+        assemble_from_string(src, "out_s");
+#endif        
     }
-    Lexer* lexer = Lexer_new(processed);
-    Vector tokens = tokenize(lexer);
 
-    
-    free(src);
-    free_preprocessed(processed);
-    vector_free(&tokens); 
-    
     return has_at_least_one_error ? 1 : 0;
 }

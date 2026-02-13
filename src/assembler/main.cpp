@@ -39,6 +39,8 @@ int main(int argc, char* argv[]) {
         // Make executable
 #ifdef __linux__
         chmod(output_file.c_str(), 0755);
+#else
+        std::printf("You are  un unsupported windows assembler doesnt work currently\n\t- either get the most recent version or wait until windows is supported.");
 #endif
         
         std::cout << "Assembly successful: " << output_file << std::endl;
