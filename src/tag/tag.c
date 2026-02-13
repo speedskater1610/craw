@@ -1,4 +1,7 @@
 #include "tag.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
 
 static void print_help(void) {
     printf("Usage: craw [options] <file>\n");
@@ -15,19 +18,20 @@ static void print_version(void) {
     printf("craw compiler version 0.0.0\n"); // TODO : update this as time goes on and versions change
 }
 
-#define tag(s, f) (strcmp(tag, s) == 0 || strcmp(tag, f) == 0);
+#define tag(t, s, f) (strcmp(t, s) == 0 || strcmp(t, f) == 0)
+
 
 int get_tag(char *tag, bool *debug_mode, bool* is_assembling, char **input_file) {
-    if (tag("-h", "--help")) {
+    if (tag(tag, "-h", "--help")) {
         print_help();
     }
-    else if (tag("-v", "--version")) {
+    else if (tag(tag, "-v", "--version")) {
         print_version();
     }
-    else if (tag("-d", "--debug")) {
+    else if (tag(tag, "-d", "--debug")) {
         *debug_mode = true;
     }
-    else if (tag("-a", "--assemble")) {
+    else if (tag(tag, "-a", "--assemble")) {
         *is_assembling = true;
     }
     else if (tag[0] == '-') {
@@ -37,7 +41,7 @@ int get_tag(char *tag, bool *debug_mode, bool* is_assembling, char **input_file)
     else {
         *input_file = tag;
     }
-    
+
     return 0;
 }
 
