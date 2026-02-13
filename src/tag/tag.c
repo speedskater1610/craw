@@ -20,15 +20,12 @@ static void print_version(void) {
 int get_tag(char *tag, bool *debug_mode, bool* is_assembling, char **input_file) {
     if (tag("-h", "--help")) {
         print_help();
-        return 0;
     }
     else if (tag("-v", "--version")) {
         print_version();
-        return 0;
     }
     else if (tag("-d", "--debug")) {
         *debug_mode = true;
-        return 0;
     }
     else if (tag("-a", "--assemble")) {
         *is_assembling = true;
@@ -39,7 +36,8 @@ int get_tag(char *tag, bool *debug_mode, bool* is_assembling, char **input_file)
     } 
     else {
         *input_file = tag;
-        return 0;
     }
+    
+    return 0;
 }
 
