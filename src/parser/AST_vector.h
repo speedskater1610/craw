@@ -8,17 +8,20 @@
 #include "../throwErr.h"
 #include "../lexer/token.h"
 
-typedef struct {
-    Token *token;
-    Ast_node *parent;
-    AST_vector *children;
-} Ast_node;
+typedef struct Ast_node Ast_node;
 
 typedef struct {
     Ast_node *data; // pointer array
     unsigned int size;
     unsigned int capacity;
 } AST_vector;
+
+typedef struct {
+    Token *token;
+    Ast_node *parent;
+    AST_vector *children;
+} Ast_node;
+
 
 /*
 ---
