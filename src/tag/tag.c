@@ -1,4 +1,5 @@
 #include "tag.h"
+#include "../asniColors.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
@@ -15,7 +16,7 @@ static void print_help(void) {
 }
 
 static void print_version(void) {
-    printf("craw compiler version 0.0.0\n"); // TODO : update this as time goes on and versions change
+    printf("" GREEN_HB "craw" RESET " compiler version " CYAN "0.0.0\n" RESET "\n\t From github"); // TODO : update this as time goes on and versions change
 }
 
 #define tag(t, s, f) (strcmp(t, s) == 0 || strcmp(t, f) == 0)
@@ -35,7 +36,7 @@ int get_tag(char *tag, bool *debug_mode, bool* is_assembling, char **input_file)
         *is_assembling = true;
     }
     else if (tag[0] == '-') {
-        fprintf(stderr, "Unknown option: %s\n", tag);
+        fprintf(stderr, "" BH_RED "Unknown option:" RESET " %s\n", tag);
         return 1;
     } 
     else {
