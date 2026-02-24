@@ -1,5 +1,5 @@
 # CRASM x86 Assembler
-A lightweight x86_32 assembler for Manjaro Linux that generates ELF32 executables.
+A lightweight x86_32 assembler for linux that generates ELF32 executables.
 ## Resources 
 - [user manual](https://github.com/speedskater1610/craw/edit/main/docs/assembler/user_manual.md)
 - [build the CRASM assembler](https://github.com/speedskater1610/craw/blob/main/docs/assembler/build.md)

@@ -18,6 +18,7 @@ LLVM_SYSLIBS   := $(shell $(LLVM_CONFIG) --system-libs 2>/dev/null)
 
 # C/C++ src
 C_SOURCES = src/main.c \
+            src/setup.c \
             src/throwErr.c \
             src/lexer/token.c \
             src/lexer/vector.c \
