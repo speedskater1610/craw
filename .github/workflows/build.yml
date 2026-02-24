@@ -25,7 +25,8 @@ jobs:
             libllvm17 \
             llvm-17-runtime \
             clang-17 \
-            lld-17
+            lld-17 \
+            libpolly-dev
           sudo ./llvm.sh all
 
       - name: Install Rust toolchain on Linux
