@@ -1,0 +1,14 @@
+[package]
+name = "assembler"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "assembler"
+crate-type = ["staticlib", "cdylib"]
+
+[dependencies]
+inkwell = { version = "0.4", features = ["llvm17-0"] } # This should be correct
+
+[profile.release]
+opt-level = 3
