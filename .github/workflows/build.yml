@@ -25,9 +25,10 @@ jobs:
             libllvm17 \
             llvm-17-runtime \
             clang-17 \
-            lld-17 \
-            libpolly-dev
-          sudo ./llvm.sh all
+            lld-17
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 17 all
 
       - name: Install Rust toolchain on Linux
         if: runner.os == 'Linux'
