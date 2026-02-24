@@ -172,7 +172,7 @@ fn parse_operands(s: &str) -> Result<Vec<Operand>, String> {
             }
             ')' => {
                 if depth == 0 {
-                    return Err("unmatched ')'".to_string());
+                    return Err("RASSEMBLER error: unmatched ')'".to_string());
                 }
                 depth -= 1;
                 current.push(c);
