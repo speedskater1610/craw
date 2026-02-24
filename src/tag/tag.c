@@ -7,10 +7,12 @@
 static void print_help(void) {
     printf("Usage: craw [options] <file>\n");
     printf("Options:\n");
-    printf("  -h, --help       Show this help message.\n");
-    printf("  -v, --version    Show compiler version.\n");
-    printf("  -d, --debug      Enable debug mode.\n");
-    printf("  -a, --assemble   The <file> will be considered a assembly file.\n");
+    printf("  -h, --help             Show this help message.\n");
+    printf("  -v, --version          Show compiler version.\n");
+    printf("  -d, --debug            Enable debug mode.\n");
+    printf("  -a, --assemble         The <file> will be considered a assembly file.\n");
+    printf("  -r  --rassemble        This will use the rust assembler to assemble <file>.\n")
+    printf("  -s  --switch-assembler This will use the none defualt assembler and make that the main on you system ")
     printf("\nExample:\n");
     printf("  craw --debug test.c\n");
 }
