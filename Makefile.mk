@@ -52,7 +52,7 @@ rust-lib: $(RUST_LIB)
 
 $(RUST_LIB): $(shell find $(RUST_SRC_DIR)/src -name '*.rs') $(RUST_SRC_DIR)/Cargo.toml
 	@echo "[cargo] building Rust assembler library..."
-	cargo build --release --manifest-path $(RUST_SRC_DIR)/Cargo.toml
+	cargo build --release -L --manifest-path $(RUST_SRC_DIR)/Cargo.toml
 	@echo "[cargo] done → $(RUST_LIB)"
 
 # link
