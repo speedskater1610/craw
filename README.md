@@ -8,13 +8,13 @@ CRAW is a compiler and assembler toolchain that is used for compiling a C like l
 
 ## Getting the CRAW Compiler
 
-1. Clone the repository:
+#### 1. Clone the repository:
 
 ```bash
    git clone https://github.com/speedskater1610/craw
 ```
 
-2. Compile the compiler:
+#### 2. Compile the compiler:
 
 ```bash
 make all
@@ -22,7 +22,7 @@ make all
 
 This will generate an executable for the compiler.
    
-3. To uninstall the compiler and clean up generated files:
+#### 3. To uninstall the compiler and clean up generated files:
 
 ```bash
 make clean
