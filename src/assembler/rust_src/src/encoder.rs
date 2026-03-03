@@ -1,4 +1,8 @@
-use crate::parser::{Directive, Instruction, Item, Operand};
+// src/assembler/rust_src/src/encoder.rs
+// Encodes parsed x86-64 instructions into raw machine-code bytes.
+// Produces a simple section map used by codegen to build the object file.
+
+use crate::parser::{Directive, Item, Operand};
 use std::collections::HashMap;
 
 /// A section of encoded bytes.
@@ -35,7 +39,6 @@ pub fn encode(items: &[Item]) -> Result<EncoderOutput, String> {
     // First pass: collect labels
     // Second pass: emit bytes (we do both in one pass with fixups for forward refs)
     let mut pending_globals: Vec<String> = Vec::new();
-    let mut pending_label: Option<String> = None;
 
     for item in items {
         match item {
@@ -663,7 +666,7 @@ fn encode_shift(reg_field: u8, ops: &[Operand], sec: &mut Section) -> Result<(),
     Ok(())
 }
 
-fn encode_jmp(short_op: u8, near_op: u8, ops: &[Operand], sec: &mut Section) -> Result<(), String> {
+fn encode_jmp(_short_op: u8, near_op: u8, ops: &[Operand], sec: &mut Section) -> Result<(), String> {
     match ops.get(0) {
         Some(Operand::Label(name)) => {
             // Emit as near jump with relocation; linker resolves
@@ -689,7 +692,7 @@ fn encode_jmp(short_op: u8, near_op: u8, ops: &[Operand], sec: &mut Section) -> 
     }
 }
 
-fn encode_jcc(short_op: u8, near_op: u8, ops: &[Operand], sec: &mut Section) -> Result<(), String> {
+fn encode_jcc(_short_op: u8, near_op: u8, ops: &[Operand], sec: &mut Section) -> Result<(), String> {
     match ops.get(0) {
         Some(Operand::Label(name)) => {
             sec.data.extend_from_slice(&[0x0F, near_op]);
