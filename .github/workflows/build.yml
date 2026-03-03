@@ -1,54 +1,119 @@
 name: Build craw Compiler and CRASM Assembler
-
 on:
   push:
   pull_request:
-
 jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-
     steps:
       # Checkout the repo
       - name: Checkout the repo
         uses: actions/checkout@v4
 
-      # Install build tools on Linux
+      # setup linux
       - name: Install build tools on Linux
-        if: runner.os != 'Windows'
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential
-      #  install build tools on windows
+          sudo apt-get install -y \
+            build-essential \
+            llvm-17 \
+            llvm-17-dev \
+            libllvm17 \
+            llvm-17-runtime \
+            clang-17 \
+            lld-17
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 17 all
+
+      - name: Install Rust toolchain on Linux
+        if: runner.os == 'Linux'
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          targets: x86_64-unknown-linux-gnu
+
+      - name: Cache Rust registry & build on Linux
+        if: runner.os == 'Linux'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            src/assembler/rust_src/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('src/assembler/rust_src/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      # Point inkwell / llvm-sys at the versioned llvm-config binary
+      - name: Configure LLVM environment on Linux
+        if: runner.os == 'Linux'
+        run: |
+          echo "LLVM_SYS_170_PREFIX=/usr/lib/llvm-17" >> "$GITHUB_ENV"
+          echo "LLVM_CONFIG=/usr/bin/llvm-config-17"  >> "$GITHUB_ENV"
+          echo "/usr/lib/llvm-17/bin"                  >> "$GITHUB_PATH"
+
+      # setup windows
       - name: Install build tools on Windows
         if: runner.os == 'Windows'
         shell: powershell
         run: |
           if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
-            Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+            Set-ExecutionPolicy Bypass -Scope Process -Force
+            [System.Net.ServicePointManager]::SecurityProtocol = `
+              [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+            iex ((New-Object System.Net.WebClient).DownloadString(
+              'https://community.chocolatey.org/install.ps1'))
           }
-          choco install make --global -y
-          choco install git --global -y
-          
+          choco install make  --global -y
+          choco install git   --global -y
+          choco install llvm  --version 17.0.6 --global -y
 
-      # Build craw compiler on Windows
+      - name: Install Rust toolchain on Windows
+        if: runner.os == 'Windows'
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          targets: x86_64-pc-windows-msvc
+
+      - name: Cache Rust registry & build on Windows
+        if: runner.os == 'Windows'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~\.cargo\registry
+            ~\.cargo\git
+            src\assembler\rust_src\target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('src/assembler/rust_src/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Configure LLVM environment on Windows
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          $llvmRoot = "C:\Program Files\LLVM"
+          echo "LLVM_SYS_170_PREFIX=$llvmRoot"    >> $env:GITHUB_ENV
+          echo "LLVM_CONFIG=$llvmRoot\bin\llvm-config.exe" >> $env:GITHUB_ENV
+          echo "$llvmRoot\bin"                     >> $env:GITHUB_PATH
+
+      # build
+      - name: Build craw on Linux
+        if: runner.os == 'Linux'
+        run: make -f Makefile.mk all
+
       - name: Build craw on Windows
         if: runner.os == 'Windows'
         run: make -f Makefile.mk all
 
-      # Build craw compiler on Linux
-      - name: Build craw on Linux
-        if: runner.os != 'Windows'
-        run: make -f Makefile.mk all
-      
-      # Upload craw artifact
+      # upload artifacts
       - name: Upload craw artifact
         uses: actions/upload-artifact@v4
         with:
           name: craw-binary-${{ matrix.os }}
           path: |
             craw*
-
