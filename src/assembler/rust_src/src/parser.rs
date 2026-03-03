@@ -1,4 +1,7 @@
-use std::collections::HashMap;
+// src/assembler/rust_src/src/parser.rs
+// Tokenizer and parser for a subset of Linux x86 (32/64-bit) AT&T / Intel syntax assembly.
+
+
 
 /// A parsed operand.
 #[derive(Debug, Clone, PartialEq)]
@@ -172,7 +175,7 @@ fn parse_operands(s: &str) -> Result<Vec<Operand>, String> {
             }
             ')' => {
                 if depth == 0 {
-                    return Err("RASSEMBLER error: unmatched ')'".to_string());
+                    return Err("unmatched ')'".to_string());
                 }
                 depth -= 1;
                 current.push(c);
