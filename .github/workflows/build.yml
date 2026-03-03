@@ -12,18 +12,22 @@ jobs:
         os: [ubuntu-latest, windows-latest]
 
     steps:
-      # Checkout the repo
       - name: Checkout the repo
         uses: actions/checkout@v4
 
-      # Install build tools on Linux
       - name: Install build tools on Linux
         if: runner.os != 'Windows'
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential
+          sudo apt-get install -y build-essential llvm-18 llvm-18-dev libpolly-18-dev clang-18
 
-      # Install build tools on Windows
+      - name: Set LLVM environment variables on Linux
+        if: runner.os != 'Windows'
+        run: |
+          echo "LLVM_SYS_180_PREFIX=/usr/lib/llvm-18" >> $GITHUB_ENV
+          echo "LIBCLANG_PATH=/usr/lib/llvm-18/lib" >> $GITHUB_ENV
+          echo "PATH=/usr/lib/llvm-18/bin:$PATH" >> $GITHUB_ENV
+
       - name: Install build tools on Windows
         if: runner.os == 'Windows'
         shell: powershell
@@ -36,18 +40,15 @@ jobs:
           choco install make --global -y --no-progress
           choco install git --global -y --no-progress
 
-      # Build craw compiler on Windows
       - name: Build craw on Windows
         if: runner.os == 'Windows'
         shell: cmd
         run: make -f Makefile.mk all
 
-      # Build craw compiler on Linux
       - name: Build craw on Linux
         if: runner.os != 'Windows'
         run: make -f Makefile.mk all
 
-      # Upload craw artifact
       - name: Upload craw artifact
         uses: actions/upload-artifact@v4
         with:
