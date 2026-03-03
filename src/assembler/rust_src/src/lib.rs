@@ -1,10 +1,13 @@
+// src/assembler/rust_src/src/lib.rs
+// Linux x86 Assembler that generates LLVM object files
+// Exposed as a C-compatible library
+
 mod parser;
 mod encoder;
 mod codegen;
 
 use std::ffi::{CStr, CString};
 use std::os::raw::c_char;
-use std::path::Path;
 
 /// Assemble x86 assembly source into an LLVM object file.
 ///
