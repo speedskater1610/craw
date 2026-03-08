@@ -22,31 +22,28 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential
-
-      # Install build tools on Windows
+      #  install build tools on windows
       - name: Install build tools on Windows
         if: runner.os == 'Windows'
         shell: powershell
         run: |
           if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
-            Set-ExecutionPolicy Bypass -Scope Process -Force
-            [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
-            iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+            Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
           }
-          choco install make --global -y --no-progress
-          choco install git --global -y --no-progress
+          choco install make --global -y
+          choco install git --global -y
+          
 
       # Build craw compiler on Windows
       - name: Build craw on Windows
         if: runner.os == 'Windows'
-        shell: cmd
         run: make -f Makefile.mk all
 
       # Build craw compiler on Linux
       - name: Build craw on Linux
         if: runner.os != 'Windows'
         run: make -f Makefile.mk all
-
+      
       # Upload craw artifact
       - name: Upload craw artifact
         uses: actions/upload-artifact@v4
