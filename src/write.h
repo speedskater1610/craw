@@ -5,6 +5,6 @@
 #include <stdlib.h> 
 #include <string.h> 
 
-void write(char *path, char *data);
+void write_file(char *path, char *data);
 
 #endif

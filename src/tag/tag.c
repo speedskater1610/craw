@@ -9,28 +9,29 @@ static void print_help(void) {
     printf("Usage: craw [options] <file>\n");
     printf("Options:\n");
     printf("  -h, --help             Show this help message.\n");
-    printf("  -d  --deaper-help      This will print deeper and more complete help.\n")
+    printf("  -d  --deaper-help      This will print deeper and more complete help.\n");
     printf("  -v, --version          Show compiler version.\n");
     printf("  -d, --debug            Enable debug mode.\n");
     printf("  -a, --assemble         The <file> will be considered a assembly file.\n");
-    printf("  -r  --rassemble        This will use the rust assembler to assemble <file>.\n")
-    printf("  -s  --switch-assembler This will use the none defualt assembler and make that the main on you system.\n")
+    printf("  -r  --rassemble        This will use the rust assembler to assemble <file>.\n");
+    printf("  -s  --switch-assembler This will use the none defualt assembler and make that the main on you system.\n");
     printf("\nExample:\n");
     printf("  craw --debug test.craw\n");
 }
 
 static void print_deaper_help(void) {
-    printf("");
+    // printf("");
 }
 
 static void print_help_assembler(void) {
-    printf("");    
+    // printf("");    
 }
 
 static void print_version(void) {
     // get the version 
+    // TODO: verify that the version file exists if not prompt to start setup
     char *version = read_file("~/.config/craw/version.txt");
-    printf("" GREEN_HB "craw" RESET " compiler version " CYAN "" version "\n" RESET "\n\t From github"); // TODO : update this as time goes on and versions change
+    printf("" GREEN_HB "craw" RESET " compiler version " CYAN "%s\n" RESET "\n\t From github", version); // TODO : update this as time goes on and versions change
 }
 
 #define tag(t, s, f) (strcmp(t, s) == 0 || strcmp(t, f) == 0)

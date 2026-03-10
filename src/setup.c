@@ -19,7 +19,7 @@ static bool is_directory_exists(const char* path) {
     }
 }
 
-static read_line(char *input) {
+static int read_line(char *input) {
     int option;
     printf(input);
     scanf("%d", &option);
@@ -28,8 +28,8 @@ static read_line(char *input) {
 }
 
 static void create_config_files(void) {
-    write("~/.config/craw/which_assembler.bin", "1");
-    write("~/.config/craw/version.txt")
+    write_file("~/.config/craw/which_assembler.bin", "1");
+    write_file("~/.config/craw/version.txt", "0-0-0-0-RELEASE");
 }
 
 void setup(void) {

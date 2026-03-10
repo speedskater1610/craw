@@ -2,6 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+static char *strdup(const char *s) {
+    size_t len = strlen(s) + 1;
+    char *copy = malloc(len);
+    if (copy) memcpy(copy, s, len);
+    return copy;
+}
+
 static uint64_t hash_str(const char *str) {
     // FNV-1a 64-bit
     uint64_t hash = 1469598103934665603ULL;

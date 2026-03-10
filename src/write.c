@@ -1,6 +1,6 @@
 #include "write.h"
 
-void write(char *path, char *data) {
+void write_file(char *path, char *data) {
     FILE *fptr = fopen("path", "w");
 
     if (fptr == NULL) {
