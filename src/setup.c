@@ -32,20 +32,46 @@ static void create_config_files(void) {
     write_file("~/.config/craw/version.txt", "0-0-0-0-RELEASE");
 }
 
+static void create_config_scratch(void) {
+    
+}
+
 void setup(void) {
     // setup config
     if (is_directory_exists("~/.config/craw/")) {
-        int restart = read_line(
-            "Config detected;\n"
-            "\n Do you want to make a new config? [Y:1, N:0] : "
-        );
+        goto create_config;
+    } 
+    else {
+        
+    }
 
-        if (restart) { // new config
-            create_config_files();
-        }
-        else {
-            printf("Ending setup...");
-            return;
-        }
+end_setup:
+    printf("Ending setup...");
+    return;
+
+create_config:
+    int restart = read_line(
+        "Config detected;\n"
+        "\n\tDo you want to make a new config? [Y:1, N:0] : "
+    );
+
+    if (restart) { // new config
+        create_config_files();
+    }
+    else {
+        goto end_setup;
+    }
+
+create_config_scratch:
+    int restart = read_line(
+        "Creating config from scratch\n"
+        "\n\tDo you want to start? [Y:1, N:0] : "
+    );
+
+    if (restart) { // new config
+        create_config_files();
+    }
+    else {
+        goto end_setup;
     }
 }

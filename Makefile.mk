@@ -22,6 +22,7 @@ C_SOURCES = src/main.c \
 			src/read.c \
 			src/write.c \
             src/throwErr.c \
+            src/assemble.c \
             src/lexer/token.c \
             src/lexer/vector.c \
             src/lexer/f32.c \
@@ -79,6 +80,4 @@ $(TARGET): $(OBJECTS) $(RUST_LIB)
 # clean
 clean:
 	rm -f $(TARGET) $(OBJECTS)
-
-rust-clean:
 	cargo clean --manifest-path $(RUST_SRC_DIR)/Cargo.toml
