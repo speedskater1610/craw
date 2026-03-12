@@ -39,7 +39,7 @@ CXX_SOURCES = src/assembler/assembler.cpp \
               src/assembler/emit.cpp \
               src/assembler/encode.cpp \
               src/assembler/mainAssembler.cpp \
-              src/assembler/parse.cpp
+              src/assembler/parse.cpp 
 
 # Object files
 C_OBJECTS   = $(C_SOURCES:.c=.o)
