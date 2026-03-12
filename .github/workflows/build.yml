@@ -7,7 +7,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest]
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v4
@@ -30,32 +30,7 @@ jobs:
         if: runner.os != 'Windows'
         run: make -f Makefile.mk all
 
-      # Windows
-      - name: Install LLVM 17 on Windows
-        if: runner.os == 'Windows'
-        uses: KyleMayes/install-llvm-action@v2
-        with:
-          version: "17"
-          directory: C:\LLVM
-
-      - name: Install make on Windows
-        if: runner.os == 'Windows'
-        shell: powershell
-        run: choco install make --global -y --no-progress
-
-      - name: Set LLVM environment variables on Windows
-        if: runner.os == 'Windows'
-        shell: powershell
-        run: |
-          echo "LLVM_SYS_170_PREFIX=C:\LLVM"   >> $env:GITHUB_ENV
-          echo "LIBCLANG_PATH=C:\LLVM\lib"      >> $env:GITHUB_ENV
-          echo "PATH=C:\LLVM\bin;$env:PATH"     >> $env:GITHUB_ENV
-
-      - name: Build craw on Windows
-        if: runner.os == 'Windows'
-        shell: cmd
-        run: make -f Makefile.mk all
-
+        
       # Artifacts
       - name: Upload craw artifact
         uses: actions/upload-artifact@v4
