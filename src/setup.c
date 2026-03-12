@@ -49,7 +49,7 @@ static void create_config_scratch(void) {
 
 
 static void create_config(void) {
-        int restart = read_line(
+    int restart = read_line(
         "Config detected;\n"
         "\n\tDo you want to make a new config? [Y:1, N:0] : "
     );
@@ -74,11 +74,8 @@ void setup(void) {
             create_config_scratch();
         } 
         else {
-            goto end_setup;
+            printf("Ending setup...");
+            return;
         }
     }
-
-end_setup:
-    printf("Ending setup...");
-    return;
 }
