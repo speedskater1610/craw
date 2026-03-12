@@ -1,7 +1,7 @@
 #include "write.h"
 
 void write_file(char *path, char *data) {
-    FILE *fptr = fopen("path", "w");
+    FILE *fptr = fopen(path, "w");
 
     if (fptr == NULL) {
         printf("SYSTEM error: opening file!");
