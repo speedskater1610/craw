@@ -34,7 +34,7 @@ static void create_config_files(void) {
 
 
 static void create_config_scratch(void) {
-        int restart = read_line(
+    int restart = read_line(
         "Creating config from scratch\n"
         "\n\tDo you want to start? [Y:1, N:0] : "
     );
@@ -43,7 +43,8 @@ static void create_config_scratch(void) {
         create_config_files();
     }
     else {
-        goto end_setup;
+        printf("Ending setup...");
+        return;
     }
 }
 
@@ -58,7 +59,8 @@ static void create_config(void) {
         create_config_files();
     }
     else {
-        goto end_setup;
+        printf("Ending setup...");
+        return;
     }
 }
 
