@@ -5,6 +5,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#define _POSIX_C_SOURCE 200809L
+#include <string.h>
+
 // A simple open-addressed hash map with linear probing.
 
 typedef struct {

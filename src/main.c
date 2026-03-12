@@ -8,7 +8,7 @@
 #include "preprocess/preprocessor.h"
 #include "lexer/lexer.h"
 #include "lexer/vector.h"
-#include "assembler/mainAssemblerC.h"
+#include "assemble.h"
 
 bool has_at_least_one_error = false;
 bool debug_mode_enables = false;
@@ -57,10 +57,11 @@ int main(int argc, char *argv[]) {
         free_preprocessed(processed);
         vector_free(&tokens); 
     } else {
+
 #ifdef _WIN32
-        assemble_from_string(src, "out_s.exe");
+        global_assemble_WIN(src, "out_s.exe");
 #else
-        assemble_from_string(src, "out_s");
+        global_assemble(src, "out_s");
 #endif        
     }
 
