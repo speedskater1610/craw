@@ -19,15 +19,15 @@ static void print_help(void) {
     printf("  craw --debug test.craw\n");
 }
 
-static void print_deaper_help(void) __attribute__((unused)) {
+__attribute__((unused)) static void print_deaper_help(void) {
     // printf("");
 }
 
 
-static void print_help_assembler(void)  __attribute__((unused));
-static void print_help_assembler(void) {
-    // printf("");    
-}
+// static void print_help_assembler(void)  __attribute__((unused));
+// static void print_help_assembler(void) {
+//     // printf("");    
+// }
 
 static void print_version(void) {
     // get the version 
