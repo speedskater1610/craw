@@ -21,7 +21,7 @@ static bool is_directory_exists(const char* path) {
 
 static int read_line(char *input) {
     int option;
-    printf(input);
+    printf("%s", input);
     scanf("%d", &option);
 
     return option;
