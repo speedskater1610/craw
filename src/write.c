@@ -8,7 +8,8 @@ void write_file(char *path, char *data) {
         return;
     }
 
-    fprintf(fptr, data);
+    fprintf(fptr, "%s", data);
+
     fclose(fptr);
     return;
 }
