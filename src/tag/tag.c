@@ -24,10 +24,9 @@ __attribute__((unused)) static void print_deaper_help(void) {
 }
 
 
-// static void print_help_assembler(void)  __attribute__((unused));
-// static void print_help_assembler(void) {
-//     // printf("");    
-// }
+__attribute__((unused)) static void print_help_assembler(void) {
+    // printf("");    
+}
 
 static void print_version(void) {
     // get the version 
