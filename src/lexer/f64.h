@@ -1,6 +1,10 @@
 #ifndef F_64_h
 #define F_64_h
 
+#include <errno.h>
+#include <float.h> 
+#include <limits.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include "../throwErr.h"

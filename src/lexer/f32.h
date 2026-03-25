@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include "../throwErr.h"
 
-// TODO: add type size checks
 bool check_f32 (const char *str_f32, 
                 unsigned int start_line, 
                 unsigned int start_column);
