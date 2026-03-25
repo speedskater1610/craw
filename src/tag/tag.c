@@ -19,10 +19,12 @@ static void print_help(void) {
     printf("  craw --debug test.craw\n");
 }
 
-static void print_deaper_help(void) {
+static void print_deaper_help(void) __attribute__((unused)) {
     // printf("");
 }
 
+
+static void print_help_assembler(void)  __attribute__((unused));
 static void print_help_assembler(void) {
     // printf("");    
 }
