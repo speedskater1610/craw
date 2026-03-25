@@ -34,12 +34,12 @@ typedef struct Ast_node {
     Token *token;
     Ast_node *parent;
     AST_vector *children;
-};
+} Ast_node;
 
 typedef struct AST_vector {
     Ast_node *data; // pointer array
     unsigned int size;
     unsigned int capacity;
-};
+} AST_vector;
 
 #endif // AST_VECTOR_H
