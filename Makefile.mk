@@ -30,10 +30,12 @@ C_SOURCES = src/main.c \
             src/lexer/lexer.c \
             src/tag/tag.c \
             src/preprocess/preprocessor.c\
-            src/parser/AST_vector.c \
             src/parser/AST.c \
             src/parser/hashmap.c \
-            src/parser/parser.c
+            src/parser/parser.c \
+            src/parser/nodes/function.c
+
+            # src/parser/deprecated/AST_vector.c
 
 CXX_SOURCES = src/assembler/assembler.cpp \
               src/assembler/emit.cpp \
