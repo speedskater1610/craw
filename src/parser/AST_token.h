@@ -7,6 +7,7 @@
 
 #include "nodes/function.h"
 #include "nodes/program.h"
+#include "nodes/var_dec.h"
 
 // Simulated Vec<AstNode>
 typedef struct AstNode AstNode;
@@ -15,7 +16,6 @@ typedef struct {
     size_t length;
     size_t capacity;
 } AstVec;
-
 
 // discriminant (tag)
 typedef enum {
@@ -32,8 +32,6 @@ struct AstNode {
     } data;
 };
 
-typedef enum ProgramData {};
-typedef enum VariableDeclData {};
 typedef enum AssignmentData {};
 typedef enum BinaryOpData {};
 typedef enum UnaryOpData {};
