@@ -22,5 +22,4 @@ assignees: speedskater1610
 - [ ] Parser  
 - [ ] Codegen
 - [ ] Optimization?
-- [ ] optimization
 - [ ] standard libarary

@@ -1,8 +1,3 @@
-// src/assembler/rust_src/src/parser.rs
-// Tokenizer and parser for a subset of Linux x86 (32/64-bit) AT&T / Intel syntax assembly.
-
-
-
 /// A parsed operand.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Operand {
@@ -207,7 +202,7 @@ fn parse_operand(s: &str) -> Result<Operand, String> {
         return Ok(Operand::Register(reg_str.to_lowercase()));
     }
 
-    // Memory: contains '(' — e.g. 8(%rsp) or (%rbx,%rax,4)
+    // Memory: contains '(' -> e.g. 8(%rsp) or (%rbx,%rax,4)
     if s.contains('(') {
         return parse_memory_operand(s);
     }
@@ -353,16 +348,23 @@ fn is_register_name(s: &str) -> bool {
         "rax", "rbx", "rcx", "rdx", "rsi", "rdi", "rsp", "rbp",
         "r8",  "r9",  "r10", "r11", "r12", "r13", "r14", "r15",
         "rip",
+        
         // 32-bit
+        /* honestly pretty much only going to use this */
+        /* NOTE: for craw compiler need to use all */
         "eax", "ebx", "ecx", "edx", "esi", "edi", "esp", "ebp",
         "r8d", "r9d", "r10d", "r11d", "r12d", "r13d", "r14d", "r15d",
+        
         // 16-bit
         "ax", "bx", "cx", "dx", "si", "di", "sp", "bp",
+        
         // 8-bit
         "al", "ah", "bl", "bh", "cl", "ch", "dl", "dh",
         "sil", "dil", "spl", "bpl",
+        
         // Segment
         "cs", "ds", "es", "fs", "gs", "ss",
+
         // XMM/YMM
         "xmm0","xmm1","xmm2","xmm3","xmm4","xmm5","xmm6","xmm7",
         "xmm8","xmm9","xmm10","xmm11","xmm12","xmm13","xmm14","xmm15",

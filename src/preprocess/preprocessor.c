@@ -1,6 +1,7 @@
 #define _POSIX_C_SOURCE 200809L 
 // above: for strdup 
 #include "preprocessor.h"
+#include "single_time.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -232,7 +233,6 @@ static char *process_string_literals(const char *src) {
     return out;
 }
 
-
 static char *preprocess_once(const char *src, int *err) {
     char *no_comments = remove_comments(src);
 
@@ -267,7 +267,7 @@ char *preprocess(const char *source) {
         if (prev && strcmp(prev, next) == 0) {
             free(prev);
             free(cur);
-            return next;
+            goto lblnext;
         }
 
         free(prev);
@@ -280,6 +280,12 @@ char *preprocess(const char *source) {
             return NULL;
         }
     }
+
+lblnext:
+    // one time preprocessing
+    
+    
+    return next;
 }
 
 
