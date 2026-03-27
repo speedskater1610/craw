@@ -1,7 +1,7 @@
 #define _POSIX_C_SOURCE 200809L 
 // above: for strdup 
 #include "preprocessor.h"
-#include "single_time.h"
+#include "funcExists.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

@@ -1,4 +1,4 @@
-#include "single_time.h"
+#include "funcExists.h"
 
 static char **split_by_newline(char *str, int *count) {
     if (str == NULL)
