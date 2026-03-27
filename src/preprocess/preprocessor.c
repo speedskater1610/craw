@@ -7,7 +7,7 @@
 #include <string.h>
 #include <ctype.h>
 
-// util - dynamically append characters/strings to a buffer
+// util - dynamically append characters/strings to a buffer;
 static void push_char(char **buf, size_t *len, size_t *cap, char c) {
     if (*len + 1 >= *cap) {
         *cap *= 2;
