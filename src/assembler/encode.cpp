@@ -315,3 +315,79 @@ void Assembler::encode_sar(const Operand& dest, const Operand& src) {
         throw std::runtime_error("Unsupported SAR operands");
     }
 }
+
+void Assembler::encode_div(const Operand& op) {
+    /* DIV r/m32: F7 /6 — unsigned divide EDX:EAX by operand */
+    if (op.type == REG) {
+        Assembler::emit_byte(0xF7);
+        Assembler::emit_byte(modrm_byte(3, 6, op.reg_val));
+    } else {
+        throw std::runtime_error("Unsupported DIV operand");
+    }
+}
+
+void Assembler::encode_mul(const Operand& op) {
+    /* MUL r/m32: F7 /4 — unsigned multiply EAX by operand → EDX:EAX */
+    if (op.type == REG) {
+        Assembler::emit_byte(0xF7);
+        Assembler::emit_byte(modrm_byte(3, 4, op.reg_val));
+    } else {
+        throw std::runtime_error("Unsupported MUL operand");
+    }
+}
+
+void Assembler::encode_movzx(const Operand& dest, const Operand& src) {
+    /* MOVZX r32, r/m8: 0F B6 /r */
+    if (dest.type == REG && src.type == REG) {
+        Assembler::emit_byte(0x0F);
+        Assembler::emit_byte(0xB6);
+        Assembler::emit_byte(modrm_byte(3, dest.reg_val, src.reg_val));
+    } else if (dest.type == REG && src.type == MEM_REG) {
+        Assembler::emit_byte(0x0F);
+        Assembler::emit_byte(0xB6);
+        Assembler::emit_byte(modrm_byte(0, dest.reg_val, src.reg_val));
+    } else if (dest.type == REG && src.type == MEM_REG_DISP) {
+        Assembler::emit_byte(0x0F);
+        Assembler::emit_byte(0xB6);
+        if (src.disp >= -128 && src.disp <= 127) {
+            Assembler::emit_byte(modrm_byte(1, dest.reg_val, src.reg_val));
+            Assembler::emit_byte(src.disp & 0xFF);
+        } else {
+            Assembler::emit_byte(modrm_byte(2, dest.reg_val, src.reg_val));
+            Assembler::emit_dword((uint32_t)src.disp);
+        }
+    } else {
+        throw std::runtime_error("Unsupported MOVZX operands");
+    }
+}
+
+void Assembler::encode_movsx(const Operand& dest, const Operand& src) {
+    /* MOVSX r32, r/m8: 0F BE /r */
+    if (dest.type == REG && src.type == REG) {
+        Assembler::emit_byte(0x0F);
+        Assembler::emit_byte(0xBE);
+        Assembler::emit_byte(modrm_byte(3, dest.reg_val, src.reg_val));
+    } else if (dest.type == REG && src.type == MEM_REG) {
+        Assembler::emit_byte(0x0F);
+        Assembler::emit_byte(0xBE);
+        Assembler::emit_byte(modrm_byte(0, dest.reg_val, src.reg_val));
+    } else {
+        throw std::runtime_error("Unsupported MOVSX operands");
+    }
+}
+
+void Assembler::encode_xchg(const Operand& a, const Operand& b) {
+    /* XCHG r32, r32 — short form: 90+rd when one is EAX, else 87 /r */
+    if (a.type == REG && b.type == REG) {
+        if (a.reg_val == 0) { /* EAX xchg eax, r32 → 90+rd */
+            Assembler::emit_byte(0x90 + b.reg_val);
+        } else if (b.reg_val == 0) {
+            Assembler::emit_byte(0x90 + a.reg_val);
+        } else {
+            Assembler::emit_byte(0x87);
+            Assembler::emit_byte(modrm_byte(3, a.reg_val, b.reg_val));
+        }
+    } else {
+        throw std::runtime_error("Unsupported XCHG operands");
+    }
+}

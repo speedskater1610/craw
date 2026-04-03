@@ -1,0 +1,106 @@
+// lib/print.craw — I/O library for CRAW
+//
+// Usage:  use "lib/print.craw";
+//
+// Functions:
+//   print_char(c: i32)        -> write one character to stdout
+//   print_str(s: i32)         -> write null-terminated string
+//   print_int(n: i32)         -> write signed decimal integer
+//   print_newline()           -> write '\n'
+//   println(s: i32)           -> print_str + newline
+//   println_int(n: i32)       -> print_int + newline
+
+
+// Write a single character to stdout (sys_write, fd=1)
+fn print_char -> void (c: i32) {
+    asm {
+        mov eax, [ebp + 8]
+        push eax
+        mov eax, 4
+        mov ebx, 1
+        mov ecx, esp
+        mov edx, 1
+        int 0x80
+        add esp, 4
+    }
+}
+
+// Write a null-terminated string to stdout.
+// Pass the stack address of the string (e.g. from a string literal).
+fn print_str -> void (s: i32) {
+    asm {
+        mov esi, [ebp + 8]
+        mov ecx, esi
+        mov edx, 0
+    str_len_loop:
+        mov al, [ecx]
+        test al, al
+        je str_len_done
+        inc ecx
+        inc edx
+        jmp str_len_loop
+    str_len_done:
+        test edx, edx
+        je str_write_skip
+        mov eax, 4
+        mov ebx, 1
+        mov ecx, esi
+        int 0x80
+    str_write_skip:
+    }
+}
+
+// Write a newline character to stdout
+fn print_newline -> void () {
+    print_char(10);
+}
+
+// Write a null-terminated string followed by a newline
+fn println -> void (s: i32) {
+    print_str(s);
+    print_char(10);
+}
+
+// Write a signed 32-bit integer as decimal digits
+fn print_int -> void (n: i32) {
+    if (n < 0) {
+        print_char(45);
+        n = -n;
+    }
+    if (n == 0) {
+        print_char(48);
+        return;
+    }
+    asm {
+        mov eax, [ebp + 8]
+        mov edi, 0
+        mov ebx, 10
+    int_digit_push:
+        test eax, eax
+        je int_digit_print
+        xor edx, edx
+        div ebx
+        add edx, 48
+        push edx
+        inc edi
+        jmp int_digit_push
+    int_digit_print:
+        test edi, edi
+        je int_digit_done
+        mov eax, 4
+        mov ebx, 1
+        mov ecx, esp
+        mov edx, 1
+        int 0x80
+        add esp, 4
+        dec edi
+        jmp int_digit_print
+    int_digit_done:
+    }
+}
+
+// Write a signed 32-bit integer followed by a newline
+fn println_int -> void (n: i32) {
+    print_int(n);
+    print_char(10);
+}

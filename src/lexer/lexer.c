@@ -1,5 +1,6 @@
 #include "lexer.h"
 
+    
 // constructor
 Lexer* Lexer_new(char *input) {
     Lexer* s = (Lexer*)malloc(sizeof(Lexer));
@@ -206,6 +207,35 @@ ResultSigTok read_number (Lexer *self,
                     unsigned int start_column) {
     char *number = NULL;
     int is_float = 0;   // bool
+
+    /* Hex literal: 0x... or 0X... */
+    if (current_char(self) == '0' && !is_at_end(self)) {
+        /* peek ahead */
+        unsigned int saved_pos = self->position;
+        unsigned int saved_col = self->column;
+        advance(self); /* consume '0' */
+        if (!is_at_end(self) && (current_char(self) == 'x' || current_char(self) == 'X')) {
+            append_char(&number, '0');
+            append_char(&number, current_char(self));
+            advance(self); /* consume 'x' */
+            while (!is_at_end(self) && (is_numeric(current_char(self)) ||
+                   (current_char(self) >= 'a' && current_char(self) <= 'f') ||
+                   (current_char(self) >= 'A' && current_char(self) <= 'F'))) {
+                append_char(&number, current_char(self));
+                advance(self);
+            }
+            Token *return_token = Token_new(IntLiteral, number, start_line, start_column);
+            ResultSigTok return_result = {};
+            return_result.token = *return_token;
+            return_result.Error = false;
+            return return_result;
+        } else {
+            /* Not hex — restore and fall through to normal number parsing */
+            self->position = saved_pos;
+            self->column   = saved_col;
+        }
+    }
+
     while (!is_at_end(self) && (is_numeric(current_char(self)) || current_char(self) == '.')) {
         if (current_char(self) == '.') {
             if (is_float) {     // when over more than one '.' so the number is like 0.65.7

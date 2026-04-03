@@ -9,6 +9,8 @@
 #include <cstdint>
 #include <sys/stat.h>
 
+
+
 class Assembler {
 public:
     std::map<std::string, uint32_t> labels;
@@ -70,6 +72,11 @@ public:
     void encode_not(const Operand& op);
     void encode_cdq();
     void encode_sar(const Operand& dest, const Operand& src);
+    void encode_div(const Operand& op);
+    void encode_mul(const Operand& op);
+    void encode_movzx(const Operand& dest, const Operand& src);
+    void encode_movsx(const Operand& dest, const Operand& src);
+    void encode_xchg(const Operand& a, const Operand& b);
     void encode_push(const Operand& op);
     void encode_pop(const Operand& op);
     void encode_call(const Operand& op);

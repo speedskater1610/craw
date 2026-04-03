@@ -76,10 +76,30 @@ void Assembler::assemble_line(const std::string& line) {
         encode_cdq();
     } else if (mnemonic == "sar" && operands.size() == 2) {
         encode_sar(parse_operand(operands[0]), parse_operand(operands[1]));
+    } else if (mnemonic == "div" && operands.size() == 1) {
+        encode_div(parse_operand(operands[0]));
+    } else if (mnemonic == "mul" && operands.size() == 1) {
+        encode_mul(parse_operand(operands[0]));
+    } else if (mnemonic == "movzx" && operands.size() == 2) {
+        encode_movzx(parse_operand(operands[0]), parse_operand(operands[1]));
+    } else if (mnemonic == "movsx" && operands.size() == 2) {
+        encode_movsx(parse_operand(operands[0]), parse_operand(operands[1]));
+    } else if (mnemonic == "xchg" && operands.size() == 2) {
+        encode_xchg(parse_operand(operands[0]), parse_operand(operands[1]));
     } else if (mnemonic == "cdq" && operands.size() == 0) {
         encode_cdq();
     } else if (mnemonic == "sar" && operands.size() == 2) {
         encode_sar(parse_operand(operands[0]), parse_operand(operands[1]));
+    } else if (mnemonic == "div" && operands.size() == 1) {
+        encode_div(parse_operand(operands[0]));
+    } else if (mnemonic == "mul" && operands.size() == 1) {
+        encode_mul(parse_operand(operands[0]));
+    } else if (mnemonic == "movzx" && operands.size() == 2) {
+        encode_movzx(parse_operand(operands[0]), parse_operand(operands[1]));
+    } else if (mnemonic == "movsx" && operands.size() == 2) {
+        encode_movsx(parse_operand(operands[0]), parse_operand(operands[1]));
+    } else if (mnemonic == "xchg" && operands.size() == 2) {
+        encode_xchg(parse_operand(operands[0]), parse_operand(operands[1]));
     } else if (mnemonic == "push" && operands.size() == 1) {
         encode_push(parse_operand(operands[0]));
     } else if (mnemonic == "pop" && operands.size() == 1) {
