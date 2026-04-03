@@ -28,7 +28,7 @@ jobs:
 
       - name: Build craw on Linux
         if: runner.os != 'Windows'
-        run: make -f Makefile.mk all
+        run: make all
 
         
       # Artifacts
