@@ -1,0 +1,106 @@
+use "lib/print.craw";
+
+fn factorial -> i32 (n: i32) {
+    if (n <= 1) { return 1; }
+    return n * factorial(n - 1);
+}
+
+fn is_prime -> i32 (n: i32) {
+    if (n < 2) { return 0; }
+    let i: i32 = 2;
+    while (i * i <= n) {
+        if (n % i == 0) { return 0; }
+        i = i + 1;
+    }
+    return 1;
+}
+
+fn abs_val -> i32 (x: i32) {
+    if (x < 0) { return -x; }
+    return x;
+}
+
+fn main -> i32 () {
+
+    // --- Factorials ---
+    let msg_fact: a<char> = "Factorials:";
+    println(msg_fact);
+
+    let i: i32 = 1;
+    while (i <= 10) {
+        print_int(i);
+        let msg_bang: a<char> = "! = ";
+        print_str(msg_bang);
+        println_int(factorial(i));
+        i = i + 1;
+    }
+
+    print_newline();
+
+    // --- Primes up to 30 ---
+    let msg_prime: a<char> = "Primes up to 30:";
+    println(msg_prime);
+
+    let n: i32 = 2;
+    while (n <= 30) {
+        if (is_prime(n)) {
+            print_int(n);
+            print_char(32);
+        }
+        n = n + 1;
+    }
+    print_newline();
+    print_newline();
+
+    // --- Integer arithmetic ---
+    let msg_arith: a<char> = "Arithmetic:";
+    println(msg_arith);
+
+    let a: i32 = 255;
+    let b: i32 = 16;
+
+    let msg_a: a<char> = "255 / 16 = ";
+    print_str(msg_a);
+    println_int(a / b);
+
+    let msg_b: a<char> = "255 % 16 = ";
+    print_str(msg_b);
+    println_int(a % b);
+
+    let msg_c: a<char> = "abs(-42) = ";
+    print_str(msg_c);
+    println_int(abs_val(-42));
+
+    let msg_d: a<char> = "7 << 3  = ";
+    print_str(msg_d);
+    println_int(7 << 3);
+
+    print_newline();
+
+    // --- Struct demo ---
+    let msg_struct: a<char> = "Struct demo:";
+    println(msg_struct);
+
+    let Vec2 : defstruct = {
+        let x : i32,
+        let y : i32,
+    };
+    let v : structinstance = new Vec2;
+    v.x = 3;
+    v.y = 4;
+
+    let msg_x: a<char> = "v.x = ";
+    print_str(msg_x);
+    println_int(v.x);
+
+    let msg_y: a<char> = "v.y = ";
+    print_str(msg_y);
+    println_int(v.y);
+
+    let dot: i32 = v.x * v.x + v.y * v.y;
+    let msg_dot: a<char> = "x^2+y^2 = ";
+    print_str(msg_dot);
+    println_int(dot);
+
+    return 0;
+}
