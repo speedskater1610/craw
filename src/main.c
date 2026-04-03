@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    /* Assembler-only mode (-a flag)                                     */
+    /* Assembler-only mode (-a flag) */
     if (is_assembling) {
 #ifdef _WIN32
         global_assemble_WIN(src, output_file);
