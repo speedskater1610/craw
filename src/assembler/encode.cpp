@@ -272,3 +272,46 @@ void Assembler::encode_shr(const Operand& dest, const Operand& src) {
         throw std::runtime_error("Unsupported SHR operands");
     }
 }
+
+void Assembler::encode_neg(const Operand& op) {
+    /* NEG r/m32: F7 /3 (ModRM byte: mod=11, reg=3, rm=reg) */
+    if (op.type == REG) {
+        Assembler::emit_byte(0xF7);
+        Assembler::emit_byte(modrm_byte(3, 3, op.reg_val));
+    } else {
+        throw std::runtime_error("Unsupported NEG operand");
+    }
+}
+
+void Assembler::encode_not(const Operand& op) {
+    /* NOT r/m32: F7 /2 (ModRM byte: mod=11, reg=2, rm=reg) */
+    if (op.type == REG) {
+        Assembler::emit_byte(0xF7);
+        Assembler::emit_byte(modrm_byte(3, 2, op.reg_val));
+    } else {
+        throw std::runtime_error("Unsupported NOT operand");
+    }
+}
+
+void Assembler::encode_cdq() {
+    /* CDQ: sign-extend EAX into EDX:EAX. Opcode: 0x99 */
+    Assembler::emit_byte(0x99);
+}
+
+void Assembler::encode_sar(const Operand& dest, const Operand& src) {
+    /* SAR r/m32, imm8:  C1 /7 ib
+       SAR r/m32, 1:     D1 /7
+       Both only supported for register dest here. */
+    if (dest.type == REG && src.type == IMM) {
+        if (src.imm_val == 1) {
+            Assembler::emit_byte(0xD1);
+            Assembler::emit_byte(modrm_byte(3, 7, dest.reg_val));
+        } else {
+            Assembler::emit_byte(0xC1);
+            Assembler::emit_byte(modrm_byte(3, 7, dest.reg_val));
+            Assembler::emit_byte(src.imm_val & 0xFF);
+        }
+    } else {
+        throw std::runtime_error("Unsupported SAR operands");
+    }
+}

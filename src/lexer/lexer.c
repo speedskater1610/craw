@@ -1,6 +1,5 @@
 #include "lexer.h"
 
-    
 // constructor
 Lexer* Lexer_new(char *input) {
     Lexer* s = (Lexer*)malloc(sizeof(Lexer));
@@ -193,21 +192,9 @@ ResultSigTok read_identifier_or_keyword (Lexer *self, unsigned int start_line, u
         return return_result;
     }
         
-    // token is an error
-    Err (
-    "\e[31m\e[1m\e[4m\e[40mLEXER ERROR - \e[0m" 
-    " \e[4m\e[36m\e[40mIdentifier or token\e[0m" 
-    " \e[37m\e[40m Unidentified Identifier or Token\e[0m" 
-    "\n\t\e[0m" 
-    "\e[4mAt line \e[0m" 
-    "\e[1m\e[33m\e[40m%d\e[0m" 
-    "\e[4m , and Column \e[0m" 
-    "\e[1m\e[33m\e[40m%d\e[0m\n",
-        start_line, start_column
-    );
-    Token *return_token = Token_new(keyword_type, identifier, start_line, start_column);
-        
-    // result
+    // Not a keyword — it is a plain identifier
+    Token *return_token = Token_new(Identifier, identifier, start_line, start_column);
+
     ResultSigTok return_result = {};
     return_result.token = *return_token;
     return_result.Error = false;

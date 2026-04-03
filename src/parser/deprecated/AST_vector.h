@@ -7,6 +7,7 @@
 
 #include "../throwErr.h"
 #include "../lexer/token.h"
+#include "AST_token.h"
 
 typedef struct Ast_node Ast_node;
 typedef struct AST_vector AST_vector;
@@ -31,7 +32,7 @@ children - type `AST_vector`; holds member `data` (type `Ast_node`) of all of th
 */
 
 typedef struct Ast_node {
-    Token *token;
+    AST_token *token;
     Ast_node *parent;
     AST_vector *children;
 } Ast_node;

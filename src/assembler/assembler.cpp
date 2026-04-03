@@ -68,6 +68,18 @@ void Assembler::assemble_line(const std::string& line) {
         encode_inc(parse_operand(operands[0]));
     } else if (mnemonic == "dec" && operands.size() == 1) {
         encode_dec(parse_operand(operands[0]));
+    } else if (mnemonic == "neg" && operands.size() == 1) {
+        encode_neg(parse_operand(operands[0]));
+    } else if (mnemonic == "not" && operands.size() == 1) {
+        encode_not(parse_operand(operands[0]));
+    } else if (mnemonic == "cdq" && operands.size() == 0) {
+        encode_cdq();
+    } else if (mnemonic == "sar" && operands.size() == 2) {
+        encode_sar(parse_operand(operands[0]), parse_operand(operands[1]));
+    } else if (mnemonic == "cdq" && operands.size() == 0) {
+        encode_cdq();
+    } else if (mnemonic == "sar" && operands.size() == 2) {
+        encode_sar(parse_operand(operands[0]), parse_operand(operands[1]));
     } else if (mnemonic == "push" && operands.size() == 1) {
         encode_push(parse_operand(operands[0]));
     } else if (mnemonic == "pop" && operands.size() == 1) {

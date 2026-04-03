@@ -25,4 +25,6 @@ Token vector_at(Vector *vector, unsigned int index);
 // free the tokens when they are no longer needed
 void vector_free(Vector *vector);
 
+void vector_destroy(Vector *vector);
+
 #endif

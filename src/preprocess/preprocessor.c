@@ -1,7 +1,7 @@
 #define _POSIX_C_SOURCE 200809L 
 // above: for strdup 
 #include "preprocessor.h"
-#include "funcExists.h"
+#include "func_exists.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -114,40 +114,58 @@ static char *process_includes(const char *src, int *err) {
     const char *p = src;
 
     while (*p) {
-        // look for: use {filename};
-        if (p[0] == 'u' && p[1] == 's' && p[2] == 'e' && isspace(p[3])) {
-            p += 3;
-            while (*p && isspace(*p)) p++;
+        /*
+         * Match two forms of use statement — both handled identically:
+         *   use "filename";   (preferred, string-literal form)
+         *   use {filename};   (legacy brace form)
+         *
+         * We must only match `use` when it appears as a whole word, not as a
+         * substring of an identifier.  The character before `p` (if any) must
+         * not be alphanumeric, and p[3] must be whitespace.
+         */
+        int at_word_start = (p == src) ||
+                            !(isalnum((unsigned char)p[-1]) || p[-1] == '_');
 
-            if (*p == '{') {
-                p++;
+        if (at_word_start &&
+            p[0] == 'u' && p[1] == 's' && p[2] == 'e' && isspace((unsigned char)p[3])) {
+
+            /* Peek ahead past whitespace to see what delimiter follows */
+            const char *after_use = p + 3;
+            while (*after_use && isspace((unsigned char)*after_use)) after_use++;
+
+            char delim_open = 0, delim_close = 0;
+            if (*after_use == '"') { delim_open = '"'; delim_close = '"'; }
+            else if (*after_use == '{') { delim_open = '{'; delim_close = '}'; }
+
+            if (delim_open) {
+                after_use++; /* skip opening delimiter */
                 char filename[512];
                 size_t fnlen = 0;
 
-                while (*p && *p != '}') {
-                    filename[fnlen++] = *p++;
-                }
+                while (*after_use && *after_use != delim_close && fnlen < 511)
+                    filename[fnlen++] = *after_use++;
                 filename[fnlen] = '\0';
 
-                if (*p != '}') {
-                    *err = 1;
-                    return out;
-                }
-                p++;
+                if (*after_use != delim_close) { *err = 1; return out; }
+                after_use++; /* skip closing delimiter */
 
-                while (*p && isspace(*p)) p++;
-                if (*p == ';') p++;
+                while (*after_use && isspace((unsigned char)*after_use)) after_use++;
+                if (*after_use == ';') after_use++;
 
                 char *file_contents = read_file(filename);
                 if (!file_contents) {
+                    fprintf(stderr, "use: cannot open '%s'\n", filename);
                     *err = 1;
                     return out;
                 }
 
-                push_str(&out, &len, &cap, "{\n");
+                /* Inline the file contents directly (no wrapping braces) */
+                push_str(&out, &len, &cap, "\n");
                 push_str(&out, &len, &cap, file_contents);
-                push_str(&out, &len, &cap, "\n}\n");
+                push_str(&out, &len, &cap, "\n");
                 free(file_contents);
+
+                p = after_use;
                 continue;
             }
         }
@@ -251,12 +269,13 @@ char *preprocess(const char *source) {
     if (!source) return NULL;
 
     char *prev = NULL;
+    char *next = NULL;
     char *cur = strdup(source);
     if (!cur) return NULL;
 
     for (;;) {
         int err = 0;
-        char *next = preprocess_once(cur, &err);
+        next = preprocess_once(cur, &err);
 
         if (!next) {
             free(cur);
@@ -282,9 +301,14 @@ char *preprocess(const char *source) {
     }
 
 lblnext:
-    // one time preprocessing
-    
-    
+    // one-time preprocessing: @funcExists<name> substitution
+    {
+        char *fe = preprocess_funcExists(next);
+        if (fe) {
+            free(next);
+            next = fe;
+        }
+    }
     return next;
 }
 
