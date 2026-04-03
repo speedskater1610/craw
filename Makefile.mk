@@ -38,7 +38,6 @@ C_SOURCES = \
     src/tag/tag.c \
     src/preprocess/preprocessor.c \
     src/preprocess/func_exists.c \
-    src/parser/AST_vector.c \
     src/parser/AST.c \
     src/parser/hashmap.c \
     src/parser/parser.c \
