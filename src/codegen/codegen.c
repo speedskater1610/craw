@@ -20,7 +20,7 @@
  *
  * CRASM limitations worked around
  * --------------------------------
- *  - No .data / db directive  -> strings pushed byte-by-byte at runtime
+ *  - No .data / db directive -> strings pushed byte-by-byte at runtime
  *  - shl/shr only take imm8 -> shift count must be immediate
  *  - No cdq instruction -> use explicit sign extend via sar
  *  - idiv needs edx:eax -> we always zero/sign-extend before div
@@ -36,7 +36,10 @@
 #include "../parser/AST.h"
 #include "../lexer/token.h"
 
+ 
 /* StrBuf */
+ 
+
 void strbuf_init(StrBuf *sb) {
     sb->data = NULL;
     sb->len  = 0;
@@ -71,8 +74,9 @@ void strbuf_appendf(StrBuf *sb, const char *fmt, ...) {
     strbuf_append(sb, tmp);
 }
 
-
+ 
 /* Emit helpers — write into a given StrBuf */
+ 
 
 #define EMIT(buf, ...)   strbuf_appendf((buf), __VA_ARGS__)
 #define EMITL(buf, ...)  do { strbuf_appendf((buf), __VA_ARGS__); strbuf_append((buf), "\n"); } while(0)
@@ -84,8 +88,9 @@ void strbuf_appendf(StrBuf *sb, const char *fmt, ...) {
 /* Text section (for function labels etc.) */
 #define T(cg)  (&(cg)->text)
 
-
-/* Error  */
+ 
+/* Error */
+ 
 
 static void cg_error(Codegen *cg, const char *msg, const Token *tok) {
     if (tok)
@@ -102,7 +107,9 @@ static void cg_error(Codegen *cg, const char *msg, const Token *tok) {
     cg->had_error = true;
 }
 
+ 
 /* SymTable */
+ 
 
 static void symtable_reset(SymTable *st) {
     st->count       = 0;
@@ -162,8 +169,9 @@ static void emit_ebp_ref(StrBuf *buf, int offset) {
 }
 
 
-
+ 
 /* Type helpers */
+ 
 
 static int type_size(const Token *tok) {
     if (!tok) return 4;
@@ -177,6 +185,7 @@ static int type_size(const Token *tok) {
 }
 
 /* Struct type table */
+ 
 
 /* Register a struct definition from a NODE_DEF_STRUCT node.
  * NODE_LET children: [0]=name, [1]=type(defstruct), [2]=NODE_DEF_STRUCT
@@ -246,7 +255,10 @@ static __attribute__((unused)) const StructDef *var_struct_type(const Codegen *c
     return NULL;
 }
 
+ 
+ 
 /* String literal interning */
+ 
 
 /* Process escape sequences in a raw lexer string and intern it.
    Returns the asm label for this string. */
@@ -265,8 +277,9 @@ static const char *intern_string(Codegen *cg, const char *raw) {
     return e->label;
 }
 
-
+ 
 /* Public API */
+ 
 
 Codegen *codegen_new(void) {
     Codegen *cg = calloc(1, sizeof(Codegen));
@@ -367,8 +380,9 @@ void codegen_write_asm(Codegen *cg, FILE *f) {
     free(asm_str);
 }
 
-
+ 
 /* Forward declarations */
+ 
 
 static void cg_stmt  (Codegen *cg, const Ast_node *node);
 static void cg_expr  (Codegen *cg, const Ast_node *node);
@@ -385,18 +399,21 @@ static void cg_binary(Codegen *cg, const Ast_node *node);
 static void cg_unary (Codegen *cg, const Ast_node *node);
 static void cg_assign(Codegen *cg, const Ast_node *node);
 
+ 
 /* Program */
+ 
 
-/* ================================================================== */
+ 
 /* Global variable support */
 /* */
 /* Globals are stored on _start's stack frame (which is never freed */
 /* since _start calls sys_exit, not ret).  We reserve space for each */
 /* global below _start's initial esp, then store the base pointer in */
 /* esi so all functions can access globals as [esi + offset]. */
-
+/* */
 /* Register convention (craw-specific extension to cdecl): */
-/*   esi = global variable base pointer (set once in _start, read-only) */
+/* esi = global variable base pointer (set once in _start, read-only) */
+ 
 
 /* Look up a global by name; returns its esi-relative offset or -1 */
 static int global_find(Codegen *cg, const char *name) {
@@ -479,7 +496,10 @@ void codegen_program(Codegen *cg, const Ast_node *program) {
     (void)has_init; /* will use in future when we add _craw_init call to _start */
 }
 
+ 
 /* Function definition */
+ 
+
 /*
  * fn_def children:
  *   [0]         NODE_IDENTIFIER  function name
@@ -556,14 +576,19 @@ static void cg_fn_def(Codegen *cg, const Ast_node *node) {
     EMITL(T(cg), "    ret");
 }
 
+  
 /* Block */
+ 
+
 static void cg_block(Codegen *cg, const Ast_node *node) {
     for (size_t i = 0; i < node->children.size; i++)
         cg_stmt(cg, node->children.items[i]);
 }
 
-
+ 
 /* Statements */
+ 
+
 static void cg_stmt(Codegen *cg, const Ast_node *node) {
     switch (node->kind) {
         case NODE_LET:       cg_let(cg, node);    break;
@@ -577,16 +602,68 @@ static void cg_stmt(Codegen *cg, const Ast_node *node) {
             if (node->children.size > 0)
                 cg_expr(cg, node->children.items[0]);
             break;
-        case NODE_ASM_BLOCK:
+        case NODE_ASM_BLOCK: {
+            /* Emit assembly tokens preserving their original line structure.
+               Each token carries a line number from the lexer. When the line
+               number changes we emit a newline so the assembler sees one
+               instruction per line. Labels (IDENT followed by COLON) are
+               emitted without leading spaces. */
             EMITL(B(cg), "    ; --- inline asm ---");
+            unsigned int cur_line = 0;
             for (size_t i = 0; i < node->children.size; i++) {
                 const Token *t = node->children.items[i]->token;
-                if (t && t->lexeme)
-                    EMIT(B(cg), " %s", t->lexeme);
+                if (!t || !t->lexeme) continue;
+
+                /* New source line → start a new assembly line.
+                   If the NEXT token is a colon this is a label — no indent. */
+                if (t->line != cur_line) {
+                    if (cur_line != 0) strbuf_append(B(cg), "\n");
+                    /* Peek ahead: is the token after this one a Colon? */
+                    bool is_label = false;
+                    if (i + 1 < node->children.size) {
+                        const Token *next_t = node->children.items[i+1]->token;
+                        if (next_t && next_t->tokenType == Colon) is_label = true;
+                    }
+                    strbuf_append(B(cg), is_label ? "" : "    ");
+                    cur_line = t->line;
+                }
+
+                /* Colon = label suffix — trim any trailing space then newline.
+                   Labels must be at the start of the line with no indent. */
+                if (t->tokenType == Colon) {
+                    /* Remove trailing space from the identifier just emitted */
+                    StrBuf *b = B(cg);
+                    if (b->len > 0 && b->data[b->len-1] == ' ') {
+                        b->len--;
+                        b->data[b->len] = '\0';
+                    }
+                    strbuf_append(B(cg), ":\n");
+                    cur_line = 0;
+                    continue;
+                }
+
+                /* Brackets: no spaces inside [reg+disp] */
+                if (t->tokenType == LeftBracket) {
+                    strbuf_append(B(cg), "[");
+                    continue;
+                }
+                if (t->tokenType == RightBracket) {
+                    strbuf_append(B(cg), "]");
+                    continue;
+                }
+
+                /* Comma: no space before */
+                if (t->tokenType == Comma) {
+                    strbuf_append(B(cg), ", ");
+                    continue;
+                }
+
+                EMIT(B(cg), "%s ", t->lexeme);
             }
             strbuf_append(B(cg), "\n");
             EMITL(B(cg), "    ; --- end inline asm ---");
             break;
+        }
         case NODE_DEF_STRUCT:
             EMITL(B(cg), "    ; struct definition (compile-time only)");
             break;
@@ -595,7 +672,9 @@ static void cg_stmt(Codegen *cg, const Ast_node *node) {
     }
 }
 
+ 
 /* let */
+
 static void cg_let(Codegen *cg, const Ast_node *node) {
     if (node->children.size < 2) {
         cg_error(cg, "Malformed let", node->token);
@@ -655,8 +734,10 @@ static void cg_let(Codegen *cg, const Ast_node *node) {
     }
 }
 
-
+ 
 /* return */
+ 
+
 static void cg_return(Codegen *cg, const Ast_node *node) {
     if (node->children.size > 0)
         cg_expr(cg, node->children.items[0]);
@@ -665,7 +746,11 @@ static void cg_return(Codegen *cg, const Ast_node *node) {
     EMITL(B(cg), "    jmp .%s_exit", cg->cur_fn);
 }
 
+ 
 /* if */
+ 
+
+
 /* Returns true if the last statement in a block is a return or goto
    (meaning any jmp after it would be dead code). */
 static bool block_ends_with_transfer(const Ast_node *block) {
@@ -738,7 +823,10 @@ static void cg_while(Codegen *cg, const Ast_node *node) {
     EMITL(B(cg), "%s:", end_lbl);
 }
 
+ 
 /* goto / label */
+ 
+
 static void cg_goto(Codegen *cg, const Ast_node *node) {
     if (!node->children.size) return;
     const char *lbl = node->children.items[0]->token
@@ -753,7 +841,10 @@ static void cg_label(Codegen *cg, const Ast_node *node) {
     EMITL(B(cg), "%s:", lbl);
 }
 
+ 
 /* Expression dispatch */
+ 
+
 static void cg_expr(Codegen *cg, const Ast_node *node) {
     if (!node) return;
 
@@ -929,9 +1020,12 @@ static void cg_expr(Codegen *cg, const Ast_node *node) {
     }
 }
 
+ 
 /* Binary operators */
+ 
+
 /*
- * Compile: left->eax, push; right→eax; pop ebx (=left).
+ * Compile: left→eax, push; right→eax; pop ebx (=left).
  * eax = right operand, ebx = left operand.
  * Result in eax.
  */
@@ -1075,7 +1169,10 @@ static void cg_binary(Codegen *cg, const Ast_node *node) {
     }
 }
 
+ 
 /* Unary */
+ 
+
 static void cg_unary(Codegen *cg, const Ast_node *node) {
     if (!node->token || !node->children.size) return;
     cg_expr(cg, node->children.items[0]);
@@ -1105,8 +1202,9 @@ static void cg_unary(Codegen *cg, const Ast_node *node) {
             break;
     }
 }
-
+ 
 /* Assignment */
+
 static void cg_assign(Codegen *cg, const Ast_node *node) {
     if (node->children.size < 2) return;
 
@@ -1184,7 +1282,10 @@ static void cg_assign(Codegen *cg, const Ast_node *node) {
     }
 }
 
-/* Function call (cdecl)  */
+ 
+/* Function call (cdecl) */
+ 
+
 static void cg_call(Codegen *cg, const Ast_node *node) {
     if (!node->children.size) return;
 

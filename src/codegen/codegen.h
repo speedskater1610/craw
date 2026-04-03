@@ -6,7 +6,7 @@
 #include "../parser/AST.h"
 
 /*
- * x86-32 code generator for CRAW.
+ * code generator for CRAW.
  *
  * Emits CRASM-syntax assembly targeting the ELF32 C++ backend.
  *
@@ -20,9 +20,9 @@
  *   [ebp - 4*n]      nth local (4-byte slots)
  */
 
-
+ 
 /* Dynamic string buffer (for in-memory assembly output) */
-
+ 
 typedef struct {
     char  *data;
     size_t len;
@@ -34,9 +34,9 @@ void strbuf_free   (StrBuf *sb);
 void strbuf_appendf(StrBuf *sb, const char *fmt, ...);
 void strbuf_append (StrBuf *sb, const char *s);
 
-
+ 
 /* String-literal table (for the .data section) */
-
+ 
 #define CODEGEN_MAX_STRINGS 256
 
 typedef struct {
@@ -45,9 +45,9 @@ typedef struct {
     int   len;          /* length including null terminator */
 } StrEntry;
 
-
+ 
 /* Struct type table — collected from NODE_DEF_STRUCT nodes */
-
+ 
 #define CODEGEN_MAX_STRUCT_FIELDS 32
 #define CODEGEN_MAX_STRUCTS       64
 
@@ -69,9 +69,9 @@ typedef struct {
     int       count;
 } StructTable;
 
-
+ 
 /* Symbol table */
-
+ 
 #define CODEGEN_MAX_LOCALS 256
 
 typedef struct {
@@ -86,14 +86,14 @@ typedef struct {
     int      next_offset;  /* next free negative offset */
 } SymTable;
 
-
-/* Code generator state                                                 */
-
+ 
+/* Code generator state */
+ 
 typedef struct {
-    StrBuf   text;          /* .text section buffer           */
-    StrBuf   data;          /* .data section buffer           */
+    StrBuf   text;          /* .text section buffer */
+    StrBuf   data;          /* .data section buffer */
     StrBuf   pre;           /* function preamble (sub esp, N) */
-    StrBuf   body;          /* function body instructions     */
+    StrBuf   body;          /* function body instructions */
 
     StrEntry    strings[CODEGEN_MAX_STRINGS];
     int         nstrings;
@@ -112,8 +112,9 @@ typedef struct {
     char     cur_fn[64];
 } Codegen;
 
-
-/* Public API                                                           */
+ 
+/* Public API */
+ 
 
 Codegen *codegen_new   (void);
 void     codegen_free  (Codegen *cg);
