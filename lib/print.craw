@@ -10,7 +10,6 @@
 //   println(s: i32)           -> print_str + newline
 //   println_int(n: i32)       -> print_int + newline
 
-
 // Write a single character to stdout (sys_write, fd=1)
 fn print_char -> void (c: i32) {
     asm {
