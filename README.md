@@ -6,42 +6,25 @@ CRAW is a compiler and assembler toolchain that is used for compiling a C like l
 
 ---
 
-## Getting the CRAW Compiler
-
-#### 1. Clone the repository:
-
-```bash
-   git clone https://github.com/speedskater1610/craw
-```
-
-#### 2. Compile the compiler:
-
-```bash
-make all
-```
-
-This will generate an executable for the compiler.
-   
-#### 3. To uninstall the compiler and clean up generated files:
-
-```bash
-make clean
-```  
-
-This removes all object files and the compiler executable.
-
----
-
 ## Getting the CRAW Assembler 
 ### crasm
 
-> Either find the assmebler in releases or make it youself with the following steps : 
-1. Clone the repository (if you haven’t already): `git clone https://github.com/speedskater1610/craw`
-2. Navigate to the assembler directory: `cd src/assembler/assembler_cpp`
-3. Build the assembler: `make -f Assembler.mk`
-4. Use the assembler: `./crasm input.asm output`
-
-> **Note:** Currently, the assembler only produces ELF-format binaries.
-
-5. For detailed usage and documentation, see the [Assembler Docs](https://github.com/speedskater1610/craw/tree/main/docs/assembler)
+- to build `crawc` with the crasm assembler build with 
+```
+make quick
+```
 ---
+
+
+
+#### Simple Usage
+```
+# Compile to assembly (inspect output)
+./craw -S -o out.asm tests/test_comprehensive.craw
+
+# Compile to ELF32 binary
+./craw -o out tests/test_comprehensive.craw
+
+# Debug mode (prints AST and preprocessed source)
+./craw -d -S -o out.asm tests/test1.craw
+```
