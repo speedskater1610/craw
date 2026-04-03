@@ -20,10 +20,10 @@
  *
  * CRASM limitations worked around
  * --------------------------------
- *  - No .data / db directive  → strings pushed byte-by-byte at runtime
- *  - shl/shr only take imm8   → shift count must be immediate
- *  - No cdq instruction        → use explicit sign extend via sar
- *  - idiv needs edx:eax       → we always zero/sign-extend before div
+ *  - No .data / db directive  -> strings pushed byte-by-byte at runtime
+ *  - shl/shr only take imm8 -> shift count must be immediate
+ *  - No cdq instruction -> use explicit sign extend via sar
+ *  - idiv needs edx:eax -> we always zero/sign-extend before div
  */
 
 #include <stdio.h>
