@@ -1,3 +1,4 @@
+#define _POSIX_C_SOURCE 200809L
 #include "token.h"
 
 // Constructor
@@ -5,7 +6,8 @@ Token *Token_new(enum TokenType tokenType, char* lexeme, unsigned int line, unsi
     Token *s = (Token*)malloc(sizeof(Token));
     if (s != NULL) {
         s->tokenType = tokenType;
-        s->lexeme = lexeme;
+        /* Always duplicate so vector_free can unconditionally free lexemes */
+        s->lexeme = lexeme ? strdup(lexeme) : NULL;
         s->line = line;
         s->column = column;
     }
@@ -37,7 +39,9 @@ enum TokenType from_keyword(const char *s) {
     else if (!strcmp(s, "void")) return Void;
     else if (!strcmp(s, "and")) return And;
     else if (!strcmp(s, "or")) return Or;
-    else return Error;
+    else if (!strcmp(s, "else")) return Else;
+    else if (!strcmp(s, "while")) return While;
+    else return Identifier;  /* not a keyword — it is a plain identifier */
 }
 
 // get the value functions

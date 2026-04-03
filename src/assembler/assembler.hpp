@@ -9,8 +9,6 @@
 #include <cstdint>
 #include <sys/stat.h>
 
-
-
 class Assembler {
 public:
     std::map<std::string, uint32_t> labels;
@@ -36,9 +34,13 @@ public:
     };
 
     void write_to_file(const char* filename) {
+        std::vector<uint8_t> elf_data = create_elf();
         std::ofstream out(filename, std::ios::binary);
-        out.write(reinterpret_cast<const char*>(code.data()), code.size());
+        out.write(reinterpret_cast<const char*>(elf_data.data()), elf_data.size());
         out.close();
+        chmod(filename, 0755);
+        std::cout << "Assembly successful: " << filename << std::endl;
+        std::cout << "Code size: " << code.size() << " bytes" << std::endl;
     }
 
 
@@ -64,6 +66,10 @@ public:
     void encode_test(const Operand& dest, const Operand& src);
     void encode_inc(const Operand& op);
     void encode_dec(const Operand& op);
+    void encode_neg(const Operand& op);
+    void encode_not(const Operand& op);
+    void encode_cdq();
+    void encode_sar(const Operand& dest, const Operand& src);
     void encode_push(const Operand& op);
     void encode_pop(const Operand& op);
     void encode_call(const Operand& op);

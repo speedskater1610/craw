@@ -18,8 +18,8 @@ void vector_free(Vector *vector) {
     vector->size = 0;
     vector->capacity = 0;
 
-    // Finally, free the Vector structure itself
-    free(vector);
+    // NOTE: do NOT free(vector) here — callers may pass stack-allocated Vectors.
+    // Use vector_destroy() only for heap-allocated Vectors.
 }
 
 // create a new vector
@@ -72,4 +72,10 @@ Token vector_at(Vector *vector, unsigned int index) {
         exit(1);
     }
     return vector->data[index]; // return the element at the specified index
+}
+
+/* Free a heap-allocated Vector (created via create_vector()). */
+void vector_destroy(Vector *vector) {
+    vector_free(vector);
+    free(vector);
 }

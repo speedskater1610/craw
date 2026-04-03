@@ -13,6 +13,8 @@ static void print_help(void) {
     printf("  -v, --version          Show compiler version.\n");
     printf("  -d, --debug            Enable debug mode.\n");
     printf("  -a, --assemble         The <file> will be considered a assembly file.\n");
+    printf("  -S                     Emit assembly source only; do not assemble.\n");
+    printf("  -o, --output <file>    Set the output filename (default: \"out\" or \"out.asm\").\n");
     printf("  -r  --rassemble        This will use the rust assembler to assemble <file>.\n");
     printf("  -s  --switch-assembler This will use the none defualt assembler and make that the main on you system.\n");
     printf("\nExample:\n");
