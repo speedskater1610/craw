@@ -1,7 +1,3 @@
-// src/assembler/rust_src/src/codegen.rs
-// Uses the `inkwell` LLVM binding to produce a native object file
-// from raw section data produced by the encoder.
-
 use inkwell::context::Context;
 use inkwell::module::Module;
 use inkwell::targets::{

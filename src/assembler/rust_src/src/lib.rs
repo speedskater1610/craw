@@ -1,7 +1,3 @@
-// src/assembler/rust_src/src/lib.rs
-// Linux x86 Assembler that generates LLVM object files
-// Exposed as a C-compatible library
-
 mod parser;
 mod encoder;
 mod codegen;
@@ -56,14 +52,9 @@ fn error_cstring(msg: &str) -> *mut c_char {
 }
 
 fn assemble_impl(source: &str, filename: &str) -> Result<(), String> {
-    // 1. Parse the assembly source into an instruction list
-    let instructions = parser::parse(source)?;
-
-    // 2. Encode instructions into machine code bytes
-    let sections = encoder::encode(&instructions)?;
-
-    // 3. Use LLVM (via inkwell) to produce an object file
-    codegen::emit_object_file(&sections, filename)?;
-
+    let instructions = parser::parse(source)?; // Parse the assembly source into an instruction list
+    let sections = encoder::encode(&instructions)?; // Encode instructions into machine code bytes
+    codegen::emit_object_file(&sections, filename)?; // Use LLVM (via inkwell) to produce an object file
+    
     Ok(())
 }

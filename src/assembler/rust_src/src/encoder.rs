@@ -11,7 +11,7 @@ pub struct Section {
     pub name: String,
     pub data: Vec<u8>,
     pub globals: Vec<String>,
-    /// Map from label name → byte offset within this section
+    /// Map from label name -> byte offset within this section
     pub labels: HashMap<String, u64>,
     /// Relocations: (offset_in_section, label_name, is_relative)
     pub relocations: Vec<Relocation>,
@@ -119,9 +119,8 @@ pub fn encode(items: &[Item]) -> Result<EncoderOutput, String> {
     Ok(EncoderOutput { sections })
 }
 
-// ---------------------------------------------------------------------------
+
 // Instruction encoding
-// ---------------------------------------------------------------------------
 
 fn encode_instruction(
     mnemonic: &str,
@@ -129,7 +128,7 @@ fn encode_instruction(
     sec: &mut Section,
 ) -> Result<(), String> {
     match mnemonic {
-        // ── No-operand instructions ─────────────────────────────────────────
+        // No-operand instructions 
         "nop"   => sec.data.push(0x90),
         "ret"   => sec.data.push(0xC3),
         "retf"  => sec.data.push(0xCB),
@@ -151,7 +150,7 @@ fn encode_instruction(
         "ud2"     => sec.data.extend_from_slice(&[0x0F, 0x0B]),
         "endbr64" => sec.data.extend_from_slice(&[0xF3, 0x0F, 0x1E, 0xFA]),
 
-        // ── Single-operand (64-bit reg) ─────────────────────────────────────
+        // Single-operand (64-bit reg) 
         "push" => encode_push(operands, sec)?,
         "pop"  => encode_pop(operands, sec)?,
         "inc"  => encode_unary_rm(0xFF, 0, operands, sec)?,
@@ -163,7 +162,7 @@ fn encode_instruction(
         "imul1"=> encode_unary_rm(0xF7, 5, operands, sec)?,
         "mul"  => encode_unary_rm(0xF7, 4, operands, sec)?,
 
-        // ── Two-operand (MOV, ADD, SUB, etc.) ──────────────────────────────
+        // Two-operand (MOV, ADD, SUB, etc.) 
         "mov"  => encode_mov(operands, sec)?,
         "movsx"  => encode_movsx(operands, sec, false)?,
         "movsxd" => encode_movsx(operands, sec, true)?,
@@ -179,14 +178,14 @@ fn encode_instruction(
         "imul" => encode_imul(operands, sec)?,
         "xchg" => encode_xchg(operands, sec)?,
 
-        // ── Shifts ──────────────────────────────────────────────────────────
+        // Shifts
         "shl" | "sal" => encode_shift(4, operands, sec)?,
         "shr"         => encode_shift(5, operands, sec)?,
         "sar"         => encode_shift(7, operands, sec)?,
         "rol"         => encode_shift(0, operands, sec)?,
         "ror"         => encode_shift(1, operands, sec)?,
 
-        // ── Jumps and calls ─────────────────────────────────────────────────
+        // Jumps and calls 
         "jmp"  => encode_jmp(0xEB, 0xE9, operands, sec)?,
         "je"  | "jz"   => encode_jcc(0x74, 0x84, operands, sec)?,
         "jne" | "jnz"  => encode_jcc(0x75, 0x85, operands, sec)?,
@@ -206,7 +205,7 @@ fn encode_instruction(
         "jno"          => encode_jcc(0x71, 0x81, operands, sec)?,
         "call" => encode_call(operands, sec)?,
 
-        // ── String ops ──────────────────────────────────────────────────────
+        // String ops 
         "rep"   => { sec.data.push(0xF3); }
         "repne" | "repnz" => { sec.data.push(0xF2); }
         "movsb" => sec.data.push(0xA4),
@@ -221,7 +220,7 @@ fn encode_instruction(
         "lodsb" => sec.data.push(0xAC),
         "lodsq" => sec.data.extend_from_slice(&[0x48, 0xAD]),
 
-        // ── Set byte on condition ────────────────────────────────────────────
+        // Set byte on condition
         "sete"  | "setz"   => encode_setcc(0x94, operands, sec)?,
         "setne" | "setnz"  => encode_setcc(0x95, operands, sec)?,
         "setl"  | "setnge" => encode_setcc(0x9C, operands, sec)?,
@@ -233,7 +232,7 @@ fn encode_instruction(
         "sets"  => encode_setcc(0x98, operands, sec)?,
         "setns" => encode_setcc(0x99, operands, sec)?,
 
-        // ── CMOV ────────────────────────────────────────────────────────────
+        // CMOV
         "cmove"  | "cmovz"   => encode_cmov(0x44, operands, sec)?,
         "cmovne" | "cmovnz"  => encode_cmov(0x45, operands, sec)?,
         "cmovl"  | "cmovnge" => encode_cmov(0x4C, operands, sec)?,
@@ -241,7 +240,7 @@ fn encode_instruction(
         "cmovle" | "cmovng"  => encode_cmov(0x4E, operands, sec)?,
         "cmovg"  | "cmovnle" => encode_cmov(0x4F, operands, sec)?,
 
-        // ── Misc ─────────────────────────────────────────────────────────────
+        // Misc
         "int" => {
             let imm = require_imm(operands, 0)?;
             sec.data.push(0xCD);
@@ -258,9 +257,9 @@ fn encode_instruction(
     Ok(())
 }
 
-// ---------------------------------------------------------------------------
+
+
 // Register encoding helpers
-// ---------------------------------------------------------------------------
 
 /// Returns (rex_b_needed, reg_bits_3) for a 64-bit register name.
 fn reg_info(name: &str) -> Option<(bool, u8)> {
@@ -328,9 +327,8 @@ fn require_imm(operands: &[Operand], idx: usize) -> Result<i64, String> {
     }
 }
 
-// ---------------------------------------------------------------------------
+
 // Specific encoders
-// ---------------------------------------------------------------------------
 
 fn encode_push(ops: &[Operand], sec: &mut Section) -> Result<(), String> {
     match ops.get(0) {
@@ -433,7 +431,7 @@ fn encode_mov(ops: &[Operand], sec: &mut Section) -> Result<(), String> {
                 base.as_deref(), index.as_deref(), *scale, w, sec,
             )
         }
-        // mov mem, imm  →  MOV r/m64, imm32
+        // mov mem, imm  ->  MOV r/m64, imm32
         (Operand::Memory { displacement, base, index, scale }, Operand::Immediate(imm)) => {
             // use 64-bit form
             encode_mem_operand_imm(
@@ -781,7 +779,7 @@ fn encode_mem_operand(
         (false, 4u8) // no index
     };
 
-    let need_sib = index.is_some() || base_bits == 4; // rsp/r12 base → need SIB
+    let need_sib = index.is_some() || base_bits == 4; // rsp/r12 base -> need SIB
 
     // REX prefix
     let rex_byte = rex(w, reg_ext, idx_ext, base_ext);
@@ -801,7 +799,7 @@ fn encode_mem_operand(
     };
 
     if need_sib {
-        sec.data.push(modrm_mod_reg_rm(mod_bits, reg_bits, 4)); // rm=100 → SIB follows
+        sec.data.push(modrm_mod_reg_rm(mod_bits, reg_bits, 4)); // rm=100 -> SIB follows
         let scale_bits: u8 = match scale { 1 => 0, 2 => 1, 4 => 2, 8 => 3, _ => 0 };
         sec.data.push((scale_bits << 6) | ((idx_bits & 7) << 3) | (base_bits & 7));
     } else {

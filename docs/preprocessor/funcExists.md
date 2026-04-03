@@ -1,0 +1,1 @@
+# `@funcExists<function name>` -> returns boolean (0 / 1)
