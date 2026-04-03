@@ -1,5 +1,5 @@
 #define _POSIX_C_SOURCE 200809L
-#include "funcExists.h"
+#include "func_exists.h"
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
@@ -20,11 +20,11 @@
  * Returns NULL on allocation failure.
  */
 
-/* ------------------------------------------------------------------ */
-/* Helper: return 1 if `fn_name` appears as a function name in src.   */
-/* We look for the pattern "fn " followed by exactly fn_name followed  */
-/* by a non-identifier character.                                       */
-/* ------------------------------------------------------------------ */
+
+/* Helper: return 1 if `fn_name` appears as a function name in src. */
+/* We look for the pattern "fn " followed by exactly fn_name followed */
+/* by a non-identifier character. */
+
 static int function_defined(const char *src, const char *fn_name) {
     size_t name_len = strlen(fn_name);
     const char *p = src;
@@ -44,9 +44,9 @@ static int function_defined(const char *src, const char *fn_name) {
     return 0;
 }
 
-/* ------------------------------------------------------------------ */
-/* Dynamic string builder                                               */
-/* ------------------------------------------------------------------ */
+
+/* Dynamic string builder */
+
 typedef struct { char *buf; size_t len; size_t cap; } SB;
 
 static int sb_push(SB *sb, const char *s, size_t n) {
@@ -65,9 +65,9 @@ static int sb_push(SB *sb, const char *s, size_t n) {
 
 static int sb_pushc(SB *sb, char c) { return sb_push(sb, &c, 1); }
 
-/* ------------------------------------------------------------------ */
-/* Main replacement pass                                                */
-/* ------------------------------------------------------------------ */
+
+/* Main replacement pass */
+
 char *preprocess_funcExists(const char *src) {
     if (!src) return NULL;
 
