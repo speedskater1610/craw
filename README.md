@@ -20,11 +20,11 @@ make quick
 #### Simple Usage
 ```
 # Compile to assembly (inspect output)
-./craw -S -o out.asm tests/test_comprehensive.craw
+./crawc -S -o out.asm tests/test_comprehensive.craw
 
 # Compile to ELF32 binary
-./craw -o out tests/test_comprehensive.craw
+./crawc -o out tests/test_comprehensive.craw
 
 # Debug mode (prints AST and preprocessed source)
-./craw -d -S -o out.asm tests/test1.craw
+./crawc -d -S -o out.asm tests/test1.craw
 ```
