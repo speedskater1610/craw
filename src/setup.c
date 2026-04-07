@@ -29,7 +29,7 @@ static int read_line(char *input) {
 
 static void create_config_files(void) {
     write_file("~/.config/craw/which_assembler.bin", "1");
-    write_file("~/.config/craw/version.txt", "0-0-0-1-GITHUB-RELEASE");
+    write_file("~/.config/craw/version.txt", "0-1.0-GITHUB-RELEASE");
 }
 
 
