@@ -28,8 +28,13 @@ jobs:
 
       - name: Build craw on Linux
         if: runner.os != 'Windows'
-        run: make all
-
+        run: | 
+          make all
+          make clean
+          make quick
+          make test
+          make cli
+          make clean
         
       # Artifacts
       - name: Upload craw artifact
