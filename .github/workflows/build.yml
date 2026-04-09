@@ -38,7 +38,7 @@ jobs:
       - name: Run tests
         if: runner.os != 'Windows'
         run: |
-          make quicks
+          make quick
           make test
         
       # Artifacts
