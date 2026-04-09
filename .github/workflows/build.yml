@@ -18,6 +18,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential llvm-18 llvm-18-dev libpolly-18-dev clang-18
+          sudo apy-get zig
 
       - name: Set LLVM environment variables on Linux
         if: runner.os != 'Windows'
