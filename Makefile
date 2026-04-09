@@ -25,7 +25,7 @@ LLVM_SYSLIBS   := $(shell $(LLVM_CONFIG) --system-libs 2>/dev/null)
 # Build seperatly as its own exacutable
 # removed if build with `clean`
 # -----------------------------------------------------------------------
-ZIG_SRC_DIR = cli
+ZIG_SRC_DIR = CLI
 ZIGC = zig
 
 # -----------------------------------------------------------------------
@@ -105,7 +105,9 @@ $(TARGET): $(ALL_OBJECTS) $(RUST_LIB)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Build the CLI
-cli: $(ZIGC) build
+cli: 
+	$(ZIGC) build --build-file $(ZIG_SRC_DIR)/build.zig
+	
 
 # Run test suite
 TEST_FILES = $(wildcard tests/*.craw)
@@ -129,9 +131,9 @@ clean:
 	rm -f $(TARGET) $(ALL_OBJECTS) $(STUB_OBJECTS)
 	echo "Removing rust assembler"
 	cargo clean --manifest-path $(RUST_SRC_DIR)/Cargo.toml
-	if [ -d "zig-out" && -d ".zig-cache" ]; then
+	if [ -d "$(ZIG_SRC_DIR)/zig-out" && -d "$(ZIG_SRC_DIR)/.zig-cache" ]; then
 		echo "Removing Zig CLI build"
-		rm -rf zig-out .zig-cache
+		rm -rf $(ZIG_SRC_DIR)/zig-out $(ZIG_SRC_DIR)/.zig-cache
 	else
 		echo "Directory does not exist."
 	fi
