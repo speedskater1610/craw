@@ -33,11 +33,13 @@ jobs:
         if: runner.os != 'Windows'
         run: | 
           make all
-          make clean
-          make quick
-          make test
           make cli
-          make clean
+
+      - name: Run tests
+        if: runner.os != 'Windows'
+        run: |
+          make quicks
+          make test
         
       # Artifacts
       - name: Upload craw artifact
