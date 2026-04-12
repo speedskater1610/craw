@@ -130,14 +130,19 @@ clean:
 	echo "Removing C & C++ build" \
 	rm -f $(TARGET) $(ALL_OBJECTS) $(STUB_OBJECTS) \
 	echo "Removing rust assembler" \
-	#if [ -f src/assembler/rust_src/Cargo.toml ]; then \
-	#	cargo clean --manifest-path src/assembler/rust_src/Cargo.toml; \
-	#else \
-	#	echo "Cargo.toml not found, skipping cargo clean."; \
-	#fi
-	#if [ -d "$(ZIG_SRC_DIR)/zig-out" && -d "$(ZIG_SRC_DIR)/.zig-cache" ]; then \
-	#	echo "Removing Zig CLI build" \
-	#	rm -rf $(ZIG_SRC_DIR)/zig-out $(ZIG_SRC_DIR)/.zig-cache \
-	#else \
-	#	echo "Directory does not exist." \
-	#fi
+clean:
+	echo "Removing C & C++ build"; \
+	rm -f $(TARGET) $(ALL_OBJECTS) $(STUB_OBJECTS); \
+	echo "Removing rust assembler"; \
+	if [ -f src/assembler/rust_src/Cargo.toml ]; then \
+		cargo clean --manifest-path src/assembler/rust_src/Cargo.toml; \
+	else \
+		echo "Cargo.toml not found, skipping cargo clean."; \
+	fi; \
+	echo "Removing Zig CLI"
+	if [ -d "$(ZIG_SRC_DIR)/zig-out" ] && [ -d "$(ZIG_SRC_DIR)/.zig-cache" ]; then \
+		echo "Removing Zig CLI build"; \
+		rm -rf $(ZIG_SRC_DIR)/zig-out $(ZIG_SRC_DIR)/.zig-cache; \
+	else \
+		echo "Directory does not exist."; \
+	fi
