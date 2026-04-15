@@ -146,7 +146,7 @@ int main(int argc, char *argv[]) {
                     }
                 } else {
                     /* Normal mode: pipe asm string into the C++ assembler */
-                    char *asm_str = ELF32_codegen_get_asm(cg);
+                    char *asm_str = ELF32_Codegen_get_asm(cg);
 
                     if (debug_mode)
                         printf(B_RED "[DEBUG]" RESET " Assembling to '%s'...\n", output_file);
