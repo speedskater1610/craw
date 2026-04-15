@@ -1,5 +1,5 @@
 #include "assembler.hpp"
-#include "mainAssemblerC.h" // extern "C" header
+#include "assembler.h" // extern "C" header
 
 bool assemble_from_string(const char* asm_code, const char* output_file) {
     Assembler assembler;
