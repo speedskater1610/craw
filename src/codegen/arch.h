@@ -6,4 +6,4 @@ typedef enum {
     X86_64
 } Arch;
 
-#endif ARCH
+#endif /* ARCH */
