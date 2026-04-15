@@ -1,7 +1,0 @@
-fn _start -> void () {
-    if ( @funcExists<main> ) { main(); }
-   
-    if (!( @funcExists<main> )) {
-        // TODO: when I add std; print error of no main found
-    }
-}
