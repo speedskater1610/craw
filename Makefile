@@ -11,7 +11,7 @@ TARGET   = crawc
 # Run `make all` for the full build (requires cargo + llvm-config).
 # Run `make quick` to build without Rust/LLVM using the C++ backend only.
 # -----------------------------------------------------------------------
-RUST_SRC_DIR   = src/assembler/rust_src
+RUST_SRC_DIR   = src/assembler/x86-64
 RUST_TARGET    = $(RUST_SRC_DIR)/target/release
 RUST_LIB       = $(RUST_TARGET)/libassembler.a
 
