@@ -5,10 +5,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "assemble.h"
-
-#include "assembler/mainAssemblerC.h"
-#include "assembler/rassembler.h"
+#include "assembler/elf32/assembler.h"
+#include "assembler/x86-64/assembler.h"
 #include "read.h"
 
 #include "ansiColors.h"
