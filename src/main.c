@@ -117,19 +117,19 @@ int main(int argc, char *argv[]) {
     {
         switch (arch) {
             case ELF32:
-                ELF32_Codegen *cg = ELF32_codegen_new();
-                ELF32_codegen_program(cg, ast);
+                ELF32_Codegen *cg = ELF32_Codegen_new();
+                ELF32_Codegen_program(cg, ast);
 
                 if (cg->had_error) {
                     has_at_least_one_error = true;
                     fprintf(stderr, "Error: Code generation failed.\n");
-                    ELF32_codegen_free(cg);
+                    ELF32_Codegen_free(cg);
                     goto cleanup;
                 }
 
                 if (debug_mode) {
                     printf(B_RED "[DEBUG]" RESET " Generated assembly:\n");
-                    ELF32_codegen_write_asm(cg, stdout);
+                    ELF32_Codegen_write_asm(cg, stdout);
                     printf("\n");
                 }
 
@@ -140,7 +140,7 @@ int main(int argc, char *argv[]) {
                         fprintf(stderr, "Error: Cannot open '%s' for writing.\n", output_file);
                         has_at_least_one_error = true;
                     } else {
-                        ELF32_codegen_write_asm(cg, asm_f);
+                        ELF32_Codegen_write_asm(cg, asm_f);
                         fclose(asm_f);
                         printf("Assembly written to %s\n", output_file);
                     }
@@ -161,7 +161,7 @@ int main(int argc, char *argv[]) {
                     free(asm_str);
                 }
 
-                ELF32_codegen_free(cg);
+                ELF32_Codegen_free(cg);
                 break;
             case X86_64:
                 break;
