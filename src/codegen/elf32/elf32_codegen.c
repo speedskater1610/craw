@@ -11,7 +11,7 @@
  * String literals
  * ---------------
  * Every string literal is interned into cg->strings[].  After all
- * functions are compiled, codegen_get_asm() prepends a data section
+ * functions are compiled, ELF32_Codegen_get_asm() prepends a data section
  * that pushes the bytes on the stack at program start — actually we
  * emit them as labelled byte sequences using the "push imm" trick since
  * CRASM doesn't support .data.  Strings are built backwards on the stack
@@ -37,23 +37,23 @@
 #include "../lexer/token.h"
 
  
-/* StrBuf */
+/* ELF32_StrBuf */
  
 
-void strbuf_init(StrBuf *sb) {
+void ELF32_StrBuf_init(ELF32_StrBuf *sb) {
     sb->data = NULL;
     sb->len  = 0;
     sb->cap  = 0;
 }
 
-void strbuf_free(StrBuf *sb) {
+void ELF32_StrBuf_free(ELF32_StrBuf *sb) {
     free(sb->data);
     sb->data = NULL;
     sb->len  = 0;
     sb->cap  = 0;
 }
 
-void strbuf_append(StrBuf *sb, const char *s) {
+void ELF32_StrBuf_append(ELF32_StrBuf *sb, const char *s) {
     size_t slen = strlen(s);
     if (sb->len + slen + 1 > sb->cap) {
         size_t new_cap = sb->cap ? sb->cap * 2 : 4096;
@@ -65,21 +65,21 @@ void strbuf_append(StrBuf *sb, const char *s) {
     sb->len += slen;
 }
 
-void strbuf_appendf(StrBuf *sb, const char *fmt, ...) {
+void ELF32_StrBuf_appendf(ELF32_StrBuf *sb, const char *fmt, ...) {
     char tmp[1024];
     va_list ap;
     va_start(ap, fmt);
     vsnprintf(tmp, sizeof(tmp), fmt, ap);
     va_end(ap);
-    strbuf_append(sb, tmp);
+    ELF32_StrBuf_append(sb, tmp);
 }
 
  
-/* Emit helpers — write into a given StrBuf */
+/* Emit helpers — write into a given ELF32_StrBuf */
  
 
-#define EMIT(buf, ...)   strbuf_appendf((buf), __VA_ARGS__)
-#define EMITL(buf, ...)  do { strbuf_appendf((buf), __VA_ARGS__); strbuf_append((buf), "\n"); } while(0)
+#define EMIT(buf, ...)   ELF32_StrBuf_appendf((buf), __VA_ARGS__)
+#define EMITL(buf, ...)  do { ELF32_StrBuf_appendf((buf), __VA_ARGS__); ELF32_StrBuf_append((buf), "\n"); } while(0)
 
 /* Current function body target */
 #define B(cg)  (&(cg)->body)
@@ -92,7 +92,7 @@ void strbuf_appendf(StrBuf *sb, const char *fmt, ...) {
 /* Error */
  
 
-static void cg_error(Codegen *cg, const char *msg, const Token *tok) {
+static void cg_error(ELF32_Codegen *cg, const char *msg, const Token *tok) {
     if (tok)
         fprintf(stderr,
             "\e[31m\e[1m\e[4m\e[40mCODEGEN ERROR - \e[0m"
@@ -108,20 +108,20 @@ static void cg_error(Codegen *cg, const char *msg, const Token *tok) {
 }
 
  
-/* SymTable */
+/* ELF32_SymTable */
  
 
-static void symtable_reset(SymTable *st) {
+static void ELF32_SymTable_reset(ELF32_SymTable *st) {
     st->count       = 0;
     st->next_offset = -4;
 }
 
-static int symtable_add_local(SymTable *st, const char *name, int size) {
-    if (st->count >= CODEGEN_MAX_LOCALS) return 0;
+static int ELF32_SymTable_add_local(ELF32_SymTable *st, const char *name, int size) {
+    if (st->count >= ELF32_Codegen_MAX_LOCALS) return 0;
     /* round size up to 4-byte slot */
     int slot = (size < 4) ? 4 : ((size + 3) & ~3);
     st->next_offset -= slot;   /* allocate from the bottom down */
-    LocalVar *v = &st->vars[st->count++];
+    ELF32_LocalVar *v = &st->vars[st->count++];
     strncpy(v->name, name, sizeof(v->name) - 1);
     v->name[sizeof(v->name)-1] = '\0';
     v->offset       = st->next_offset;  /* base = bottom of allocated region */
@@ -129,9 +129,9 @@ static int symtable_add_local(SymTable *st, const char *name, int size) {
     return v->offset;
 }
 
-static int symtable_add_param(SymTable *st, const char *name, int param_index) {
-    if (st->count >= CODEGEN_MAX_LOCALS) return 8;
-    LocalVar *v = &st->vars[st->count++];
+static int ELF32_SymTable_add_param(ELF32_SymTable *st, const char *name, int param_index) {
+    if (st->count >= ELF32_Codegen_MAX_LOCALS) return 8;
+    ELF32_LocalVar *v = &st->vars[st->count++];
     strncpy(v->name, name, sizeof(v->name) - 1);
     v->name[sizeof(v->name)-1] = '\0';
     v->offset = 8 + param_index * 4;
@@ -139,7 +139,7 @@ static int symtable_add_param(SymTable *st, const char *name, int param_index) {
     return v->offset;
 }
 
-static int symtable_find(const SymTable *st, const char *name, bool *found) {
+static int ELF32_SymTable_find(const ELF32_SymTable *st, const char *name, bool *found) {
     for (int i = 0; i < st->count; i++) {
         if (strcmp(st->vars[i].name, name) == 0) {
             *found = true;
@@ -151,7 +151,7 @@ static int symtable_find(const SymTable *st, const char *name, bool *found) {
 }
 
 /* Total bytes needed for locals (always a multiple of 4). */
-static int symtable_frame_size(const SymTable *st) {
+static int ELF32_SymTable_frame_size(const ELF32_SymTable *st) {
     int total = 0;
     for (int i = 0; i < st->count; i++)
         if (st->vars[i].offset < 0)
@@ -161,11 +161,11 @@ static int symtable_frame_size(const SymTable *st) {
 }
 
 /* Format an ebp-relative address correctly: [ebp - N] for negative, [ebp + N] for positive */
-static void emit_ebp_ref(StrBuf *buf, int offset) {
+static void emit_ebp_ref(ELF32_StrBuf *buf, int offset) {
     if (offset < 0)
-        strbuf_appendf(buf, "[ebp - %d]", -offset);
+        ELF32_StrBuf_appendf(buf, "[ebp - %d]", -offset);
     else
-        strbuf_appendf(buf, "[ebp + %d]", offset);
+        ELF32_StrBuf_appendf(buf, "[ebp + %d]", offset);
 }
 
 
@@ -192,19 +192,19 @@ static int type_size(const Token *tok) {
  * NODE_DEF_STRUCT children: NODE_STRUCT_FIELD nodes, each with:
  *   token = field name, children[0] = NODE_TYPE
  */
-static void register_struct(Codegen *cg, const Ast_node *let_node) {
+static void register_struct(ELF32_Codegen *cg, const Ast_node *let_node) {
     if (let_node->children.size < 3) return;
     const char *sname = let_node->children.items[0]->token
                         ? let_node->children.items[0]->token->lexeme : "";
     const Ast_node *ds = let_node->children.items[2];
 
-    if (cg->structs.count >= CODEGEN_MAX_STRUCTS) return;
-    StructDef *sd = &cg->structs.defs[cg->structs.count++];
+    if (cg->structs.count >= ELF32_Codegen_MAX_STRUCTS) return;
+    ELF32_StructDef *sd = &cg->structs.defs[cg->structs.count++];
     strncpy(sd->name, sname, sizeof(sd->name)-1);
     sd->nfields    = 0;
     sd->total_size = 0;
 
-    for (size_t i = 0; i < ds->children.size && sd->nfields < CODEGEN_MAX_STRUCT_FIELDS; i++) {
+    for (size_t i = 0; i < ds->children.size && sd->nfields < ELF32_Codegen_MAX_STRUCT_FIELDS; i++) {
         const Ast_node *field = ds->children.items[i];
         if (field->kind != NODE_STRUCT_FIELD) continue;
 
@@ -215,7 +215,7 @@ static void register_struct(Codegen *cg, const Ast_node *let_node) {
         int align = fsz < 4 ? fsz : 4;
         int padded = (sd->total_size + align - 1) & ~(align - 1);
 
-        StructField *sf = &sd->fields[sd->nfields++];
+        ELF32_StructField *sf = &sd->fields[sd->nfields++];
         strncpy(sf->name, fname, sizeof(sf->name)-1);
         sf->offset = padded;
         sf->size   = fsz;
@@ -225,14 +225,14 @@ static void register_struct(Codegen *cg, const Ast_node *let_node) {
     sd->total_size = (sd->total_size + 3) & ~3;
 }
 
-static const StructDef *find_struct(const Codegen *cg, const char *name) {
+static const ELF32_StructDef *find_struct(const ELF32_Codegen *cg, const char *name) {
     for (int i = 0; i < cg->structs.count; i++)
         if (strcmp(cg->structs.defs[i].name, name) == 0)
             return &cg->structs.defs[i];
     return NULL;
 }
 
-static __attribute__((unused)) const StructField *find_field(const StructDef *sd, const char *name) {
+static __attribute__((unused)) const ELF32_StructField *find_field(const ELF32_StructDef *sd, const char *name) {
     for (int i = 0; i < sd->nfields; i++)
         if (strcmp(sd->fields[i].name, name) == 0)
             return &sd->fields[i];
@@ -240,8 +240,8 @@ static __attribute__((unused)) const StructField *find_field(const StructDef *sd
 }
 
 /* Find which struct type a variable was declared as.
-   We store the struct name in the LocalVar name as "varname:StructName". */
-static __attribute__((unused)) const StructDef *var_struct_type(const Codegen *cg, const char *varname) {
+   We store the struct name in the ELF32_LocalVar name as "varname:StructName". */
+static __attribute__((unused)) const ELF32_StructDef *var_struct_type(const ELF32_Codegen *cg, const char *varname) {
     /* Look for "varname:StructName" pattern in symbol table */
     for (int i = 0; i < cg->syms.count; i++) {
         const char *vn = cg->syms.vars[i].name;
@@ -262,15 +262,15 @@ static __attribute__((unused)) const StructDef *var_struct_type(const Codegen *c
 
 /* Process escape sequences in a raw lexer string and intern it.
    Returns the asm label for this string. */
-static const char *intern_string(Codegen *cg, const char *raw) {
+static const char *intern_string(ELF32_Codegen *cg, const char *raw) {
     /* Check if already interned */
     for (int i = 0; i < cg->nstrings; i++)
         if (strcmp(cg->strings[i].value, raw) == 0)
             return cg->strings[i].label;
 
-    if (cg->nstrings >= CODEGEN_MAX_STRINGS) return ".str_overflow";
+    if (cg->nstrings >= ELF32_Codegen_MAX_STRINGS) return ".str_overflow";
 
-    StrEntry *e = &cg->strings[cg->nstrings++];
+    ELF32_StrEntry *e = &cg->strings[cg->nstrings++];
     snprintf(e->label, sizeof(e->label), ".str%d", cg->nstrings - 1);
     e->value = strdup(raw);
     e->len   = (int)strlen(raw) + 1; /* include null terminator */
@@ -281,30 +281,30 @@ static const char *intern_string(Codegen *cg, const char *raw) {
 /* Public API */
  
 
-Codegen *codegen_new(void) {
-    Codegen *cg = calloc(1, sizeof(Codegen));
-    strbuf_init(&cg->text);
-    strbuf_init(&cg->data);
-    strbuf_init(&cg->pre);
-    strbuf_init(&cg->body);
+ELF32_Codegen *ELF32_Codegen_new(void) {
+    ELF32_Codegen *cg = calloc(1, sizeof(ELF32_Codegen));
+    ELF32_StrBuf_init(&cg->text);
+    ELF32_StrBuf_init(&cg->data);
+    ELF32_StrBuf_init(&cg->pre);
+    ELF32_StrBuf_init(&cg->body);
     cg->label_counter = 0;
     cg->had_error     = false;
     cg->nglobals      = 0;
-    symtable_reset(&cg->syms);
+    ELF32_SymTable_reset(&cg->syms);
     return cg;
 }
 
-void codegen_free(Codegen *cg) {
-    strbuf_free(&cg->text);
-    strbuf_free(&cg->data);
-    strbuf_free(&cg->pre);
-    strbuf_free(&cg->body);
+void ELF32_Codegen_free(ELF32_Codegen *cg) {
+    ELF32_StrBuf_free(&cg->text);
+    ELF32_StrBuf_free(&cg->data);
+    ELF32_StrBuf_free(&cg->pre);
+    ELF32_StrBuf_free(&cg->body);
     for (int i = 0; i < cg->nstrings; i++)
         free(cg->strings[i].value);
     free(cg);
 }
 
-void codegen_fresh_label(Codegen *cg, char *buf, const char *prefix) {
+void ELF32_Codegen_fresh_label(ELF32_Codegen *cg, char *buf, const char *prefix) {
     snprintf(buf, 32, ".%s%d", prefix, cg->label_counter++);
 }
 
@@ -326,7 +326,7 @@ void codegen_fresh_label(Codegen *cg, char *buf, const char *prefix) {
    We emit a helper _craw_str_init that sets up all strings and stores
    their addresses into statically-known stack slots in _start's frame.
 */
-static void emit_string_data(Codegen *cg) {
+static void emit_string_data(ELF32_Codegen *cg) {
     if (cg->nstrings == 0) return;
 
     EMITL(D(cg), "; === string literal helper ===");
@@ -361,7 +361,7 @@ static void emit_string_data(Codegen *cg) {
     EMITL(D(cg), "");
 }
 
-char *codegen_get_asm(Codegen *cg) {
+char *ELF32_Codegen_get_asm(ELF32_Codegen *cg) {
     /* Build data section helpers first */
     emit_string_data(cg);
 
@@ -374,8 +374,8 @@ char *codegen_get_asm(Codegen *cg) {
     return out;
 }
 
-void codegen_write_asm(Codegen *cg, FILE *f) {
-    char *asm_str = codegen_get_asm(cg);
+void ELF32_Codegen_write_asm(ELF32_Codegen *cg, FILE *f) {
+    char *asm_str = ELF32_Codegen_get_asm(cg);
     fputs(asm_str, f);
     free(asm_str);
 }
@@ -384,20 +384,20 @@ void codegen_write_asm(Codegen *cg, FILE *f) {
 /* Forward declarations */
  
 
-static void cg_stmt  (Codegen *cg, const Ast_node *node);
-static void cg_expr  (Codegen *cg, const Ast_node *node);
-static void cg_fn_def(Codegen *cg, const Ast_node *node);
-static void cg_let   (Codegen *cg, const Ast_node *node);
-static void cg_return(Codegen *cg, const Ast_node *node);
-static void cg_if    (Codegen *cg, const Ast_node *node);
-static void cg_while (Codegen *cg, const Ast_node *node);
-static void cg_goto  (Codegen *cg, const Ast_node *node);
-static void cg_label (Codegen *cg, const Ast_node *node);
-static void cg_block (Codegen *cg, const Ast_node *node);
-static void cg_call  (Codegen *cg, const Ast_node *node);
-static void cg_binary(Codegen *cg, const Ast_node *node);
-static void cg_unary (Codegen *cg, const Ast_node *node);
-static void cg_assign(Codegen *cg, const Ast_node *node);
+static void cg_stmt  (ELF32_Codegen *cg, const Ast_node *node);
+static void cg_expr  (ELF32_Codegen *cg, const Ast_node *node);
+static void cg_fn_def(ELF32_Codegen *cg, const Ast_node *node);
+static void cg_let   (ELF32_Codegen *cg, const Ast_node *node);
+static void cg_return(ELF32_Codegen *cg, const Ast_node *node);
+static void cg_if    (ELF32_Codegen *cg, const Ast_node *node);
+static void cg_while (ELF32_Codegen *cg, const Ast_node *node);
+static void cg_goto  (ELF32_Codegen *cg, const Ast_node *node);
+static void cg_label (ELF32_Codegen *cg, const Ast_node *node);
+static void cg_block (ELF32_Codegen *cg, const Ast_node *node);
+static void cg_call  (ELF32_Codegen *cg, const Ast_node *node);
+static void cg_binary(ELF32_Codegen *cg, const Ast_node *node);
+static void cg_unary (ELF32_Codegen *cg, const Ast_node *node);
+static void cg_assign(ELF32_Codegen *cg, const Ast_node *node);
 
  
 /* Program */
@@ -416,7 +416,7 @@ static void cg_assign(Codegen *cg, const Ast_node *node);
  
 
 /* Look up a global by name; returns its esi-relative offset or -1 */
-static int global_find(Codegen *cg, const char *name) {
+static int global_find(ELF32_Codegen *cg, const char *name) {
     int offset = 0;
     for (int i = 0; i < cg->nglobals; i++) {
         if (strcmp(cg->globals[i].name, name) == 0)
@@ -427,14 +427,14 @@ static int global_find(Codegen *cg, const char *name) {
 }
 
 /* Total bytes needed for all globals */
-static int globals_frame_size(Codegen *cg) {
+static int globals_frame_size(ELF32_Codegen *cg) {
     int total = 0;
     for (int i = 0; i < cg->nglobals; i++)
         total += cg->globals[i].size < 4 ? 4 : cg->globals[i].size;
     return (total + 15) & ~15;  /* align to 16 */
 }
 
-void codegen_program(Codegen *cg, const Ast_node *program) {
+void ELF32_Codegen_program(ELF32_Codegen *cg, const Ast_node *program) {
     EMITL(T(cg), "; === CRAW generated x86-32 assembly ===");
 
     /* First pass: register struct types and collect global variables */
@@ -450,7 +450,7 @@ void codegen_program(Codegen *cg, const Ast_node *program) {
             const char *vname = child->children.items[0]->token
                                 ? child->children.items[0]->token->lexeme : "";
             int sz = type_size(type_tok);
-            if (cg->nglobals < CODEGEN_MAX_GLOBALS) {
+            if (cg->nglobals < ELF32_Codegen_MAX_GLOBALS) {
                 snprintf(cg->globals[cg->nglobals].label, 32,
                          ".gbl%d", cg->nglobals);
                 strncpy(cg->globals[cg->nglobals].name, vname, 63);
@@ -507,7 +507,7 @@ void codegen_program(Codegen *cg, const Ast_node *program) {
  *   [2..n-2]    NODE_PARAM       parameters
  *   [n-1]       NODE_PROGRAM     body block
  */
-static void cg_fn_def(Codegen *cg, const Ast_node *node) {
+static void cg_fn_def(ELF32_Codegen *cg, const Ast_node *node) {
     if (node->children.size < 2) {
         cg_error(cg, "Malformed fn_def", node->token);
         return;
@@ -518,7 +518,7 @@ static void cg_fn_def(Codegen *cg, const Ast_node *node) {
     strncpy(cg->cur_fn, fname, sizeof(cg->cur_fn) - 1);
     cg->cur_fn[sizeof(cg->cur_fn)-1] = '\0';
 
-    symtable_reset(&cg->syms);
+    ELF32_SymTable_reset(&cg->syms);
 
     /* Collect params and find body */
     int param_index = 0;
@@ -527,7 +527,7 @@ static void cg_fn_def(Codegen *cg, const Ast_node *node) {
         const Ast_node *ch = node->children.items[i];
         if (ch->kind == NODE_PARAM) {
             const char *pname = ch->token ? ch->token->lexeme : "";
-            symtable_add_param(&cg->syms, pname, param_index++);
+            ELF32_SymTable_add_param(&cg->syms, pname, param_index++);
         } else if (ch->kind == NODE_PROGRAM) {
             body = ch;
         }
@@ -536,14 +536,14 @@ static void cg_fn_def(Codegen *cg, const Ast_node *node) {
         body = node->children.items[node->children.size - 1];
 
     /* Reset body buffer for this function */
-    strbuf_free(&cg->body);
-    strbuf_init(&cg->body);
+    ELF32_StrBuf_free(&cg->body);
+    ELF32_StrBuf_init(&cg->body);
 
     /* Compile body into cg->body */
     if (body) cg_block(cg, body);
 
     /* Now we know the frame size */
-    int frame_sz = symtable_frame_size(&cg->syms);
+    int frame_sz = ELF32_SymTable_frame_size(&cg->syms);
     /* Minimum 16 bytes even for empty functions */
     if (frame_sz < 16) frame_sz = 16;
 
@@ -562,7 +562,7 @@ static void cg_fn_def(Codegen *cg, const Ast_node *node) {
 
     /* Splice in body */
     if (cg->body.len)
-        strbuf_append(T(cg), cg->body.data);
+        ELF32_StrBuf_append(T(cg), cg->body.data);
 
     /* Epilogue */
     EMITL(T(cg), ".%s_exit:", fname);
@@ -580,7 +580,7 @@ static void cg_fn_def(Codegen *cg, const Ast_node *node) {
 /* Block */
  
 
-static void cg_block(Codegen *cg, const Ast_node *node) {
+static void cg_block(ELF32_Codegen *cg, const Ast_node *node) {
     for (size_t i = 0; i < node->children.size; i++)
         cg_stmt(cg, node->children.items[i]);
 }
@@ -589,7 +589,7 @@ static void cg_block(Codegen *cg, const Ast_node *node) {
 /* Statements */
  
 
-static void cg_stmt(Codegen *cg, const Ast_node *node) {
+static void cg_stmt(ELF32_Codegen *cg, const Ast_node *node) {
     switch (node->kind) {
         case NODE_LET:       cg_let(cg, node);    break;
         case NODE_RETURN:    cg_return(cg, node);  break;
@@ -617,14 +617,14 @@ static void cg_stmt(Codegen *cg, const Ast_node *node) {
                 /* New source line → start a new assembly line.
                    If the NEXT token is a colon this is a label — no indent. */
                 if (t->line != cur_line) {
-                    if (cur_line != 0) strbuf_append(B(cg), "\n");
+                    if (cur_line != 0) ELF32_StrBuf_append(B(cg), "\n");
                     /* Peek ahead: is the token after this one a Colon? */
                     bool is_label = false;
                     if (i + 1 < node->children.size) {
                         const Token *next_t = node->children.items[i+1]->token;
                         if (next_t && next_t->tokenType == Colon) is_label = true;
                     }
-                    strbuf_append(B(cg), is_label ? "" : "    ");
+                    ELF32_StrBuf_append(B(cg), is_label ? "" : "    ");
                     cur_line = t->line;
                 }
 
@@ -632,35 +632,35 @@ static void cg_stmt(Codegen *cg, const Ast_node *node) {
                    Labels must be at the start of the line with no indent. */
                 if (t->tokenType == Colon) {
                     /* Remove trailing space from the identifier just emitted */
-                    StrBuf *b = B(cg);
+                    ELF32_StrBuf *b = B(cg);
                     if (b->len > 0 && b->data[b->len-1] == ' ') {
                         b->len--;
                         b->data[b->len] = '\0';
                     }
-                    strbuf_append(B(cg), ":\n");
+                    ELF32_StrBuf_append(B(cg), ":\n");
                     cur_line = 0;
                     continue;
                 }
 
                 /* Brackets: no spaces inside [reg+disp] */
                 if (t->tokenType == LeftBracket) {
-                    strbuf_append(B(cg), "[");
+                    ELF32_StrBuf_append(B(cg), "[");
                     continue;
                 }
                 if (t->tokenType == RightBracket) {
-                    strbuf_append(B(cg), "]");
+                    ELF32_StrBuf_append(B(cg), "]");
                     continue;
                 }
 
                 /* Comma: no space before */
                 if (t->tokenType == Comma) {
-                    strbuf_append(B(cg), ", ");
+                    ELF32_StrBuf_append(B(cg), ", ");
                     continue;
                 }
 
                 EMIT(B(cg), "%s ", t->lexeme);
             }
-            strbuf_append(B(cg), "\n");
+            ELF32_StrBuf_append(B(cg), "\n");
             EMITL(B(cg), "    ; --- end inline asm ---");
             break;
         }
@@ -675,7 +675,7 @@ static void cg_stmt(Codegen *cg, const Ast_node *node) {
  
 /* let */
 
-static void cg_let(Codegen *cg, const Ast_node *node) {
+static void cg_let(ELF32_Codegen *cg, const Ast_node *node) {
     if (node->children.size < 2) {
         cg_error(cg, "Malformed let", node->token);
         return;
@@ -702,13 +702,13 @@ static void cg_let(Codegen *cg, const Ast_node *node) {
                 sname = init->children.items[0]->token
                         ? init->children.items[0]->token->lexeme : NULL;
         }
-        const StructDef *sd = sname ? find_struct(cg, sname) : NULL;
+        const ELF32_StructDef *sd = sname ? find_struct(cg, sname) : NULL;
         int sz = sd ? sd->total_size : 4;
 
         /* Store as "varname:StructName" so we can look up the type later */
         char tagged[128];
         snprintf(tagged, sizeof(tagged), "%s:%s", vname, sname ? sname : "?");
-        int offset = symtable_add_local(&cg->syms, tagged, sz);
+        int offset = ELF32_SymTable_add_local(&cg->syms, tagged, sz);
 
         EMITL(B(cg), "    ; let %s : %s  [ebp%d]  size=%d",
               vname, sname ? sname : "?", offset, sz);
@@ -717,20 +717,20 @@ static void cg_let(Codegen *cg, const Ast_node *node) {
         for (int i = 0; i < sz; i += 4) {
             EMITL(B(cg), "    mov eax, 0");
             EMIT(B(cg), "    mov "); emit_ebp_ref(B(cg), offset + i);
-            strbuf_append(B(cg), ", eax\n");
+            ELF32_StrBuf_append(B(cg), ", eax\n");
         }
         return;
     }
 
     /* Ordinary variable */
     int sz = type_size(type_tok);
-    int offset = symtable_add_local(&cg->syms, vname, sz);
+    int offset = ELF32_SymTable_add_local(&cg->syms, vname, sz);
     EMITL(B(cg), "    ; let %s : %s  [ebp%d]",
           vname, type_tok ? type_tok->lexeme : "?", offset);
 
     if (node->children.size > 2) {
         cg_expr(cg, node->children.items[2]);
-        EMIT(B(cg), "    mov "); emit_ebp_ref(B(cg), offset); strbuf_appendf(B(cg), ", eax    ; store %s\n", vname);
+        EMIT(B(cg), "    mov "); emit_ebp_ref(B(cg), offset); ELF32_StrBuf_appendf(B(cg), ", eax    ; store %s\n", vname);
     }
 }
 
@@ -738,7 +738,7 @@ static void cg_let(Codegen *cg, const Ast_node *node) {
 /* return */
  
 
-static void cg_return(Codegen *cg, const Ast_node *node) {
+static void cg_return(ELF32_Codegen *cg, const Ast_node *node) {
     if (node->children.size > 0)
         cg_expr(cg, node->children.items[0]);
     else
@@ -765,7 +765,7 @@ static bool block_ends_with_transfer(const Ast_node *block) {
  *   [1]   then-block (NODE_PROGRAM)
  *   [2]?  else-block (NODE_PROGRAM) or else-if (NODE_IF)
  */
-static void cg_if(Codegen *cg, const Ast_node *node) {
+static void cg_if(ELF32_Codegen *cg, const Ast_node *node) {
     if (node->children.size < 2) {
         cg_error(cg, "Malformed if", node->token);
         return;
@@ -773,8 +773,8 @@ static void cg_if(Codegen *cg, const Ast_node *node) {
     bool has_else = (node->children.size >= 3);
 
     char else_lbl[32], end_lbl[32];
-    codegen_fresh_label(cg, end_lbl, "if_end");
-    if (has_else) codegen_fresh_label(cg, else_lbl, "if_else");
+    ELF32_Codegen_fresh_label(cg, end_lbl, "if_end");
+    if (has_else) ELF32_Codegen_fresh_label(cg, else_lbl, "if_else");
 
     /* Evaluate condition */
     cg_expr(cg, node->children.items[0]);
@@ -805,14 +805,14 @@ static void cg_if(Codegen *cg, const Ast_node *node) {
  *   [0]  condition expr
  *   [1]  body block
  */
-static void cg_while(Codegen *cg, const Ast_node *node) {
+static void cg_while(ELF32_Codegen *cg, const Ast_node *node) {
     if (node->children.size < 2) {
         cg_error(cg, "Malformed while", node->token);
         return;
     }
     char top_lbl[32], end_lbl[32];
-    codegen_fresh_label(cg, top_lbl, "while_top");
-    codegen_fresh_label(cg, end_lbl, "while_end");
+    ELF32_Codegen_fresh_label(cg, top_lbl, "while_top");
+    ELF32_Codegen_fresh_label(cg, end_lbl, "while_end");
 
     EMITL(B(cg), "%s:", top_lbl);
     cg_expr(cg, node->children.items[0]);
@@ -827,14 +827,14 @@ static void cg_while(Codegen *cg, const Ast_node *node) {
 /* goto / label */
  
 
-static void cg_goto(Codegen *cg, const Ast_node *node) {
+static void cg_goto(ELF32_Codegen *cg, const Ast_node *node) {
     if (!node->children.size) return;
     const char *lbl = node->children.items[0]->token
                       ? node->children.items[0]->token->lexeme : "";
     EMITL(B(cg), "    jmp %s", lbl);
 }
 
-static void cg_label(Codegen *cg, const Ast_node *node) {
+static void cg_label(ELF32_Codegen *cg, const Ast_node *node) {
     if (!node->children.size) return;
     const char *lbl = node->children.items[0]->token
                       ? node->children.items[0]->token->lexeme : "";
@@ -845,7 +845,7 @@ static void cg_label(Codegen *cg, const Ast_node *node) {
 /* Expression dispatch */
  
 
-static void cg_expr(Codegen *cg, const Ast_node *node) {
+static void cg_expr(ELF32_Codegen *cg, const Ast_node *node) {
     if (!node) return;
 
     switch (node->kind) {
@@ -895,9 +895,9 @@ static void cg_expr(Codegen *cg, const Ast_node *node) {
         case NODE_IDENTIFIER: {
             if (!node->token || !node->token->lexeme) break;
             bool found = false;
-            int offset = symtable_find(&cg->syms, node->token->lexeme, &found);
+            int offset = ELF32_SymTable_find(&cg->syms, node->token->lexeme, &found);
             if (found) {
-                EMIT(B(cg), "    mov eax, "); emit_ebp_ref(B(cg), offset); strbuf_appendf(B(cg), "    ; %s\n", node->token->lexeme);
+                EMIT(B(cg), "    mov eax, "); emit_ebp_ref(B(cg), offset); ELF32_StrBuf_appendf(B(cg), "    ; %s\n", node->token->lexeme);
             } else {
                 /* Check global variable table */
                 int goff = global_find(cg, node->token->lexeme);
@@ -938,7 +938,7 @@ static void cg_expr(Codegen *cg, const Ast_node *node) {
             /* Find the struct base offset */
             bool found = false;
             int obj_off = 0;
-            const StructDef *sd = NULL;
+            const ELF32_StructDef *sd = NULL;
 
             for (int vi = 0; vi < cg->syms.count; vi++) {
                 const char *vn = cg->syms.vars[vi].name;
@@ -964,7 +964,7 @@ static void cg_expr(Codegen *cg, const Ast_node *node) {
             }
 
             /* Find the field */
-            const StructField *sf = NULL;
+            const ELF32_StructField *sf = NULL;
             for (int fi = 0; fi < sd->nfields; fi++) {
                 if (strcmp(sd->fields[fi].name, fname) == 0) {
                     sf = &sd->fields[fi];
@@ -982,7 +982,7 @@ static void cg_expr(Codegen *cg, const Ast_node *node) {
             EMITL(B(cg), "    ; %s.%s  [ebp%+d]", oname, fname, total_off);
             EMIT(B(cg), "    mov eax, ");
             emit_ebp_ref(B(cg), total_off);
-            strbuf_append(B(cg), "\n");
+            ELF32_StrBuf_append(B(cg), "\n");
             break;
         }
 
@@ -1029,7 +1029,7 @@ static void cg_expr(Codegen *cg, const Ast_node *node) {
  * eax = right operand, ebx = left operand.
  * Result in eax.
  */
-static void cg_binary(Codegen *cg, const Ast_node *node) {
+static void cg_binary(ELF32_Codegen *cg, const Ast_node *node) {
     if (!node->token || node->children.size < 2) {
         cg_error(cg, "Malformed binary-op", node->token);
         return;
@@ -1104,8 +1104,8 @@ static void cg_binary(Codegen *cg, const Ast_node *node) {
            combine the boolean results */
         case And: {
             char lf[32], ld[32];
-            codegen_fresh_label(cg, lf, "and_f");
-            codegen_fresh_label(cg, ld, "and_d");
+            ELF32_Codegen_fresh_label(cg, lf, "and_f");
+            ELF32_Codegen_fresh_label(cg, ld, "and_d");
             EMITL(B(cg), "    test ebx, ebx");
             EMITL(B(cg), "    je %s", lf);
             EMITL(B(cg), "    test eax, eax");
@@ -1119,8 +1119,8 @@ static void cg_binary(Codegen *cg, const Ast_node *node) {
         }
         case Or: {
             char lt[32], ld[32];
-            codegen_fresh_label(cg, lt, "or_t");
-            codegen_fresh_label(cg, ld, "or_d");
+            ELF32_Codegen_fresh_label(cg, lt, "or_t");
+            ELF32_Codegen_fresh_label(cg, ld, "or_d");
             EMITL(B(cg), "    test ebx, ebx");
             EMITL(B(cg), "    jne %s", lt);
             EMITL(B(cg), "    test eax, eax");
@@ -1141,8 +1141,8 @@ static void cg_binary(Codegen *cg, const Ast_node *node) {
         case LessEqual:
         case GreaterEqual: {
             char lt[32], ld[32];
-            codegen_fresh_label(cg, lt, "cmp_t");
-            codegen_fresh_label(cg, ld, "cmp_d");
+            ELF32_Codegen_fresh_label(cg, lt, "cmp_t");
+            ELF32_Codegen_fresh_label(cg, ld, "cmp_d");
             EMITL(B(cg), "    cmp ebx, eax");
             const char *jmp;
             switch(op) {
@@ -1173,7 +1173,7 @@ static void cg_binary(Codegen *cg, const Ast_node *node) {
 /* Unary */
  
 
-static void cg_unary(Codegen *cg, const Ast_node *node) {
+static void cg_unary(ELF32_Codegen *cg, const Ast_node *node) {
     if (!node->token || !node->children.size) return;
     cg_expr(cg, node->children.items[0]);
 
@@ -1183,8 +1183,8 @@ static void cg_unary(Codegen *cg, const Ast_node *node) {
             break;
         case Not: {
             char lf[32], ld[32];
-            codegen_fresh_label(cg, lf, "not_f");
-            codegen_fresh_label(cg, ld, "not_d");
+            ELF32_Codegen_fresh_label(cg, lf, "not_f");
+            ELF32_Codegen_fresh_label(cg, ld, "not_d");
             EMITL(B(cg), "    test eax, eax");
             EMITL(B(cg), "    jne %s", lf);
             EMITL(B(cg), "    mov eax, 1");
@@ -1205,7 +1205,7 @@ static void cg_unary(Codegen *cg, const Ast_node *node) {
  
 /* Assignment */
 
-static void cg_assign(Codegen *cg, const Ast_node *node) {
+static void cg_assign(ELF32_Codegen *cg, const Ast_node *node) {
     if (node->children.size < 2) return;
 
     /* Compile RHS → eax */
@@ -1214,9 +1214,9 @@ static void cg_assign(Codegen *cg, const Ast_node *node) {
     const Ast_node *target = node->children.items[0];
     if (target->kind == NODE_IDENTIFIER && target->token) {
         bool found = false;
-        int offset = symtable_find(&cg->syms, target->token->lexeme, &found);
+        int offset = ELF32_SymTable_find(&cg->syms, target->token->lexeme, &found);
         if (found) {
-            EMIT(B(cg), "    mov "); emit_ebp_ref(B(cg), offset); strbuf_appendf(B(cg), ", eax    ; %s =\n", target->token->lexeme);
+            EMIT(B(cg), "    mov "); emit_ebp_ref(B(cg), offset); ELF32_StrBuf_appendf(B(cg), ", eax    ; %s =\n", target->token->lexeme);
         } else {
             int goff = global_find(cg, target->token->lexeme);
             if (goff >= 0) {
@@ -1246,7 +1246,7 @@ static void cg_assign(Codegen *cg, const Ast_node *node) {
 
         /* Find object in sym table */
         int obj_off = 0;
-        const StructDef *sd = NULL;
+        const ELF32_StructDef *sd = NULL;
         for (int vi = 0; vi < cg->syms.count; vi++) {
             const char *vn = cg->syms.vars[vi].name;
             const char *colon = strchr(vn, ':');
@@ -1262,7 +1262,7 @@ static void cg_assign(Codegen *cg, const Ast_node *node) {
             EMITL(B(cg), "    ; ERROR: '%s' is not a struct or not found", oname);
             cg->had_error = true;
         } else {
-            const StructField *sf = NULL;
+            const ELF32_StructField *sf = NULL;
             for (int fi = 0; fi < sd->nfields; fi++) {
                 if (strcmp(sd->fields[fi].name, fname) == 0) { sf = &sd->fields[fi]; break; }
             }
@@ -1274,7 +1274,7 @@ static void cg_assign(Codegen *cg, const Ast_node *node) {
                 EMITL(B(cg), "    ; %s.%s = eax  [ebp%+d]", oname, fname, total_off);
                 EMIT(B(cg), "    mov ");
                 emit_ebp_ref(B(cg), total_off);
-                strbuf_append(B(cg), ", eax\n");
+                ELF32_StrBuf_append(B(cg), ", eax\n");
             }
         }
     } else {
@@ -1286,7 +1286,7 @@ static void cg_assign(Codegen *cg, const Ast_node *node) {
 /* Function call (cdecl) */
  
 
-static void cg_call(Codegen *cg, const Ast_node *node) {
+static void cg_call(ELF32_Codegen *cg, const Ast_node *node) {
     if (!node->children.size) return;
 
     const Ast_node *callee = node->children.items[0];

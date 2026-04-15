@@ -49,7 +49,8 @@ C_SOURCES = \
     src/parser/AST.c \
     src/parser/hashmap.c \
     src/parser/parser.c \
-    src/codegen/codegen.c
+    src/codegen/elf32/elf32_codegen.c \
+	src/codegen/x86-64/x86-64_codegen.c
 
 CXX_SOURCES = \
     src/assembler/assembler.cpp \

@@ -111,53 +111,61 @@ int main(int argc, char *argv[]) {
         goto cleanup;
     }
 
+    Arch arch = ELF32;
+
     /* Codegen */
     {
-        Codegen *cg = codegen_new();
-        codegen_program(cg, ast);
+        switch (arch) {
+            case ELF32:
+                ELF32_Codegen *cg = ELF32_codegen_new();
+                ELF32_codegen_program(cg, ast);
 
-        if (cg->had_error) {
-            has_at_least_one_error = true;
-            fprintf(stderr, "Error: Code generation failed.\n");
-            codegen_free(cg);
-            goto cleanup;
+                if (cg->had_error) {
+                    has_at_least_one_error = true;
+                    fprintf(stderr, "Error: Code generation failed.\n");
+                    ELF32_codegen_free(cg);
+                    goto cleanup;
+                }
+
+                if (debug_mode) {
+                    printf(B_RED "[DEBUG]" RESET " Generated assembly:\n");
+                    ELF32_codegen_write_asm(cg, stdout);
+                    printf("\n");
+                }
+
+                /* -S mode: write .asm file only */
+                if (emit_asm) {
+                    FILE *asm_f = fopen(output_file, "w");
+                    if (!asm_f) {
+                        fprintf(stderr, "Error: Cannot open '%s' for writing.\n", output_file);
+                        has_at_least_one_error = true;
+                    } else {
+                        ELF32_codegen_write_asm(cg, asm_f);
+                        fclose(asm_f);
+                        printf("Assembly written to %s\n", output_file);
+                    }
+                } else {
+                    /* Normal mode: pipe asm string into the C++ assembler */
+                    char *asm_str = ELF32_codegen_get_asm(cg);
+
+                    if (debug_mode)
+                        printf(B_RED "[DEBUG]" RESET " Assembling to '%s'...\n", output_file);
+
+                    bool ok = assemble_from_string(asm_str, output_file);
+                    if (!ok) {
+                        fprintf(stderr, "Error: Assembly failed.\n");
+                        has_at_least_one_error = true;
+                    } else {
+                        printf("Binary written to %s\n", output_file);
+                    }
+                    free(asm_str);
+                }
+
+                ELF32_codegen_free(cg);
+                break;
+            case X86_64:
+                break;
         }
-
-        if (debug_mode) {
-            printf(B_RED "[DEBUG]" RESET " Generated assembly:\n");
-            codegen_write_asm(cg, stdout);
-            printf("\n");
-        }
-
-        /* -S mode: write .asm file only */
-        if (emit_asm) {
-            FILE *asm_f = fopen(output_file, "w");
-            if (!asm_f) {
-                fprintf(stderr, "Error: Cannot open '%s' for writing.\n", output_file);
-                has_at_least_one_error = true;
-            } else {
-                codegen_write_asm(cg, asm_f);
-                fclose(asm_f);
-                printf("Assembly written to %s\n", output_file);
-            }
-        } else {
-            /* Normal mode: pipe asm string into the C++ assembler */
-            char *asm_str = codegen_get_asm(cg);
-
-            if (debug_mode)
-                printf(B_RED "[DEBUG]" RESET " Assembling to '%s'...\n", output_file);
-
-            bool ok = assemble_from_string(asm_str, output_file);
-            if (!ok) {
-                fprintf(stderr, "Error: Assembly failed.\n");
-                has_at_least_one_error = true;
-            } else {
-                printf("Binary written to %s\n", output_file);
-            }
-            free(asm_str);
-        }
-
-        codegen_free(cg);
     }
 
 cleanup:
