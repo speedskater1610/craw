@@ -20,9 +20,8 @@
  *   [ebp - 4*n]      nth local (4-byte slots)
  */
 
- 
+
 /* Dynamic string buffer (for in-memory assembly output) */
- 
 typedef struct {
     char  *data;
     size_t len;
@@ -36,7 +35,6 @@ void ELF32_StrBuf_append (ELF32_StrBuf *sb, const char *s);
 
  
 /* String-literal table (for the .data section) */
- 
 #define ELF32_Codegen_MAX_STRINGS 256
 
 typedef struct {
@@ -47,7 +45,6 @@ typedef struct {
 
  
 /* Struct type table — collected from NODE_DEF_STRUCT nodes */
- 
 #define ELF32_Codegen_MAX_STRUCT_FIELDS 32
 #define ELF32_Codegen_MAX_STRUCTS       64
 
@@ -71,7 +68,6 @@ typedef struct {
 
  
 /* Symbol table */
- 
 #define ELF32_Codegen_MAX_LOCALS 256
 
 typedef struct {
@@ -88,7 +84,6 @@ typedef struct {
 
  
 /* Code generator state */
- 
 typedef struct {
     ELF32_StrBuf   text;          /* .text section buffer */
     ELF32_StrBuf   data;          /* .data section buffer */
@@ -114,21 +109,19 @@ typedef struct {
 
  
 /* Public API */
- 
-
-ELF32_Codegen *ELF32_Codegen_new   (void);
-void     ELF32_Codegen_free  (ELF32_Codegen *cg);
+ELF32_Codegen *ELF32_Codegen_new(void);
+void ELF32_Codegen_free(ELF32_Codegen *cg);
 
 /* Compile a full program AST; fills cg->text and cg->data. */
-void     ELF32_Codegen_program(ELF32_Codegen *cg, const Ast_node *program);
+void ELF32_Codegen_program(ELF32_Codegen *cg, const Ast_node *program);
 
 /* Return a single heap-allocated string: data section + text section.
    Caller must free(). */
-char    *ELF32_Codegen_get_asm(ELF32_Codegen *cg);
+char *ELF32_Codegen_get_asm(ELF32_Codegen *cg);
 
 /* Write complete assembly to a FILE* (e.g. for -S flag or debug). */
-void     ELF32_Codegen_write_asm(ELF32_Codegen *cg, FILE *f);
+void ELF32_Codegen_write_asm(ELF32_Codegen *cg, FILE *f);
 
-void     ELF32_Codegen_fresh_label(ELF32_Codegen *cg, char *buf, const char *prefix);
+void ELF32_Codegen_fresh_label(ELF32_Codegen *cg, char *buf, const char *prefix);
 
 #endif /* ELF32_Codegen_H */

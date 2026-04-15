@@ -21,7 +21,22 @@
  *   [rbp - 4*n]      nth local (4-byte slots)
  */
 
+typedef struct {} x86_64_Codegen;
 
+/* NOTE: Still decided if I want to rewrie elf32 codegen or write a new one */
 
+/* Public API */
+x86_64_Codegen *x86_64_Codegen_new();
+void x86_64_Codegen_free();
+
+/* Compile a full program AST; fills cg->text and cg->data. */
+void x86_64_Codegen_program();
+
+/* Return a single heap-allocated string: data section + text section.
+   Caller must free(). */
+char *x86_64_Codegen_get_asm();
+
+/* Write complete assembly to a FILE* (e.g. for -S flag or debug). */
+void x86_64_Codegen_write_asm();
 
 #endif /* CODEGEN_H */
