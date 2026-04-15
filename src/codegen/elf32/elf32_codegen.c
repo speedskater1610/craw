@@ -32,9 +32,9 @@
 #include <stdarg.h>
 #include <stdbool.h>
 
-#include "codegen.h"
-#include "../parser/AST.h"
-#include "../lexer/token.h"
+#include "../codegen.h"
+#include "../../parser/AST.h"
+#include "../../lexer/token.h"
 
  
 /* ELF32_StrBuf */
