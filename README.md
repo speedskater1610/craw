@@ -1,6 +1,10 @@
 # CRAW
 
-CRAW is a compiler and assembler toolchain that is used for compiling a C like language with rust like syntax, It includes 2 binary output options, both are for x86 linux, a 32 bit assembler backend that includes minimal instructions, but produces direct elf binaries that are "smaller", than the other option, a LLVM backend assembler, written in rust, that is the default. When using the ELF32 assembler, a single craw source file is used to produce a single assembly and object file.
+Crawc is a compiler for the craw programming language, a language I wrote a "spec" on 3 years ago when I started getting into rust that I thought would be the "optimal" programming language, it has grown from just a compiler to a tool chain for this language, (well no yet but part of the way there). I would like to say that the language is a non strict, no safety checks, language that has a similar syntax to C/Rust/Zig (3 of my favorite languages to date). Once I finish the CLI, and implement a few more targets for the compiler, I would like to add some more features to the language. Along with hopefully getting a CLI as good as cargo.
+
+## Supported architectures
+- ELF32 binary
+- x86-64 llvm object file
 
 ![Progect](https://repobeats.axiom.co/api/embed/5f415f92daddb36bceccae1c71675c76c02de222.svg "Repobeats analytics image")
 
