@@ -36,6 +36,6 @@ pub fn getTag(tag: []const u8) !void {
         // TODO: impl build logic
     }
     else if (std.mem.eql(u8, tag, "new")) {
-        setupWorkspace()
+        setupWorkspace();
     }
 }
