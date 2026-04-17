@@ -1,6 +1,6 @@
 const std = @import("std");
 
-fn print_help() !void {
+fn printHelp() !void {
     const stdout = std.io.getStdOut().writer();
     try stdout.print("\t`help`\t-\tPrints help (This message!)\n", .{});
     try stdout.print("\t`build`\t-\tBuilds the craw project in the current directory\n", .{});
@@ -10,7 +10,7 @@ fn print_help() !void {
     try stdout.flush();
 }
 
-fn setup_workspace() void {
+fn setupWorkspace() void {
     const stdout = std.io.getStdOut().writer();
     const stdin = std.io.getStdIn().reader();
 
@@ -25,9 +25,9 @@ fn setup_workspace() void {
     }
 }
 
-pub fn get_tag(tag: [_]const u8) !void {
+pub fn getTag(tag: []const u8) !void {
     if (std.mem.eql(u8, tag, "help")) {
-        print_help();
+        printHelp();
     }
     else if (std.mem.eql(u8, tag, "build")) {
         //  TODO: impl build logic
@@ -36,6 +36,6 @@ pub fn get_tag(tag: [_]const u8) !void {
         // TODO: impl build logic
     }
     else if (std.mem.eql(u8, tag, "new")) {
-        setup_workspace()
+        setupWorkspace()
     }
 }

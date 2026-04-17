@@ -1,4 +1,4 @@
-const tag = @import("tag.zig");
+const tagSys = @import("tag.zig");
 const std = @import("std");
 
 pub fn main() !void {
@@ -13,6 +13,6 @@ pub fn main() !void {
 
     const tags = args[1..]; // slice and start at index 1
     for (tags) |tag| {
-        tag.get_tag(tag);
+        tagSys.getTag(tag);
     }
 }
