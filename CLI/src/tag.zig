@@ -1,6 +1,7 @@
 const std = @import("std");
 
 fn printHelp() !void {
+    // is it bad practice if I write c.printf for all this...
     const stdout = std.io.getStdOut().writer();
     try stdout.print("\t`help`\t-\tPrints help (This message!)\n", .{});
     try stdout.print("\t`build`\t-\tBuilds the craw project in the current directory\n", .{});
