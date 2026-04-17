@@ -3,15 +3,15 @@ const std = @import("std");
 
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    const allocator = gpa.allocator();
     defer _ = gpa.deinit();
+    
+    var arena = std.heap.ArenaAllocator.init(gpa.allocator());
+    defer arena.deinit();
 
-    var args = try std.process.argsWithAllocator(allocator);
-    defer args.deinit();
+    const args = try init.args.toSlice(arena.allocator());
 
-    const exe_name = args.next() orelse "unknown"; // most likely `./crawcli` or `crawcli`
+    var tags = [..1]args; // get rid of the program name (crawcli)
 
-    const tags = args[1..]; // slice and start at index 1
     for (tags) |tag| {
         tagSys.getTag(tag);
     }

@@ -45,7 +45,7 @@ jobs:
         if: runner.os != 'Windows'
         run: |
           make cli
-          ./craw_cli  help
+          ./crawcli  help
 
       # Artifacts
       - name: Upload craw artifact

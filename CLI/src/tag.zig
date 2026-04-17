@@ -10,7 +10,7 @@ fn printHelp() !void {
     try stdout.flush();
 }
 
-fn setupWorkspace() void {
+fn setupWorkspace() !void {
     const stdout = std.io.getStdOut().writer();
     const stdin = std.io.getStdIn().reader();
 
