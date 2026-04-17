@@ -10,7 +10,7 @@ pub fn main() !void {
 
     const args = try init.args.toSlice(arena.allocator());
 
-    var tags = [..1]args; // get rid of the program name (crawcli)
+    var tags = args[0..args.len]; // get rid of the program name (crawcli)
 
     for (tags) |tag| {
         tagSys.getTag(tag);
