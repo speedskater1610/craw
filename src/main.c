@@ -18,6 +18,7 @@
 bool has_at_least_one_error = false;
 bool debug_mode_enables     = false;
 bool is_assembling          = false;
+Arch arch                   = ELF32; /* Default target: this will probably get changed no matter what though */
 
 int main(int argc, char *argv[]) {
     bool  debug_mode   = false;
@@ -110,8 +111,6 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Error: Parse failed — not assembling.\n");
         goto cleanup;
     }
-
-    Arch arch = ELF32;
 
     /* Codegen */
     {

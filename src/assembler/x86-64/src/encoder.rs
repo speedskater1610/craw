@@ -1,4 +1,3 @@
-// src/assembler/rust_src/src/encoder.rs
 // Encodes parsed x86-64 instructions into raw machine-code bytes.
 // Produces a simple section map used by codegen to build the object file.
 
@@ -119,9 +118,7 @@ pub fn encode(items: &[Item]) -> Result<EncoderOutput, String> {
     Ok(EncoderOutput { sections })
 }
 
-
 // Instruction encoding
-
 fn encode_instruction(
     mnemonic: &str,
     operands: &[Operand],

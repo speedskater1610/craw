@@ -11,7 +11,7 @@ TARGET   = crawc
 # Run `make all` for the full build (requires cargo + llvm-config).
 # Run `make quick` to build without Rust/LLVM using the C++ backend only.
 # -----------------------------------------------------------------------
-RUST_SRC_DIR   = src/assembler/rust_src
+RUST_SRC_DIR   = src/assembler/x86-64
 RUST_TARGET    = $(RUST_SRC_DIR)/target/release
 RUST_LIB       = $(RUST_TARGET)/libassembler.a
 
@@ -53,18 +53,14 @@ C_SOURCES = \
 	src/codegen/x86-64/x86-64_codegen.c
 
 CXX_SOURCES = \
-    src/assembler/assembler.cpp \
-    src/assembler/emit.cpp \
-    src/assembler/encode.cpp \
-    src/assembler/mainAssembler.cpp \
-    src/assembler/parse.cpp
-
-# Stub replaces Rust FFI symbols when building without the Rust lib
-STUB_SOURCES = src/assembler/rassembler_stub.c
+    src/assembler/elf32/assembler.cpp \
+    src/assembler/elf32/emit.cpp \
+    src/assembler/elf32/encode.cpp \
+    src/assembler/elf32/mainAssembler.cpp \
+    src/assembler/elf32/parse.cpp
 
 C_OBJECTS    = $(C_SOURCES:.c=.o)
 CXX_OBJECTS  = $(CXX_SOURCES:.cpp=.o)
-STUB_OBJECTS = $(STUB_SOURCES:.c=.o)
 ALL_OBJECTS  = $(C_OBJECTS) $(CXX_OBJECTS)
 
 # -----------------------------------------------------------------------
@@ -76,8 +72,8 @@ ALL_OBJECTS  = $(C_OBJECTS) $(CXX_OBJECTS)
 all: rust-lib $(TARGET)
 
 # Quick build: C++ assembler backend only, no Rust/LLVM needed
-quick: $(C_OBJECTS) $(CXX_OBJECTS) $(STUB_OBJECTS)
-	$(CXX) $(CXXFLAGS) $(C_OBJECTS) $(CXX_OBJECTS) $(STUB_OBJECTS) \
+quick: $(C_OBJECTS) $(CXX_OBJECTS)
+	$(CXX) $(CXXFLAGS) $(C_OBJECTS) $(CXX_OBJECTS) \
 	    -lpthread -ldl -lm \
 	    -o $(TARGET)
 	@echo "Built $(TARGET) (quick mode — C++ assembler backend)"
@@ -129,11 +125,11 @@ test: quick
 # Clean
 clean:
 	echo "Removing C & C++ build" \
-	rm -f $(TARGET) $(ALL_OBJECTS) $(STUB_OBJECTS) \
+	rm -f $(TARGET) $(ALL_OBJECTS) \
 	echo "Removing rust assembler" \
 clean:
 	echo "Removing C & C++ build"; \
-	rm -f $(TARGET) $(ALL_OBJECTS) $(STUB_OBJECTS); \
+	rm -f $(TARGET) $(ALL_OBJECTS); \
 	echo "Removing rust assembler"; \
 	if [ -f src/assembler/rust_src/Cargo.toml ]; then \
 		cargo clean --manifest-path src/assembler/rust_src/Cargo.toml; \
