@@ -44,7 +44,7 @@ typedef struct {
 } ELF32_StrEntry;
 
  
-/* Struct type table — collected from NODE_DEF_STRUCT nodes */
+/* Struct type table - collected from NODE_DEF_STRUCT nodes */
 #define ELF32_Codegen_MAX_STRUCT_FIELDS 32
 #define ELF32_Codegen_MAX_STRUCTS       64
 
@@ -82,7 +82,7 @@ typedef struct {
     int      next_offset;  /* next free negative offset */
 } ELF32_SymTable;
 
- 
+
 /* Code generator state */
 typedef struct {
     ELF32_StrBuf   text;          /* .text section buffer */
@@ -94,7 +94,7 @@ typedef struct {
     int         nstrings;
     ELF32_StructTable structs;
 
-    /* Global variables — allocated as static storage via _craw_bss labels.
+    /* Global variables allocated as static storage via _craw_bss labels.
        Each global gets a unique label; accesses use [label] memory addressing.
        Stored as: label, name, size_bytes */
 #define ELF32_Codegen_MAX_GLOBALS 128
@@ -106,7 +106,6 @@ typedef struct {
     bool     had_error;
     char     cur_fn[64];
 } ELF32_Codegen;
-
  
 /* Public API */
 ELF32_Codegen *ELF32_Codegen_new(void);

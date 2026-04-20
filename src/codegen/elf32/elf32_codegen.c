@@ -36,10 +36,8 @@
 #include "../../parser/AST.h"
 #include "../../lexer/token.h"
 
- 
-/* ELF32_StrBuf */
- 
 
+/* ELF32_StrBuf */
 void ELF32_StrBuf_init(ELF32_StrBuf *sb) {
     sb->data = NULL;
     sb->len  = 0;
@@ -75,23 +73,21 @@ void ELF32_StrBuf_appendf(ELF32_StrBuf *sb, const char *fmt, ...) {
 }
 
  
-/* Emit helpers — write into a given ELF32_StrBuf */
- 
-
+/* Emit helpers - write into a given ELF32_StrBuf */
 #define EMIT(buf, ...)   ELF32_StrBuf_appendf((buf), __VA_ARGS__)
 #define EMITL(buf, ...)  do { ELF32_StrBuf_appendf((buf), __VA_ARGS__); ELF32_StrBuf_append((buf), "\n"); } while(0)
 
 /* Current function body target */
 #define B(cg)  (&(cg)->body)
+
 /* Data section target */
 #define D(cg)  (&(cg)->data)
+
 /* Text section (for function labels etc.) */
 #define T(cg)  (&(cg)->text)
 
- 
-/* Error */
- 
 
+/* Error */
 static void cg_error(ELF32_Codegen *cg, const char *msg, const Token *tok) {
     if (tok)
         fprintf(stderr,
@@ -107,10 +103,8 @@ static void cg_error(ELF32_Codegen *cg, const char *msg, const Token *tok) {
     cg->had_error = true;
 }
 
- 
-/* ELF32_SymTable */
- 
 
+/* ELF32_SymTable */
 static void ELF32_SymTable_reset(ELF32_SymTable *st) {
     st->count       = 0;
     st->next_offset = -4;
@@ -169,10 +163,8 @@ static void emit_ebp_ref(ELF32_StrBuf *buf, int offset) {
 }
 
 
- 
-/* Type helpers */
- 
 
+/* Type helpers */
 static int type_size(const Token *tok) {
     if (!tok) return 4;
     switch (tok->tokenType) {
@@ -314,7 +306,7 @@ void ELF32_Codegen_fresh_label(ELF32_Codegen *cg, char *buf, const char *prefix)
    in reverse order (null first), then mov the stack pointer into a
    reserved local in _data_init's frame.  The pointer lives at a fixed
    negative offset from the _data_init frame's ebp and is accessed via
-   a global label trick — however CRASM has no globals, so instead we
+   a global label trick however CRASM has no globals, so instead we
    store each string address in a caller-controlled memory slot.
 
    Simpler approach used here: push bytes of every string at _start,
@@ -498,7 +490,6 @@ void ELF32_Codegen_program(ELF32_Codegen *cg, const Ast_node *program) {
 
  
 /* Function definition */
- 
 
 /*
  * fn_def children:
@@ -578,8 +569,6 @@ static void cg_fn_def(ELF32_Codegen *cg, const Ast_node *node) {
 
   
 /* Block */
- 
-
 static void cg_block(ELF32_Codegen *cg, const Ast_node *node) {
     for (size_t i = 0; i < node->children.size; i++)
         cg_stmt(cg, node->children.items[i]);
@@ -587,8 +576,6 @@ static void cg_block(ELF32_Codegen *cg, const Ast_node *node) {
 
  
 /* Statements */
- 
-
 static void cg_stmt(ELF32_Codegen *cg, const Ast_node *node) {
     switch (node->kind) {
         case NODE_LET:       cg_let(cg, node);    break;
@@ -843,8 +830,6 @@ static void cg_label(ELF32_Codegen *cg, const Ast_node *node) {
 
  
 /* Expression dispatch */
- 
-
 static void cg_expr(ELF32_Codegen *cg, const Ast_node *node) {
     if (!node) return;
 
@@ -1055,7 +1040,7 @@ static void cg_binary(ELF32_Codegen *cg, const Ast_node *node) {
             break;
 
         case Slash:
-            /* signed divide: ebx / eax → quotient in eax
+            /* signed divide: ebx / eax -- quotient in eax
                cdq sign-extends eax into edx:eax before idiv */
             EMITL(B(cg), "    push edx");
             EMITL(B(cg), "    mov ecx, eax      ; divisor");
@@ -1090,7 +1075,7 @@ static void cg_binary(ELF32_Codegen *cg, const Ast_node *node) {
                 /* Immediate known at compile-time: emit directly */
                 EMITL(B(cg), "    %s ebx, %s", shift_op, rhs->token->lexeme);
             } else {
-                /* Variable shift: not supported by CRASM backend — emit 1 as fallback */
+                /* Variable shift: not supported by CRASM backend emit 1 as fallback */
                 fprintf(stderr,
                     "\e[33mCODEGEN WARNING:\e[0m variable shift count not supported "
                     "by CRASM backend; using shift-by-1 fallback\n");
@@ -1100,7 +1085,7 @@ static void cg_binary(ELF32_Codegen *cg, const Ast_node *node) {
             break;
         }
 
-        /* Logical short-circuit — already evaluated both sides so we just
+        /* Logical short-circuit already evaluated both sides so we just
            combine the boolean results */
         case And: {
             char lf[32], ld[32];
@@ -1133,7 +1118,7 @@ static void cg_binary(ELF32_Codegen *cg, const Ast_node *node) {
             break;
         }
 
-        /* Comparisons → 0 or 1 in eax */
+        /* Comparisons 0 or 1 in eax */
         case Equal:
         case NotEqual:
         case LessThan:
@@ -1171,8 +1156,6 @@ static void cg_binary(ELF32_Codegen *cg, const Ast_node *node) {
 
  
 /* Unary */
- 
-
 static void cg_unary(ELF32_Codegen *cg, const Ast_node *node) {
     if (!node->token || !node->children.size) return;
     cg_expr(cg, node->children.items[0]);
@@ -1204,11 +1187,10 @@ static void cg_unary(ELF32_Codegen *cg, const Ast_node *node) {
 }
  
 /* Assignment */
-
 static void cg_assign(ELF32_Codegen *cg, const Ast_node *node) {
     if (node->children.size < 2) return;
 
-    /* Compile RHS → eax */
+    /* Compile RHS - eax */
     cg_expr(cg, node->children.items[1]);
 
     const Ast_node *target = node->children.items[0];
@@ -1284,8 +1266,6 @@ static void cg_assign(ELF32_Codegen *cg, const Ast_node *node) {
 
  
 /* Function call (cdecl) */
- 
-
 static void cg_call(ELF32_Codegen *cg, const Ast_node *node) {
     if (!node->children.size) return;
 

@@ -1,0 +1,25 @@
+// using this struct so the instance then holds the values of the size of each type (possibly for alloc)
+let __TYPES_ENUM : defstruct = {
+    let U16 : u32,
+    let U32 : u32,
+    let U64 : u32,
+    let I16 : u32,
+    let I32 : u32,
+    let I64 : u32,
+    let F32 : u32,
+    let F64 : u32,
+};
+
+
+static int type_size(const Token *tok) {
+    if (!tok) return 4;
+    switch (tok->tokenType) {
+        case I16: case U16: return 2;
+        case I64: case U64: return 8;
+        case F64: return 8;
+        case Char: return 1;
+        default:   return 4;
+    }
+}
+
+let type_size : structinstance = new __TYPES_ENUM;
