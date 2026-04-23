@@ -12,8 +12,11 @@ let __TYPES_ENUM_ : defstruct = {
     let StructInstance  : u32,
     let DefStruct       : u32,
     let Void            : u32,
+    let A               : u32,
+    let P               : u32,
 };
 
+// Size in bytes
 let type_bytes : structinstance = new __TYPES_ENUM_;
 type_bytes.U16            = 16 / 8;
 type_bytes.U32            = 32 / 8;
@@ -27,7 +30,27 @@ type_bytes.Char           =  8 / 8;
 type_bytes.StructInstance = 32 / 8;
 type_bytes.DefStruct      = 32 / 8;
 type_bytes.Void           =      0;
+type_bytes.A              = 32 / 8;
+type_bytes.P              = 32 / 8;
 
+fn find_bits(type: a<char>) -> u32 {
+    if (type == "u16") { return 16 / 8; }
+    else if (type == "u32") { return 32 / 8; }
+    else if (type == "u64") { return 64 / 8; }
+    else if (type == "i16") { return 16 / 8; }
+    else if (type == "i32") { return 32 / 8; }
+    else if (type == "i64") { return 64 / 8; }
+    else if (type == "f32") { return 32 / 8; }
+    else if (type == "f64") { return 64 / 8; }
+    else if (type == "char") { return 8 / 8; }
+    else if (type == "structinstance") { return 32 / 8; }
+    else if (type == "defstruct") { return 32 / 8; }
+    else if (type == "void") { return 0; }
+    else if ((type == "a") or (type == "a<>")) { return 32 / 8; }
+    else if ((type == "p") or (type == "p<>")) { return 32 / 8; }
+}
+
+// Size in bits
 let type_bits : structinstance = new __TYPES_ENUM_;
 type_bits.U16            = 16;
 type_bits.U32            = 32;
@@ -41,3 +64,22 @@ type_bits.Char           =  8;
 type_bits.StructInstance = 32;
 type_bits.DefStruct      = 32;
 type_bits.Void           =  0;
+type_bytes.A             = 32;
+type_bytes.P             = 32;
+
+fn find_bits(type: a<char>) -> u32 {
+    if (type == "u16") { return 16; }
+    else if (type == "u32") { return 32; }
+    else if (type == "u64") { return 64; }
+    else if (type == "i16") { return 16; }
+    else if (type == "i32") { return 32; }
+    else if (type == "i64") { return 64; }
+    else if (type == "f32") { return 32; }
+    else if (type == "f64") { return 64; }
+    else if (type == "char") { return 8; }
+    else if (type == "structinstance") { return 32; }
+    else if (type == "defstruct") { return 32; }
+    else if (type == "void") { return 0; }
+    else if ((type == "a") or (type == "a<>")) { return 32; }
+    else if ((type == "p") or (type == "p<>")) { return 32; }
+}
