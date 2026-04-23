@@ -9,7 +9,7 @@
 /*
  * another code gen for craw (specifically for the x86-64 assembler).
  *
- * Emits assembly targeting the x86-64 (LLVM) - Rust backend.
+ * Emits assembly targeting the x86-64 (LLVM) - Rust based backend.
  *
  * cdecl x86-64 -- doesnt exist :sob: - :(
  *
@@ -32,7 +32,6 @@
 
 /* Text section (for function labels etc.) */
 #define T(cg)  (&(cg)->text)
-
 
 /* Struct type table - collected from NODE_DEF_STRUCT nodes */
 #define x86_64_Codegen_MAX_STRUCT_FIELDS 64

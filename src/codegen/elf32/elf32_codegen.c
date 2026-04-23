@@ -133,7 +133,7 @@ static int ELF32_SymTable_add_param(ELF32_SymTable *st, const char *name, int pa
     return v->offset;
 }
 
-static int ELF32_SymTable_find(const ELF32_SymTable *st, const char *name, bool *found) {
+stati int ELF32_SymTable_find(const ELF32_SymTable *st, const char *name, bool *found) {
     for (int i = 0; i < st->count; i++) {
         if (strcmp(st->vars[i].name, name) == 0) {
             *found = true;
@@ -250,8 +250,6 @@ static __attribute__((unused)) const ELF32_StructDef *var_struct_type(const ELF3
  
  
 /* String literal interning */
- 
-
 /* Process escape sequences in a raw lexer string and intern it.
    Returns the asm label for this string. */
 static const char *intern_string(ELF32_Codegen *cg, const char *raw) {

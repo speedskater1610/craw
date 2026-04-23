@@ -14,11 +14,14 @@ let __TYPES_ENUM : defstruct = {
 static int type_size(const Token *tok) {
     if (!tok) return 4;
     switch (tok->tokenType) {
-        case I16: case U16: return 2;
-        case I64: case U64: return 8;
-        case F64: return 8;
-        case Char: return 1;
-        default:   return 4;
+        case I16:   return 16 / 8;
+        case U15:   return 16 / 8;
+        
+        case I64:   return 64 / 8;
+        case U64:   return 64 / 8;
+        case F64:   return 64 / 8;
+        case Char:  return 8  / 8;
+        default:    return 32 / 8;
     }
 }
 
