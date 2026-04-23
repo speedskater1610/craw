@@ -44,7 +44,7 @@ enum TokenType from_keyword(const char *s) {
     else if (!strcmp(s, "while")) return While;
     else if (!strcmp(x, "comptimelisp")) return RuntimeLisp;
     else if (!strcmp(x, "comptimeexpr")) return RuntimeExpr;
-    else if (!strcmp(x, "comptimeconst"))
+    else if (!strcmp(x, "comptimeconst"));
     else return Identifier;  /* not a keyword - it is a plain identifier */
 }
 
