@@ -1,28 +1,43 @@
 // using this struct so the instance then holds the values of the size of each type (possibly for alloc)
-let __TYPES_ENUM : defstruct = {
-    let U16 : u32,
-    let U32 : u32,
-    let U64 : u32,
-    let I16 : u32,
-    let I32 : u32,
-    let I64 : u32,
-    let F32 : u32,
-    let F64 : u32,
+let __TYPES_ENUM_ : defstruct = {
+    let U16             : u32,
+    let U32             : u32,
+    let U64             : u32,
+    let I16             : u32,
+    let I32             : u32,
+    let I64             : u32,
+    let F32             : u32,
+    let F64             : u32,
+    let Char            : u32,
+    let StructInstance  : u32,
+    let DefStruct       : u32,
+    let Void            : u32,
 };
 
+let type_bytes : structinstance = new __TYPES_ENUM_;
+type_bytes.U16            = 16 / 8;
+type_bytes.U32            = 32 / 8;
+type_bytes.U64            = 64 / 8;
+type_bytes.I16            = 16 / 8;
+type_bytes.I32            = 32 / 8;
+type_bytes.I64            = 64 / 8;
+type_bytes.F32            = 32 / 8;
+type_bytes.F64            = 64 / 8;
+type_bytes.Char           =  8 / 8;
+type_bytes.StructInstance = 32 / 8;
+type_bytes.DefStruct      = 32 / 8;
+type_bytes.Void           =      0;
 
-static int type_size(const Token *tok) {
-    if (!tok) return 4;
-    switch (tok->tokenType) {
-        case I16:   return 16 / 8;
-        case U15:   return 16 / 8;
-        
-        case I64:   return 64 / 8;
-        case U64:   return 64 / 8;
-        case F64:   return 64 / 8;
-        case Char:  return 8  / 8;
-        default:    return 32 / 8;
-    }
-}
-
-let type_size : structinstance = new __TYPES_ENUM;
+let type_bits : structinstance = new __TYPES_ENUM_;
+type_bits.U16            = 16;
+type_bits.U32            = 32;
+type_bits.U64            = 64;
+type_bits.I16            = 16;
+type_bits.I32            = 32;
+type_bits.I64            = 64;
+type_bits.F32            = 32;
+type_bits.F64            = 64;
+type_bits.Char           =  8;
+type_bits.StructInstance = 32;
+type_bits.DefStruct      = 32;
+type_bits.Void           =  0;
