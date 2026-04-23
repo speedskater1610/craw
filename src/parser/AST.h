@@ -24,7 +24,6 @@ typedef enum {
     NODE_EXPR_STMT,          /* bare expression: expr ;                       */
     NODE_COMPTIME_LISP_BLOCK,/* runtimelisp { ... } (eg. `runtimelisp { (+ 3 4) }`) */
     NODE_COMPTIME_EXPR_BLOCK,/* runtimeexpr { ... } (eg. `runtimeexpr { 3 + 4 }`) */
-    NODE_COMPTIME_CONSTANT,  /* runtimeconst name : type = value; */ 
 
     /* --- Struct declarations --- */
     NODE_DEF_STRUCT,        /* let Name : defstruct = { fields } ;          */
