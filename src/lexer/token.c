@@ -16,6 +16,7 @@ Token *Token_new(enum TokenType tokenType, char* lexeme, unsigned int line, unsi
 
 enum TokenType from_keyword(const char *s) {
     if (!strcmp(s, "let")) return Let;
+    if (!strcmp(s, ""))
     else if (!strcmp(s, "fn")) return Fn;
     else if (!strcmp(s, "return")) return Return;
     else if (!strcmp(s, "if")) return If;
@@ -41,7 +42,10 @@ enum TokenType from_keyword(const char *s) {
     else if (!strcmp(s, "or")) return Or;
     else if (!strcmp(s, "else")) return Else;
     else if (!strcmp(s, "while")) return While;
-    else return Identifier;  /* not a keyword — it is a plain identifier */
+    else if (!strcmp(x, "comptimelisp")) return RuntimeLisp;
+    else if (!strcmp(x, "comptimeexpr")) return RuntimeExpr;
+    else if (!strcmp(x, "comptimeconst"))
+    else return Identifier;  /* not a keyword - it is a plain identifier */
 }
 
 // get the value functions

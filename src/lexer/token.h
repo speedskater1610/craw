@@ -20,7 +20,11 @@ enum TokenType {
     Use,
     Else,
     While,
-    Runtime,
+
+    // runtime evals
+    RuntimeLisp,
+    RuntimeExpr,
+    RuntimeConst, /* A constant variable that value is only for compile time */
 
     // Types
     I16,

@@ -11,17 +11,20 @@
  */
 typedef enum {
     /* --- Top-level / statements --- */
-    NODE_PROGRAM,           /* root: list of top-level declarations         */
-    NODE_FN_DEF,            /* fn name -> ret_type (params) { body }        */
-    NODE_LET,               /* let name : type = expr ;                     */
-    NODE_RETURN,            /* return expr ;                                 */
-    NODE_IF,                /* if (cond) { then } [else { else }]          */
-    NODE_WHILE,             /* while (cond) { body }                        */
-    NODE_GOTO,              /* goto label ;                                  */
-    NODE_LABEL,             /* lbl name :                                    */
-    NODE_USE,               /* use "file" ;                                  */
-    NODE_ASM_BLOCK,         /* asm { ... }                                   */
-    NODE_EXPR_STMT,         /* bare expression: expr ;                       */
+    NODE_PROGRAM,            /* root: list of top-level declarations         */
+    NODE_FN_DEF,             /* fn name -> ret_type (params) { body }        */
+    NODE_LET,                /* let name : type = expr ;                     */
+    NODE_RETURN,             /* return expr ;                                 */
+    NODE_IF,                 /* if (cond) { then } [else { else }]          */
+    NODE_WHILE,              /* while (cond) { body }                        */
+    NODE_GOTO,               /* goto label ;                                  */
+    NODE_LABEL,              /* lbl name :                                    */
+    NODE_USE,                /* use "file" ;                                  */
+    NODE_ASM_BLOCK,          /* asm { ... }                                   */
+    NODE_EXPR_STMT,          /* bare expression: expr ;                       */
+    NODE_COMPTIME_LISP_BLOCK,/* runtimelisp { ... } (eg. `runtimelisp { (+ 3 4) }`) */
+    NODE_COMPTIME_EXPR_BLOCK,/* runtimeexpr { ... } (eg. `runtimeexpr { 3 + 4 }`) */
+    NODE_COMPTIME_CONSTANT,  /* runtimeconst name : type = value; */ 
 
     /* --- Struct declarations --- */
     NODE_DEF_STRUCT,        /* let Name : defstruct = { fields } ;          */
@@ -64,10 +67,10 @@ typedef struct {
 
 /*
  * Core AST node.
- *   kind     – what construct it represents
- *   token    – primary token (NULL for synthetic nodes like NODE_PROGRAM)
- *   parent   – parent node (NULL for root)
- *   children – ordered child nodes
+ *   kind     - what construct it represents
+ *   token    - primary token (NULL for synthetic nodes like NODE_PROGRAM)
+ *   parent   - parent node (NULL for root)
+ *   children - ordered child nodes
  */
 struct Ast_node {
     NodeKind    kind;
