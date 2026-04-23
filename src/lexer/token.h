@@ -20,6 +20,7 @@ enum TokenType {
     Use,
     Else,
     While,
+    Runtime,
 
     // Types
     I16,
