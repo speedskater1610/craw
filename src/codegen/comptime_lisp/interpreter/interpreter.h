@@ -15,7 +15,7 @@
  * @struct Lisp interpreter object
  */
 typedef struct {
-  obj* env;                             // Interpreter environment
+  obj* env;                                // Interpreter environment
   GarbageCollector gc;                     // Memory Manager
 } LispInterpreter;
 
@@ -54,6 +54,7 @@ void interpret_fd(LispInterpreter *interpreter, FILE *fd_in, FILE *fd_out, bool 
  * be freed
  */
 expression interpret_expression(LispInterpreter *interpreter, const_expression expr);
+// This above function is what is used for comptime lisp
 
 /**
  * Function: repl_dispose

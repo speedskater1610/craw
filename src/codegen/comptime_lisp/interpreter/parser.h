@@ -14,6 +14,7 @@
 #define NIL_STR "nil"
 #define PARSE(e) parse_expression(e, NULL)
 
+// brother...
 typedef char* expression;
 typedef const char* const_expression;
 
