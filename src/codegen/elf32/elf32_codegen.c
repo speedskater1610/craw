@@ -602,7 +602,7 @@ static void cg_stmt(ELF32_Codegen *cg, const Ast_node *node) {
             if (node->children.size > 0)
                 cg_expr(cg, node->children.items[0]);
             break;
-        case NODE_RUNTIME_LISP_BLOCK: {
+        case NODE_COMPTIME_LISP_BLOCK: {
             break;
         }
         case NODE_ASM_BLOCK: {
