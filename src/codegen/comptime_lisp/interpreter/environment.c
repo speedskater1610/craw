@@ -4,11 +4,12 @@
  * Presents the implementation of the lisp environment
  */
 
-#include <environment.h>
-#include <lisp-objects.h>
-#include <list.h>
-#include <math-lib.h>
-#include <parser.h>
+#include "environment.h"
+#include "lisp-objects.h"
+#include "list.h"
+#include "math-lib.h"
+#include "parser.h"
+
 #include <string.h>
 
 // Static function declarations

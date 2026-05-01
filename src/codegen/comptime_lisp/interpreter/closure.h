@@ -5,7 +5,7 @@
 #ifndef _CLOSURE_H_INCLUDED
 #define _CLOSURE_H_INCLUDED
 
-#include <interpreter.h>
+#include "interpreter.h"
 #include "lisp-objects.h"
 #include "garbage-collector.h"
 

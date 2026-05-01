@@ -5,9 +5,9 @@
  */
 
 
-#include <lisp-objects.h>
-#include <garbage-collector.h>
-#include <interpreter.h>
+#include "lisp-objects.h"
+#include "garbage-collector.h"
+#include "interpreter.h"
 
 #include <stdlib.h>
 #include <assert.h>

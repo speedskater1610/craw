@@ -4,15 +4,17 @@
  * Presents the implementation of the lisp evaluator
  */
 
-#include <list.h>
-#include <evaluator.h>
-#include <environment.h>
-#include <stack-trace.h>
+#include "list.h"
+#include "evaluator.h"
+#include "environment.h"
+#include "stack-trace.h"
+
+#include "lisp-objects.h"
+#include "closure.h"
+#include "garbage-collector.h"
+#include "interpreter.h"
+
 #include <string.h>
-#include <lisp-objects.h>
-#include <closure.h>
-#include <garbage-collector.h>
-#include <interpreter.h>
 
 // Static function declarations
 static obj *bind(obj *params, const obj *args, LispInterpreter *interpreter);

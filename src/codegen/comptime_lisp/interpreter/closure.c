@@ -4,13 +4,12 @@
  * Implements closure related functionality
  */
 
-#include <closure.h>
-#include <lisp-objects.h>
-#include <garbage-collector.h>
-#include <list.h>
-#include <environment.h>
-#include <evaluator.h>
-#include <stack-trace.h>
+#include "lisp-objects.h"
+#include "garbage-collector.h"
+#include "list.h"
+#include "environment.h"
+#include "evaluator.h"
+#include "stack-trace.h"
 
 #include <stdlib.h>
 #include <interpreter.h>

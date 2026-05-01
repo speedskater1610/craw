@@ -611,7 +611,7 @@ static void cg_stmt(ELF32_Codegen *cg, const Ast_node *node) {
                number changes we emit a newline so the assembler sees one
                instruction per line. Labels (IDENT followed by COLON) are
                emitted without leading spaces. */
-            EMITL(B(cg), "    ; --- inline asm ---");
+            EMITL(B(cg), "    ; --- inlined assembly ---");
             unsigned int cur_line = 0;
             for (size_t i = 0; i < node->children.size; i++) {
                 const Token *t = node->children.items[i]->token;
