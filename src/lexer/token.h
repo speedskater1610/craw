@@ -21,6 +21,10 @@ enum TokenType {
     Else,
     While,
 
+    // runtime evals
+    RuntimeLisp,
+    RuntimeExpr,
+
     // Types
     I16,
     I32,

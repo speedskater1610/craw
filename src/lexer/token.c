@@ -41,7 +41,9 @@ enum TokenType from_keyword(const char *s) {
     else if (!strcmp(s, "or")) return Or;
     else if (!strcmp(s, "else")) return Else;
     else if (!strcmp(s, "while")) return While;
-    else return Identifier;  /* not a keyword — it is a plain identifier */
+    else if (!strcmp(s, "comptimelisp")) return RuntimeLisp;
+    else if (!strcmp(s, "comptimeexpr")) return RuntimeExpr;
+    else return Identifier;  /* not a keyword - it is a plain identifier */
 }
 
 // get the value functions

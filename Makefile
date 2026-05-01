@@ -50,7 +50,19 @@ C_SOURCES = \
     src/parser/hashmap.c \
     src/parser/parser.c \
     src/codegen/elf32/elf32_codegen.c \
-	src/codegen/x86-64/x86-64_codegen.c
+	src/codegen/x86-64/x86-64_codegen.c \
+	src/codegen/comptime_lisp/interpreter/closure.c \
+	src/codegen/comptime_lisp/interpreter/environment.c \
+	src/codegen/comptime_lisp/interpreter/garbage-collector.c \
+	src/codegen/comptime_lisp/interpreter/interpreter.c \
+	src/codegen/comptime_lisp/interpreter/lisp-objects.c \
+	src/codegen/comptime_lisp/interpreter/list.c \
+	src/codegen/comptime_lisp/interpreter/math-lib.c \
+	src/codegen/comptime_lisp/interpreter/parser.c \
+	src/codegen/comptime_lisp/interpreter/primitives.c \
+	src/codegen/comptime_lisp/interpreter/run_lisp.c \
+	src/codegen/comptime_lisp/interpreter/stack-trace.c \
+	src/codegen/comptime_lisp/lisp.c \
 
 CXX_SOURCES = \
     src/assembler/assembler.cpp \
