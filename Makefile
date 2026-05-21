@@ -2,7 +2,7 @@
 CC       = gcc
 CXX      = g++
 LISP_INCLUDE = src/codegen/comptime_lisp/interpreter
-CFLAGS   = -Wall -Wextra -g -std=c11 -I$(LISP_INCLUDE)
+CFLAGS   = -Wall -Wextra -g -std=c11 -lreadline -I$(LISP_INCLUDE)
 CXXFLAGS = -Wall -Wextra -g -std=c++17
 TARGET   = crawc
 
