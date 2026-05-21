@@ -1,12 +1,13 @@
 # Compilers and flags
 CC       = gcc
 CXX      = g++
-CFLAGS   = -Wall -Wextra -g -std=c11
+LISP_INCLUDE = src/codegen/comptime_lisp/interpreter
+CFLAGS   = -Wall -Wextra -g -std=c11 -I$(LISP_INCLUDE)
 CXXFLAGS = -Wall -Wextra -g -std=c++17
 TARGET   = crawc
 
 # -----------------------------------------------------------------------
-# Rust / LLVM assembler (optional — only needed if you want the Rust
+# Rust / LLVM assembler (optional - only needed if you want the Rust
 # backend selected via ~/.config/craw/which_assembler.bin = 1).
 # Run `make all` for the full build (requires cargo + llvm-config).
 # Run `make quick` to build without Rust/LLVM using the C++ backend only.
@@ -61,6 +62,7 @@ C_SOURCES = \
 	src/codegen/comptime_lisp/interpreter/parser.c \
 	src/codegen/comptime_lisp/interpreter/primitives.c \
 	src/codegen/comptime_lisp/interpreter/run_lisp.c \
+	src/codegen/comptime_lisp/interpreter/evaluator.c \
 	src/codegen/comptime_lisp/interpreter/stack-trace.c \
 	src/codegen/comptime_lisp/lisp.c \
 
@@ -90,7 +92,7 @@ all: rust-lib $(TARGET)
 # Quick build: C++ assembler backend only, no Rust/LLVM needed
 quick: $(C_OBJECTS) $(CXX_OBJECTS) $(STUB_OBJECTS)
 	$(CXX) $(CXXFLAGS) $(C_OBJECTS) $(CXX_OBJECTS) $(STUB_OBJECTS) \
-	    -lpthread -ldl -lm \
+	    -lpthread -ldl -lm -lreadline \
 	    -o $(TARGET)
 	@echo "Built $(TARGET) (quick mode — C++ assembler backend)"
 
@@ -139,10 +141,6 @@ test: quick
 	[ $$fail -eq 0 ]
 
 # Clean
-clean:
-	echo "Removing C & C++ build" \
-	rm -f $(TARGET) $(ALL_OBJECTS) $(STUB_OBJECTS) \
-	echo "Removing rust assembler" \
 clean:
 	echo "Removing C & C++ build"; \
 	rm -f $(TARGET) $(ALL_OBJECTS) $(STUB_OBJECTS); \

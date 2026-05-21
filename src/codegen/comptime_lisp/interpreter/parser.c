@@ -4,6 +4,8 @@
  * Presents the implementation of the lisp parser
  */
 
+#define _POSIX_C_SOURCE 200809L
+
 #include <parser.h>
 #include <lisp-objects.h>
 #include <list.h>
@@ -13,6 +15,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <sys/types.h>
 
 
 #define KMAG  "\x1B[35m"

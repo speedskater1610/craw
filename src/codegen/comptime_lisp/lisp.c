@@ -8,9 +8,11 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-char *eval_lisp(char *lisp_src) {
-    LispInterpreter interpreter = NULL;
-    bool success = interpreter_init(interpreter);
+char *eval_lisp(char *lisp_src, bool verbose) {
+    (void) verbose; // reserved for future use
+
+    LispInterpreter interpreter;
+    bool success = interpreter_init(&interpreter);
 
     if (!success) {
         Err(
@@ -23,7 +25,9 @@ char *eval_lisp(char *lisp_src) {
     }
 
     const_expression const_lisp_src = lisp_src;
-    char *expression_value = interpret_expression(interpreter, const_lisp_src);
+    char *expression_value = interpret_expression(&interpreter, const_lisp_src);
+
+    interpreter_dispose(&interpreter);
 
     return expression_value;
 }

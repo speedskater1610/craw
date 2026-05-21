@@ -12,7 +12,7 @@
 #include "garbage-collector.h"
 #include "interpreter.h"
 
-#include <ops.h>
+#include "ops.h"
 
 /**
  * Primitive Definition Macro

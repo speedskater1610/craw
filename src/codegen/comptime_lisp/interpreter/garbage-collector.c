@@ -75,7 +75,6 @@ void collect_garbage(GarbageCollector *gc, obj* env) {
   assert(gc != NULL);
 
   // reset all the flags to not reached
-  void *el;
   for_vector(&gc->allocated, el) {
     obj *o = *(obj **) el;
     if (o == NULL) continue;

@@ -27,7 +27,7 @@
 #define _LISP_MEMORY_MANAGER_H
 
 #include "lisp-objects.h"
-#include <cvector.h>
+#include "cvector.h"
 
 
 typedef struct GarbageCollector {
