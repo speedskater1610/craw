@@ -7,11 +7,11 @@
 #include "AST.h"
 
 /*
- * Parser state.
+ * Parser state
  *
- *   tokens  – flat token vector produced by the lexer
- *   pos     – current read position into tokens
- *   had_error – set to true if any parse error was emitted
+ *   tokens  - flat token vector produced by the lexer
+ *   pos     - current read position into tokens
+ *   had_error - set to true if any parse error was emitted
  */
 typedef struct {
     Vector  *tokens;
@@ -19,11 +19,11 @@ typedef struct {
     bool     had_error;
 } Parser;
 
-/* ---------- Lifecycle ---------- */
-Parser   *parser_new   (Vector *tokens);
-void      parser_free  (Parser *p);
+/* Lifecycle */
+Parser   *parser_new(Vector *tokens);
+void      parser_free(Parser *p);
 
-/* ---------- Entry point ---------- */
-Ast_node *parse        (Parser *p);
+/* Entry point */
+Ast_node *parse(Parser *p);
 
 #endif /* PARSER_H */

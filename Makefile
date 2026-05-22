@@ -1,12 +1,13 @@
 # Compilers and flags
 CC       = gcc
 CXX      = g++
-CFLAGS   = -Wall -Wextra -g -std=c11
+LISP_INCLUDE = src/codegen/comptime_lisp/interpreter
+CFLAGS   = -Wall -Wextra -g -std=c11 -lreadline -I$(LISP_INCLUDE)
 CXXFLAGS = -Wall -Wextra -g -std=c++17
 TARGET   = crawc
 
 # -----------------------------------------------------------------------
-# Rust / LLVM assembler (optional — only needed if you want the Rust
+# Rust / LLVM assembler (optional - only needed if you want the Rust
 # backend selected via ~/.config/craw/which_assembler.bin = 1).
 # Run `make all` for the full build (requires cargo + llvm-config).
 # Run `make quick` to build without Rust/LLVM using the C++ backend only.
@@ -50,7 +51,20 @@ C_SOURCES = \
     src/parser/hashmap.c \
     src/parser/parser.c \
     src/codegen/elf32/elf32_codegen.c \
-	src/codegen/x86-64/x86-64_codegen.c
+	src/codegen/x86-64/x86-64_codegen.c \
+	src/codegen/comptime_lisp/interpreter/closure.c \
+	src/codegen/comptime_lisp/interpreter/environment.c \
+	src/codegen/comptime_lisp/interpreter/garbage-collector.c \
+	src/codegen/comptime_lisp/interpreter/interpreter.c \
+	src/codegen/comptime_lisp/interpreter/lisp-objects.c \
+	src/codegen/comptime_lisp/interpreter/list.c \
+	src/codegen/comptime_lisp/interpreter/math-lib.c \
+	src/codegen/comptime_lisp/interpreter/parser.c \
+	src/codegen/comptime_lisp/interpreter/primitives.c \
+	src/codegen/comptime_lisp/interpreter/run_lisp.c \
+	src/codegen/comptime_lisp/interpreter/evaluator.c \
+	src/codegen/comptime_lisp/interpreter/stack-trace.c \
+	src/codegen/comptime_lisp/lisp.c \
 
 CXX_SOURCES = \
     src/assembler/assembler.cpp \
@@ -78,9 +92,9 @@ all: rust-lib $(TARGET)
 # Quick build: C++ assembler backend only, no Rust/LLVM needed
 quick: $(C_OBJECTS) $(CXX_OBJECTS) $(STUB_OBJECTS)
 	$(CXX) $(CXXFLAGS) $(C_OBJECTS) $(CXX_OBJECTS) $(STUB_OBJECTS) \
-	    -lpthread -ldl -lm \
+	    -lpthread -ldl -lm -lreadline \
 	    -o $(TARGET)
-	@echo "Built $(TARGET) (quick mode — C++ assembler backend)"
+	@echo "Built $(TARGET) (quick mode - C++ assembler backend)"
 
 # Build Rust static library
 rust-lib: $(RUST_LIB)
@@ -88,11 +102,11 @@ rust-lib: $(RUST_LIB)
 $(RUST_LIB): $(shell find $(RUST_SRC_DIR)/src -name '*.rs') $(RUST_SRC_DIR)/Cargo.toml
 	@echo "[cargo] building Rust assembler library..."
 	cargo build --release --manifest-path $(RUST_SRC_DIR)/Cargo.toml
-	@echo "[cargo] done → $(RUST_LIB)"
+	@echo "[cargo] done - $(RUST_LIB)"
 
 # Full link (with Rust lib)
 $(TARGET): $(ALL_OBJECTS) $(RUST_LIB)
-	$(CXX) $(CXXFLAGS) $(ALL_OBJECTS) \
+	$(CXX) $(CXXFLAGS) -lreadline $(ALL_OBJECTS) \
 	    -L$(RUST_TARGET) -lassembler \
 	    $(LLVM_LDFLAGS) $(LLVM_LIBS) $(LLVM_SYSLIBS) \
 	    -lpthread -ldl -lm \
@@ -127,10 +141,6 @@ test: quick
 	[ $$fail -eq 0 ]
 
 # Clean
-clean:
-	echo "Removing C & C++ build" \
-	rm -f $(TARGET) $(ALL_OBJECTS) $(STUB_OBJECTS) \
-	echo "Removing rust assembler" \
 clean:
 	echo "Removing C & C++ build"; \
 	rm -f $(TARGET) $(ALL_OBJECTS) $(STUB_OBJECTS); \

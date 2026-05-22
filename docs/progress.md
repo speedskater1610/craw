@@ -3,7 +3,7 @@ name: Progress
 about: Report on the current progress of the project
 title: "[Progress]"
 labels: 
-assignees: speedskater1610
+assignees: @speedskater1610
 ---
 
 ## Progress
@@ -51,19 +51,21 @@ assignees: speedskater1610
   - Global variables via esi-relative addressing with callee save/restore
   - String literals inline-pushed on stack with pointer in eax
   - Correct `[ebp - N]` syntax for negative offsets
-- [x] Assembler (C++ backend — CRASM)
+- [x] Assembler (C++ backend - CRASM)
   - ELF32 output with proper program header
   - All standard x86-32 instructions including: `neg not cdq sar`
   - Negative displacement addressing: `[reg - disp]`
-- [x] `make quick` — builds full compiler without Rust/LLVM
 
 ### In Progress / Partial
+
 - [ ] `new` heap allocation (currently stack-allocated, `new` keyword accepted but allocates on stack)
 - [ ] `this` keyword (lexed, not implemented in parser/codegen)
-- [ ] Pointer operations (p<type> variables work but dereference/address-of not codegen'd)
+- [ ] Pointer operations (`p<type>` variables work but dereference/address-of not codegen'd)
 - [ ] Float types (f32/f64 parsed and typed, codegen emits 0 — FPU not in backend)
 - [ ] Standard library
+- [ ] Lisp `comptime` feature
 
 ### Not Started
+
 - [ ] Codegen optimisation pass
-- [ ] Standard library
+- [x]  Standard library
