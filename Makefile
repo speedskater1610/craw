@@ -94,7 +94,7 @@ quick: $(C_OBJECTS) $(CXX_OBJECTS) $(STUB_OBJECTS)
 	$(CXX) $(CXXFLAGS) $(C_OBJECTS) $(CXX_OBJECTS) $(STUB_OBJECTS) \
 	    -lpthread -ldl -lm -lreadline \
 	    -o $(TARGET)
-	@echo "Built $(TARGET) (quick mode — C++ assembler backend)"
+	@echo "Built $(TARGET) (quick mode - C++ assembler backend)"
 
 # Build Rust static library
 rust-lib: $(RUST_LIB)
@@ -102,11 +102,11 @@ rust-lib: $(RUST_LIB)
 $(RUST_LIB): $(shell find $(RUST_SRC_DIR)/src -name '*.rs') $(RUST_SRC_DIR)/Cargo.toml
 	@echo "[cargo] building Rust assembler library..."
 	cargo build --release --manifest-path $(RUST_SRC_DIR)/Cargo.toml
-	@echo "[cargo] done → $(RUST_LIB)"
+	@echo "[cargo] done - $(RUST_LIB)"
 
 # Full link (with Rust lib)
 $(TARGET): $(ALL_OBJECTS) $(RUST_LIB)
-	$(CXX) $(CXXFLAGS) $(ALL_OBJECTS) \
+	$(CXX) $(CXXFLAGS) -lreadline $(ALL_OBJECTS) \
 	    -L$(RUST_TARGET) -lassembler \
 	    $(LLVM_LDFLAGS) $(LLVM_LIBS) $(LLVM_SYSLIBS) \
 	    -lpthread -ldl -lm \
