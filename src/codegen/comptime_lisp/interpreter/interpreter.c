@@ -37,80 +37,91 @@ static int get_net_balance(const_expression expr);
 static void update_net_balance(char next_character, int* netp);
 
 bool interpreter_init(LispInterpreter *interpreter) {
-  assert(interpreter != NULL);
+    assert(interpreter != NULL);
 
-  interpreter->env = init_env();
-  if (interpreter->env == NULL) return false;
+    interpreter->env = init_env();
+    if (interpreter->env == NULL) return false;
 
-  bool success = gc_init(&interpreter->gc);
-  if (!success) {
-    dispose_recursive(interpreter->env);
-    return false;
-  }
-  return true;
+    bool success = gc_init(&interpreter->gc);
+    
+    if (!success) {
+        dispose_recursive(interpreter->env);
+        return false;
+    }
+
+    return true;
 }
 
 void interpret_program(LispInterpreter *interpreter, const char *program_file, bool verbose) {
-  if (!program_file) return; // no program to interpret
-  FILE* fd = fopen(program_file, "r");
+    if (!program_file) return; // no program to interpret
+    FILE* fd = fopen(program_file, "r");
 
-  bool eof = false;
-  bool syntax_error = false;
-  while (!eof) {
-    obj* o = read_expression(fd, false, &eof, &syntax_error);
-    if (syntax_error) {
-      LOG_ERROR("Syntax error.");
-      break;
+    bool eof = false;
+    bool syntax_error = false;
+    while (!eof) {
+        obj* o = read_expression(fd, false, &eof, &syntax_error);
+        if (syntax_error) {
+            LOG_ERROR("Syntax error.");
+            break;
+        }
+
+        if (o == NULL) continue;
+        obj* result = eval(o, interpreter);
+    
+        if (result == NULL) {
+            if (verbose) LOG_MSG("NULL");
+            break;
+        }
+
+        if (verbose) print_object(stdout, result);
+        collect_garbage(&interpreter->gc, interpreter->env);
     }
-    if (o == NULL) continue;
-    obj* result = eval(o, interpreter);
-    if (result == NULL) {
-      if (verbose) LOG_MSG("NULL");
-      break;
-    }
-    if (verbose) print_object(stdout, result);
-    collect_garbage(&interpreter->gc, interpreter->env);
-  }
-  fclose(fd);
+    
+    fclose(fd);
 }
 
 void interpret_fd(LispInterpreter *interpreter, FILE *fd_in, FILE *fd_out, bool verbose) {
-  bool eof = false;
-  while (!eof) {
-    obj* o = read_expression(fd_in, true, &eof, NULL);
-    if (eof) break;
-    if (o == NULL) {
-      LOG_ERROR("Invalid expression");
-      continue;
+    bool eof = false;
+    while (!eof) {
+        obj* o = read_expression(fd_in, true, &eof, NULL);
+        if (eof) break;
+    
+        if (o == NULL) {
+            LOG_ERROR("Invalid expression");
+            continue;
+        }
+    
+        obj* result = eval(o, interpreter);
+    
+        if (result == NULL && verbose) LOG_MSG("NULL");
+        
+        print_object(fd_out, result);
+        collect_garbage(&interpreter->gc, interpreter->env);
     }
-    obj* result = eval(o, interpreter);
-    if (result == NULL && verbose) LOG_MSG("NULL");
-    print_object(fd_out, result);
-    collect_garbage(&interpreter->gc, interpreter->env);
-  }
 }
 
 expression interpret_expression(LispInterpreter *interpreter, const_expression expr) {
-  assert(interpreter != NULL);
+    assert(interpreter != NULL);
 
-  if (expr == NULL) return NULL;
+    if (expr == NULL) return NULL;
 
-  obj* o = PARSE(expr);
-  if (o == NULL) {
-    LOG_ERROR("Error parsing expression: %s", expr);
-    return NULL;
-  }
+    obj* o = PARSE(expr);
+    
+    if (o == NULL) {
+        LOG_ERROR("Error parsing expression: %s", expr);
+        return NULL;
+    }
 
-  gc_add_recursive(&interpreter->gc, o);
-  obj* result_obj = eval(o, interpreter);
-  expression result = unparse(result_obj);
-  collect_garbage(&interpreter->gc, interpreter->env); // frees the objects in result_obj that were allocated during eval
-  return result;
+    gc_add_recursive(&interpreter->gc, o);
+    obj* result_obj = eval(o, interpreter);
+    expression result = unparse(result_obj);
+    collect_garbage(&interpreter->gc, interpreter->env); // frees the objects in result_obj that were allocated during eval
+    return result;
 }
 
 void interpreter_dispose(LispInterpreter *interpreter) {
-  gc_dispose(&interpreter->gc);
-  dispose_recursive(interpreter->env);
+    gc_dispose(&interpreter->gc);
+    dispose_recursive(interpreter->env);
 }
 
 /**
@@ -123,12 +134,15 @@ void interpreter_dispose(LispInterpreter *interpreter) {
  * @return: The parsed lisp object from dynamically allocated memory
  */
 static obj *read_expression(FILE *fd, bool prompt, bool *eof, bool *syntax_error) {
-  expression next_expr = get_expression(fd, prompt, eof, syntax_error);
-  if (next_expr == NULL) return NULL;
-  if (prompt) add_history(next_expr);
-  obj* o = PARSE(next_expr);
-  free(next_expr);
-  return o;
+    expression next_expr = get_expression(fd, prompt, eof, syntax_error);
+  
+    if (next_expr == NULL) return NULL;
+    if (prompt) add_history(next_expr);
+  
+    obj* o = PARSE(next_expr);
+    free(next_expr);
+  
+    return o;
 }
 
 /**
@@ -140,8 +154,8 @@ static obj *read_expression(FILE *fd, bool prompt, bool *eof, bool *syntax_error
  * @return: An expression that was read from that file descriptor
  */
 static expression get_expression(FILE *fd, bool prompt, bool *eof, bool *syntax_error) {
-  if (prompt) return get_expression_from_prompt(eof);
-  else return get_expression_from_file(fd, eof, syntax_error);
+    if (prompt) return get_expression_from_prompt(eof);
+    else return get_expression_from_file(fd, eof, syntax_error);
 }
 
 /**
@@ -152,38 +166,40 @@ static expression get_expression(FILE *fd, bool prompt, bool *eof, bool *syntax_
  * @return: The next expression entered on the interactive prompt
  */
 static expression get_expression_from_prompt(bool* eof) {
-  char* e = readline(PROMPT);
-  *eof = e == NULL;
-  if (e == NULL) return NULL;
-
-  bool empty = empty_expression(e);
-  if (empty) {
-    free(e);
-    return get_expression_from_prompt(eof);
-  }
-
-  size_t input_size = strlen(e);
-  size_t total_size = input_size;
-
-  while (true) {
-    bool valid = is_valid(e);
-    bool balanced = is_balanced(e);
+    char* e = readline(PROMPT);
+    *eof = e == NULL;
     
-    if (valid && balanced) return e;
-    if (!valid || *eof) return NULL;
+    if (e == NULL) return NULL;
 
-    char* line = reprompt(e);
-    *eof = line == NULL;
+    bool empty = empty_expression(e);
+  
+    if (empty) {
+        free(e);
+        return get_expression_from_prompt(eof);
+    }
 
-    input_size = strlen(line);
-    e = realloc(e, sizeof(char) * (total_size + 1 + input_size + 1));
-    MALLOC_CHECK(e);
+    size_t input_size = strlen(e);
+    size_t total_size = input_size;
 
-    strcpy(e + total_size, " ");
-    strcpy(e + total_size + 1, line);
-    free(line);
-    total_size += 1 + input_size;
-  }
+    while (true) {
+        bool valid = is_valid(e);
+        bool balanced = is_balanced(e);
+    
+        if (valid && balanced) return e;
+        if (!valid || *eof) return NULL;
+
+        char* line = reprompt(e);
+        *eof = line == NULL;
+
+        input_size = strlen(line);
+        e = realloc(e, sizeof(char) * (total_size + 1 + input_size + 1));
+        MALLOC_CHECK(e);
+
+        strcpy(e + total_size, " ");
+        strcpy(e + total_size + 1, line);
+        free(line);
+        total_size += 1 + input_size;
+    }
 }
 
 /**
@@ -195,37 +211,39 @@ static expression get_expression_from_prompt(bool* eof) {
  * @return: The next expression read form the file descriptor
  */
 static expression get_expression_from_file(FILE *fd, bool *eof, bool *syntax_error) {
-  char* p = fgets(buff, sizeof buff, fd);
-  *eof = p == NULL;
-  size_t input_size = strlen(buff);
-
-  size_t total_size = input_size;
-  expression e = malloc(sizeof(char) * (input_size + 1));
-  MALLOC_CHECK(e);
-
-  strcpy(e, buff);
-
-  while (true) {
-    bool valid = is_valid(e);
-    bool balanced = is_balanced(e);
-    if (valid && balanced) return e;
-    if (!valid) {
-      if (syntax_error != NULL) *syntax_error = true;
-      return NULL;
-    }
-    if (*eof) return NULL;
-
-    p = fgets(buff, sizeof buff, fd);
+    char* p = fgets(buff, sizeof buff, fd);
     *eof = p == NULL;
+    size_t input_size = strlen(buff);
 
-    input_size = strlen(buff);
-
-    e = realloc(e, sizeof(char) * (total_size + input_size + 1));
+    size_t total_size = input_size;
+    expression e = malloc(sizeof(char) * (input_size + 1));
     MALLOC_CHECK(e);
 
-    strcpy((char*) e + total_size, buff);
-    total_size += input_size;
-  }
+    strcpy(e, buff);
+
+    while (true) {
+        bool valid = is_valid(e);
+        bool balanced = is_balanced(e);
+        if (valid && balanced) return e;
+    
+        if (!valid) {
+            if (syntax_error != NULL) *syntax_error = true;
+            return NULL;
+        }
+    
+        if (*eof) return NULL;
+
+        p = fgets(buff, sizeof buff, fd);
+        *eof = p == NULL;
+
+        input_size = strlen(buff);
+
+        e = realloc(e, sizeof(char) * (total_size + input_size + 1));
+        MALLOC_CHECK(e);
+
+        strcpy((char*) e + total_size, buff);
+        total_size += input_size;
+    }
 }
 
 /**
@@ -236,14 +254,16 @@ static expression get_expression_from_file(FILE *fd, bool *eof, bool *syntax_err
  * @param o: The object to serialize and print
  */
 static void print_object(FILE *fd, const obj *o) {
-  if (fd == NULL) {
-    LOG_ERROR("Invalid file descriptor");
-    return;
-  }
+    if (fd == NULL) {
+        LOG_ERROR("Invalid file descriptor");
+        return;
+    }
 
-  expression serialization = unparse(o);
-  if (serialization) fprintf(fd, "%s\n", serialization);
-  free(serialization);
+    expression serialization = unparse(o);
+    
+    if (serialization) fprintf(fd, "%s\n", serialization);
+    
+    free(serialization);
 }
 
 /**
@@ -253,18 +273,18 @@ static void print_object(FILE *fd, const obj *o) {
  * @param expr: The expression to reprompt for
  */
 static expression reprompt(const_expression expr) {
+    // figure out the number of spaces to put for smart indentation
+    int indentation = get_indentation_size(expr);
 
-  // figure out the number of spaces to put for smart indentation
-  int indentation = get_indentation_size(expr);
+    // re-purpose the global buffer to store the prompt
+    char space = ' ';
+    strcpy(buff, REPROMPT);
+    for (int i = 0; i < indentation; i++)
+        memcpy((char*) buff + strlen(REPROMPT) + i, &space, sizeof(char));
+  
+    memset((char*) buff + strlen(REPROMPT) + indentation, 0, 1);
 
-  // re-purpose the global buffer to store the prompt
-  char space = ' ';
-  strcpy(buff, REPROMPT);
-  for (int i = 0; i < indentation; i++)
-    memcpy((char*) buff + strlen(REPROMPT) + i, &space, sizeof(char));
-  memset((char*) buff + strlen(REPROMPT) + indentation, 0, 1);
-
-  return readline(buff);
+    return readline(buff);
 }
 
 /**
@@ -277,7 +297,7 @@ static expression reprompt(const_expression expr) {
  * so that it is properly indented.
  */
 static int get_indentation_size(const_expression expr) {
-  return get_net_balance(expr);
+    return get_net_balance(expr);
 }
 
 /**
@@ -288,12 +308,13 @@ static int get_indentation_size(const_expression expr) {
  * @return: The number of parenthesis in the expression that were opened but not closed
  */
 static int get_net_balance(const_expression expr) {
-  int net = 0;
-  for (size_t i = 0; i < strlen(expr); i++) {
-    update_net_balance(expr[i], &net);
-    if (net < 0) return false;
-  }
-  return net;
+    int net = 0;
+    for (size_t i = 0; i < strlen(expr); i++) {
+        update_net_balance(expr[i], &net);
+        if (net < 0) return false;
+    }
+  
+    return net;
 }
 
 /**
@@ -304,6 +325,6 @@ static int get_net_balance(const_expression expr) {
  * @param netp: Pointer to the place where the net open parenthesis count is stored
  */
 static void update_net_balance(char next_character, int* netp) {
-  if (next_character == '(') (*netp)++;
-  if (next_character == ')') (*netp)--;
+    if (next_character == '(') (*netp)++;
+    if (next_character == ')') (*netp)--;
 }

@@ -22,7 +22,7 @@ static obj *bind(obj *params, const obj *args, LispInterpreter *interpreter);
 obj *eval(const obj *o, LispInterpreter *interpreter) {
     if (o == NULL) return NULL;
 
-  // Atom type means its just a literal that needs to be looked up
+    // Atom type means its just a literal that needs to be looked up
     if (is_atom(o)) {
         if (is_t(o)) return (obj*) o;
         obj* value = lookup(o, interpreter->env);
