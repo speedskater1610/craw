@@ -2,6 +2,8 @@
 // Encodes parsed x86-64 instructions into raw machine-code bytes.
 // Produces a simple section map used by codegen to build the object file.
 
+#![allow(dead_code)]
+
 use crate::parser::{Directive, Item, Operand};
 use std::collections::HashMap;
 
