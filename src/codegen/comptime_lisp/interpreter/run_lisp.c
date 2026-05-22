@@ -22,8 +22,11 @@ static void int_handler(int signal);
 
 static LispInterpreter* interpreter;
 
-int run_lisp(const char *bootstrap_path, const char *program_file, bool run_repl,
-             const char *history_file, bool verbose) {
+int run_lisp(const char *bootstrap_path, 
+              const char *program_file, 
+              bool run_repl,
+              const char *history_file, 
+              bool verbose) {
 
   if (bootstrap_path && !check_read_permissions(bootstrap_path)) return errno;
   if (program_file && !check_read_permissions(program_file)) return errno;

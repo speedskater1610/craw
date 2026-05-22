@@ -27,7 +27,7 @@
  * that were created during the application of the primitive
  * @return: A new lisp object which is the result of applying
  */
-#define def_primitive(name) obj *name(const obj *args UNUSED, LispInterpreter *interpreter UNUSED)
+#define def_primitive(name) obj *name(const obj *args, LispInterpreter *interpreter)
 
 // function type definitions
 typedef obj*(*primitive_t)(const obj*, LispInterpreter *);
