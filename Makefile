@@ -6,7 +6,7 @@ CXXFLAGS = -Wall -Wextra -g -std=c++17
 TARGET   = crawc
 
 # -----------------------------------------------------------------------
-# Rust / LLVM assembler (optional — only needed if you want the Rust
+# Rust / LLVM assembler (optional; only needed if you want the Rust
 # backend selected via ~/.config/craw/which_assembler.bin = 1).
 # Run `make all` for the full build (requires cargo + llvm-config).
 # Run `make quick` to build without Rust/LLVM using the C++ backend only.
@@ -80,7 +80,7 @@ quick: $(C_OBJECTS) $(CXX_OBJECTS) $(STUB_OBJECTS)
 	$(CXX) $(CXXFLAGS) $(C_OBJECTS) $(CXX_OBJECTS) $(STUB_OBJECTS) \
 	    -lpthread -ldl -lm \
 	    -o $(TARGET)
-	@echo "Built $(TARGET) (quick mode — C++ assembler backend)"
+	@echo "Built $(TARGET) (quick mode (C++ assembler backend))"
 
 # Build Rust static library
 rust-lib: $(RUST_LIB)
@@ -88,7 +88,7 @@ rust-lib: $(RUST_LIB)
 $(RUST_LIB): $(shell find $(RUST_SRC_DIR)/src -name '*.rs') $(RUST_SRC_DIR)/Cargo.toml
 	@echo "[cargo] building Rust assembler library..."
 	cargo build --release --manifest-path $(RUST_SRC_DIR)/Cargo.toml
-	@echo "[cargo] done → $(RUST_LIB)"
+	@echo "[cargo] done -> $(RUST_LIB)"
 
 # Full link (with Rust lib)
 $(TARGET): $(ALL_OBJECTS) $(RUST_LIB)
