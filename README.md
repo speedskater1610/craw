@@ -30,3 +30,12 @@ make quick
 # Debug mode (prints AST and preprocessed source)
 ./crawc -d -S -o out.asm tests/test1.craw
 ```
+
+---
+
+### NOTICE
+
+craw uses parts of code from other projects these include
+
+- [The the craw lisp interpriter for runtime expression](https://github.com/jondeaton/Lisp/tree/master) (MIT LISENCE)
+- [A Zig CLI template and library](https://github.com/zig-utils/zig-starter?tab=MIT-1-ov-file) (MIT LISENCE)
