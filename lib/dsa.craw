@@ -1,0 +1,38 @@
+// lib/dsa.craw — Data structures and algorithims library for CRAW
+//
+// Usage:  use "lib/dsa.craw";
+//
+// Functions:
+//   print_char(c: i32)        -> write one character to stdout
+
+// Singly linked list (SLL)
+let SingleLinkedList : defstruct = {
+    let val : i32,
+    let next : p<SingleLinkedList>,
+};
+
+// Singly linked list with index tracking (manual) (ISLL)
+let IndexSingleLinkedList : defstruct = {
+    let val : i32,
+    let next : p<IndexSingleLinkedList>,
+    let index : i32,
+}
+
+// Dually linked list (DLL)
+let DualLinkedList : defstruct = {
+    let val : i32,
+    let next : p<DualLinkedList>,
+    let prev : p<DualLinkedList>,
+};
+
+// Dually linked list with index tracking (manually) (IDLL)
+let IndexDualLinkedList : defstruct = {
+    let val = i32,
+    let next : p<IndexDualLinkedList>,
+    let prev : p<IndexDualLinkedList>,
+    let index : i32,
+}
+
+        fn fill_index_ISLL -> IndexSingleLinkedList (head: IndexSingleLinkedList) {
+            
+        }
