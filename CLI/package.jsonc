@@ -1,0 +1,52 @@
+{
+  "name": "zig-starter",
+  "version": "0.1.0",
+  "description": "A Zig starter template for library and CLI projects",
+
+  "dependencies": {
+    // ============================================
+    // LOCAL DEVELOPMENT PACKAGES
+    // ============================================
+    "zig-test-framework": "~/Code/zig-test-framework",
+    "zig-cli": "~/Code/zig-cli",
+    "zig-config": "~/Code/zig-config",
+    "zig-error-handling": "~/Code/zig-error-handling",
+    "zig-bump": "~/Code/zig-bump",
+
+    // System dependency
+    "ziglang.org": "0.15.1"
+  },
+
+  "devDependencies": {
+    "pantry": "~/Code/pantry"
+  },
+
+  "link": {
+    "zig-test-framework": "~/Code/zig-test-framework",
+    "zig-cli": "~/Code/zig-cli",
+    "zig-config": "~/Code/zig-config",
+    "zig-error-handling": "~/Code/zig-error-handling",
+    "zig-bump": "~/Code/zig-bump"
+  },
+
+  "build": {
+    "entry": "src/main.zig",
+    "output": "zig-out",
+    "targets": [
+      "x86_64-linux",
+      "x86_64-macos",
+      "aarch64-macos",
+      "x86_64-windows"
+    ]
+  },
+
+  "scripts": {
+    "build": "zig build",
+    "test": "zig build test",
+    "run": "zig build run",
+    "clean": "rm -rf zig-out zig-cache",
+    "bump:patch": "bump patch --changelog",
+    "bump:minor": "bump minor --changelog",
+    "bump:major": "bump major --changelog"
+  }
+}
