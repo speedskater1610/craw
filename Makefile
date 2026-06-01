@@ -4,7 +4,7 @@ CXX      = g++
 CFLAGS   = -Wall -Wextra -g -std=c11
 CXXFLAGS = -Wall -Wextra -g -std=c++17
 TARGET   = crawc
-PANTRY 	 := $(shell command -v pantry 2> /dev/null)
+PANTRY   := $(shell command -v pantry 2> /dev/null)
 
 # -----------------------------------------------------------------------
 # Rust / LLVM assembler (optional; only needed if you want the Rust
@@ -23,8 +23,8 @@ LLVM_SYSLIBS   := $(shell $(LLVM_CONFIG) --system-libs 2>/dev/null)
 
 # -----------------------------------------------------------------------
 # Zig CLI
-# Build seperatly as its own exacutable
-# removed if build with `clean`
+# Build separately as its own executable
+# removed if built with `clean`
 # -----------------------------------------------------------------------
 ZIG_SRC_DIR = CLI
 ZIGC = zig
@@ -51,7 +51,7 @@ C_SOURCES = \
     src/parser/hashmap.c \
     src/parser/parser.c \
     src/codegen/elf32/elf32_codegen.c \
-	src/codegen/x86-64/x86-64_codegen.c
+    src/codegen/x86-64/x86-64_codegen.c
 
 CXX_SOURCES = \
     src/assembler/assembler.cpp \
@@ -71,7 +71,7 @@ ALL_OBJECTS  = $(C_OBJECTS) $(CXX_OBJECTS)
 # -----------------------------------------------------------------------
 # Targets
 # -----------------------------------------------------------------------
-.PHONY: all quick clean rust-lib rust-clean
+.PHONY: all quick clean rust-lib rust-clean cli test
 
 # Full build: requires cargo + LLVM
 all: rust-lib $(TARGET)
@@ -107,19 +107,15 @@ $(TARGET): $(ALL_OBJECTS) $(RUST_LIB)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Build the CLI
-cli: 
-	ifeq ($(PANTRY),)
-		@echo "Pantry is NOT installed. Please install it first."
-		@exit 1
-	else
-		cd CLI
-		PANTRY install
-		ZIGC build
-	endif
+cli:
+	@if [ -z "$(PANTRY)" ]; then \
+		echo "Pantry is NOT installed. Please install it first."; \
+		exit 1; \
+	fi
+	cd $(ZIG_SRC_DIR) && pantry install && $(ZIGC) build
 
 # Run test suite
 TEST_FILES = $(wildcard tests/*.craw)
-.PHONY: test
 test: quick
 	@pass=0; fail=0; \
 	for f in $(TEST_FILES); do \
@@ -135,22 +131,18 @@ test: quick
 
 # Clean
 clean:
-	echo "Removing C & C++ build" \
-	rm -f $(TARGET) $(ALL_OBJECTS) $(STUB_OBJECTS) \
-	echo "Removing rust assembler" \
-clean:
-	echo "Removing C & C++ build"; \
+	@echo "Removing C & C++ build"; \
 	rm -f $(TARGET) $(ALL_OBJECTS) $(STUB_OBJECTS); \
-	echo "Removing rust assembler"; \
+	echo "Removing Rust assembler"; \
 	if [ -f src/assembler/rust_src/Cargo.toml ]; then \
 		cargo clean --manifest-path src/assembler/rust_src/Cargo.toml; \
 	else \
 		echo "Assembler: Cargo.toml not found, skipping cargo clean."; \
 	fi; \
-	echo "Removing Zig CLI"
-	if [ -d "$(ZIG_SRC_DIR)/zig-out" ] && [ -d "$(ZIG_SRC_DIR)/.zig-cache" ]; then \
+	echo "Removing Zig CLI"; \
+	if [ -d "$(ZIG_SRC_DIR)/zig-out" ] || [ -d "$(ZIG_SRC_DIR)/.zig-cache" ]; then \
 		echo "Removing Zig CLI build"; \
 		rm -rf $(ZIG_SRC_DIR)/zig-out $(ZIG_SRC_DIR)/.zig-cache; \
 	else \
-		echo "CLI directory does not exist."; \
+		echo "CLI build directory does not exist."; \
 	fi
