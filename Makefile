@@ -4,6 +4,7 @@ CXX      = g++
 CFLAGS   = -Wall -Wextra -g -std=c11
 CXXFLAGS = -Wall -Wextra -g -std=c++17
 TARGET   = crawc
+PANTRY 	 := $(shell command -v pantry 2> /dev/null)
 
 # -----------------------------------------------------------------------
 # Rust / LLVM assembler (optional; only needed if you want the Rust
@@ -107,8 +108,14 @@ $(TARGET): $(ALL_OBJECTS) $(RUST_LIB)
 
 # Build the CLI
 cli: 
-	$(ZIGC) build --build-file $(ZIG_SRC_DIR)/build.zig
-	
+	ifeq ($(PANTRY),)
+		@echo "Pantry is NOT installed. Please install it first."
+		@exit 1
+	else
+		cd CLI
+		PANTRY install
+		ZIGC build
+	endif
 
 # Run test suite
 TEST_FILES = $(wildcard tests/*.craw)
