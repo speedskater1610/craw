@@ -1,7 +1,9 @@
 name: Build craw Compiler and CRASM Assembler
+
 on:
   push:
   pull_request:
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -11,6 +13,8 @@ jobs:
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v4
+        env:
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
       # Linux
       - name: Install build tools on Linux
@@ -18,21 +22,27 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential llvm-18 llvm-18-dev libpolly-18-dev clang-18
-          curl -sS https://debian.griffo.io/EA0F721D231FDD3A0A17B9AC7808B4DD62C41256.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/debian.griffo.io.gpg
-          echo "deb https://debian.griffo.io/apt $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/debian.griffo.io.list
-          sudo apt update && sudo apt install zig
-          curl -fsSL https://pantry.dev | sh
+
+      - name: Install Zig
+        if: runner.os != 'Windows'
+        uses: mlugg/setup-zig@v1
+        with:
+          version: 0.14.0
+
+      - name: Install pantry CLI
+        if: runner.os != 'Windows'
+        run: curl -fsSL https://pantry.dev | sh
 
       - name: Set LLVM environment variables on Linux
         if: runner.os != 'Windows'
         run: |
           echo "LLVM_SYS_180_PREFIX=/usr/lib/llvm-18" >> $GITHUB_ENV
-          echo "LIBCLANG_PATH=/usr/lib/llvm-18/lib"   >> $GITHUB_ENV
-          echo "PATH=/usr/lib/llvm-18/bin:$PATH"       >> $GITHUB_ENV
+          echo "LIBCLANG_PATH=/usr/lib/llvm-18/lib" >> $GITHUB_ENV
+          echo "PATH=/usr/lib/llvm-18/bin:$PATH" >> $GITHUB_ENV
 
       - name: Build craw on Linux
         if: runner.os != 'Windows'
-        run: | 
+        run: |
           make all
           make cli
 
@@ -41,7 +51,7 @@ jobs:
         run: |
           make quick
           make test
-        
+
       # Artifacts
       - name: Upload craw artifact
         uses: actions/upload-artifact@v4
