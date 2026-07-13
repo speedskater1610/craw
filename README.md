@@ -18,8 +18,6 @@ make quick
 
 ---
 
-
-
 #### Simple Usage
 ```
 # Compile to assembly (inspect output)
