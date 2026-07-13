@@ -8,7 +8,7 @@ All future targets will have a LLVM backend
 
 ---
 
-## Getting the CRAW Assembler 
+## Getting the CRAW Assembler
 ### crasm
 
 - to build `crawc` with the crasm assembler build with 
