@@ -2,7 +2,7 @@
 CC       = gcc
 CXX      = g++
 LISP_INCLUDE = src/codegen/comptime_lisp/interpreter
-CFLAGS   = -Wall -Wextra -g -std=c11 -lreadline -I$(LISP_INCLUDE)
+CFLAGS   = -Wall -Wextra -g -std=c11 -I$(LISP_INCLUDE)
 CXXFLAGS = -Wall -Wextra -g -std=c++17
 TARGET   = crawc
 
@@ -106,10 +106,11 @@ $(RUST_LIB): $(shell find $(RUST_SRC_DIR)/src -name '*.rs') $(RUST_SRC_DIR)/Carg
 
 # Full link (with Rust lib)
 $(TARGET): $(ALL_OBJECTS) $(RUST_LIB)
-	$(CXX) $(CXXFLAGS) -lreadline $(ALL_OBJECTS) \
+	$(CXX) $(CXXFLAGS) $(ALL_OBJECTS) \
 	    -L$(RUST_TARGET) -lassembler \
 	    $(LLVM_LDFLAGS) $(LLVM_LIBS) $(LLVM_SYSLIBS) \
 	    -lpthread -ldl -lm \
+	    -lreadline \
 	    -o $(TARGET)
 
 # Compile rules
