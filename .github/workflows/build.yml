@@ -31,8 +31,9 @@ jobs:
 
       - name: Install pantry CLI
         if: runner.os != 'Windows'
-        shell: bash
-        run: curl -fsSL https://pantry.dev | bash
+        uses: pantry-pm/pantry-installer@v1
+        with:
+          install: 'false'
 
       - name: Set LLVM environment variables on Linux
         if: runner.os != 'Windows'
