@@ -1,4 +1,4 @@
-// lib/dsa.craw — Data structures and algorithims library for CRAW
+// lib/dsa.craw - Data structures and algorithims library for CRAW
 //
 // Usage:  use "lib/dsa.craw";
 //
@@ -33,6 +33,34 @@ let IndexDualLinkedList : defstruct = {
     let index : i32,
 }
 
-        fn fill_index_ISLL -> IndexSingleLinkedList (head: IndexSingleLinkedList) {
-            
-        }
+// TODO: TESTING
+fn fill_index_ISLL -> IndexSingleLinkedList (head: IndexSingleLinkedList) {
+    // The head will be indexed with 0;
+    let index : i32 = 0;
+    head.index = 0;
+
+    // UPDATE: with all the params of `IndexSingleLinkedList`
+    let cp : structinstance = new IndexSingleLinkedList;
+    cp.val = head.val;
+    cp.next = head.next;
+    cp.index = head.index;
+
+    // For return
+    // UPDATE: with all the params of `IndexSingleLinkedList`
+    let cpHead : structinstance = new IndexSingleLinkedList;
+    cpHead.val = cp.val;
+    cpHead.next = cp.next;
+    cpHead.index = cp.index; 
+
+    // No idea if this will work or not
+    // Honestly this is directly tied to the codegen and assembler and how they setup memory
+    // All of the LLVM targets this should work for
+    // Which I think just leaves out elf32 x86-32 (ia32)
+    while (cp.next != 0) {
+        cp.index = 1 + index;
+        index = 1 + index;
+        cp = cp.next;
+    }
+
+    return cpHead;
+}
