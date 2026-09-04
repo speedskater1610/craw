@@ -189,7 +189,7 @@ static Ast_node *parse_return_stmt (Parser *p);
 static Ast_node *parse_if_stmt     (Parser *p);
 static Ast_node *parse_goto_stmt   (Parser *p);
 static Ast_node *parse_label_stmt  (Parser *p);
- static Ast_node *parse_while_stmt  (Parser *p);
+static Ast_node *parse_while_stmt  (Parser *p);
 static Ast_node *parse_use_stmt    (Parser *p);
 static Ast_node *parse_asm_block   (Parser *p);
 static Ast_node *parse_type        (Parser *p);
@@ -526,7 +526,6 @@ static Ast_node *parse_if_stmt(Parser *p) {
 
 
 /* while_stmt ::= 'while' '(' expr ')' block */
-
 
 static Ast_node *parse_while_stmt(Parser *p) {
     Token *kw = parser_advance(p); /* eat 'while' */
