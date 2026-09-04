@@ -1,6 +1,6 @@
 # CRAW
 
-CRAW is a compiler and assembler toolchain that is used for compiling a C like language with rust like syntax, It includes 2 binary output options, both are for x86 linux, a 32 bit assembler backend that includes minimal instructions, but produces direct elf binaries that are "smaller" (and building the compiler takes a lot less time..), than the other option, a LLVM backend assembler, written in rust, that is the default. When using the ELF32 assembler, a single craw source file is used to produce a single assembly and object file.
+CRAW is a compiler and assembler toolchain that is used for compiling ~~a C like language with rust like syntax~~, It includes 2 binary output options, both are for x86 linux, a 32 bit assembler backend that includes minimal instructions, but produces direct elf binaries that are "smaller" (and building the compiler takes a lot less time..), than the other option, a LLVM backend assembler, written in rust, that is the default. When using the ELF32 assembler, a single craw source file is used to produce a single assembly and object file.
 
 All future targets will have a LLVM backend.
 
