@@ -12,11 +12,15 @@
  * ---------------
  * Every string literal is interned into cg->strings[].  After all
  * functions are compiled, ELF32_Codegen_get_asm() prepends a data section
- * that pushes the bytes on the stack at program start — actually we
- * emit them as labelled byte sequences using the "push imm" trick since
- * CRASM doesn't support .data.  Strings are built backwards on the stack
+ * that pushes the bytes on the stack at program start; they are
+ * emited as labelled byte sequences using the "push imm" trick since the
+ * elf32 assembler doesn't support .data. Strings are built backwards on the stack
  * by the _data_init helper and their stack address is patched into eax
  * wherever they are used.
+ * 
+ * Obviously when any other assembler (all the llvm backend ones which is all others)
+ * we will not use any weird work-arounds since they have full and correctly setup 
+ * memories. 
  *
  * CRASM limitations worked around
  * --------------------------------
@@ -372,8 +376,6 @@ void ELF32_Codegen_write_asm(ELF32_Codegen *cg, FILE *f) {
 
  
 /* Forward declarations */
- 
-
 static void cg_stmt  (ELF32_Codegen *cg, const Ast_node *node);
 static void cg_expr  (ELF32_Codegen *cg, const Ast_node *node);
 static void cg_fn_def(ELF32_Codegen *cg, const Ast_node *node);
@@ -391,9 +393,7 @@ static void cg_assign(ELF32_Codegen *cg, const Ast_node *node);
 
  
 /* Program */
- 
 
- 
 /* Global variable support */
 /* */
 /* Globals are stored on _start's stack frame (which is never freed */
@@ -471,7 +471,7 @@ void ELF32_Codegen_program(ELF32_Codegen *cg, const Ast_node *program) {
         if (child->kind == NODE_FN_DEF)
             cg_fn_def(cg, child);
         else if (child->kind == NODE_LET && child->children.size >= 3) {
-            /* Top-level let with initialiser — we need a _craw_init function */
+            /* Top-level let with initialiser - we need a _craw_init function */
             /* For now emit a comment; full init function emitted below */
         }
     }
@@ -543,7 +543,7 @@ static void cg_fn_def(ELF32_Codegen *cg, const Ast_node *node) {
     EMITL(T(cg), "%s:", fname);
     EMITL(T(cg), "    push ebp");
     EMITL(T(cg), "    mov ebp, esp");
-    /* Save esi (global base pointer) — it is callee-saved in cdecl */
+    /* Save esi (global base pointer) - it is callee-saved in cdecl */
     if (has_globals)
         EMITL(T(cg), "    push esi");
     if (frame_sz > 0)
@@ -599,8 +599,8 @@ static void cg_stmt(ELF32_Codegen *cg, const Ast_node *node) {
                 const Token *t = node->children.items[i]->token;
                 if (!t || !t->lexeme) continue;
 
-                /* New source line → start a new assembly line.
-                   If the NEXT token is a colon this is a label — no indent. */
+                /* New source line - start a new assembly line.
+                   If the NEXT token is a colon this is a label - no indent. */
                 if (t->line != cur_line) {
                     if (cur_line != 0) ELF32_StrBuf_append(B(cg), "\n");
                     /* Peek ahead: is the token after this one a Colon? */
@@ -613,7 +613,7 @@ static void cg_stmt(ELF32_Codegen *cg, const Ast_node *node) {
                     cur_line = t->line;
                 }
 
-                /* Colon = label suffix — trim any trailing space then newline.
+                /* Colon = label suffix - trim any trailing space then newline.
                    Labels must be at the start of the line with no indent. */
                 if (t->tokenType == Colon) {
                     /* Remove trailing space from the identifier just emitted */
@@ -659,7 +659,6 @@ static void cg_stmt(ELF32_Codegen *cg, const Ast_node *node) {
 
  
 /* let */
-
 static void cg_let(ELF32_Codegen *cg, const Ast_node *node) {
     if (node->children.size < 2) {
         cg_error(cg, "Malformed let", node->token);
@@ -721,8 +720,6 @@ static void cg_let(ELF32_Codegen *cg, const Ast_node *node) {
 
  
 /* return */
- 
-
 static void cg_return(ELF32_Codegen *cg, const Ast_node *node) {
     if (node->children.size > 0)
         cg_expr(cg, node->children.items[0]);
@@ -733,9 +730,6 @@ static void cg_return(ELF32_Codegen *cg, const Ast_node *node) {
 
  
 /* if */
- 
-
-
 /* Returns true if the last statement in a block is a return or goto
    (meaning any jmp after it would be dead code). */
 static bool block_ends_with_transfer(const Ast_node *block) {
@@ -810,8 +804,6 @@ static void cg_while(ELF32_Codegen *cg, const Ast_node *node) {
 
  
 /* goto / label */
- 
-
 static void cg_goto(ELF32_Codegen *cg, const Ast_node *node) {
     if (!node->children.size) return;
     const char *lbl = node->children.items[0]->token
@@ -888,7 +880,7 @@ static void cg_expr(ELF32_Codegen *cg, const Ast_node *node) {
                     EMITL(B(cg), "    mov eax, [esi + %d]    ; global %s",
                           goff, node->token->lexeme);
                 } else {
-                    EMITL(B(cg), "    ; unresolved '%s' — did you mean a call?",
+                    EMITL(B(cg), "    ; unresolved '%s' - did you mean a call?",
                           node->token->lexeme);
                     EMITL(B(cg), "    xor eax, eax");
                 }
@@ -971,9 +963,9 @@ static void cg_expr(ELF32_Codegen *cg, const Ast_node *node) {
 
         case NODE_INDEX:
             if (node->children.size >= 2) {
-                cg_expr(cg, node->children.items[1]);  /* index → eax */
+                cg_expr(cg, node->children.items[1]);  /* index -> eax */
                 EMITL(B(cg), "    push eax");
-                cg_expr(cg, node->children.items[0]);  /* base → eax */
+                cg_expr(cg, node->children.items[0]);  /* base -> eax */
                 EMITL(B(cg), "    pop ebx");
                 EMITL(B(cg), "    imul ebx, 4");
                 EMITL(B(cg), "    add eax, ebx");
@@ -1008,7 +1000,7 @@ static void cg_expr(ELF32_Codegen *cg, const Ast_node *node) {
  
 
 /*
- * Compile: left→eax, push; right→eax; pop ebx (=left).
+ * Compile: left->eax, push; right->eax; pop ebx (=left).
  * eax = right operand, ebx = left operand.
  * Result in eax.
  */
