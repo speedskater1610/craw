@@ -4,7 +4,9 @@ CRAW is a compiler and assembler toolchain that is used for compiling ~~a C like
 
 All future targets will have a LLVM backend.
 
+<!--
 ![Progect](https://repobeats.axiom.co/api/embed/5f415f92daddb36bceccae1c71675c76c02de222.svg "Repobeats analytics image")
+-->
 
 --- 
 
