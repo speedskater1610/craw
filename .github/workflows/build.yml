@@ -45,7 +45,6 @@ jobs:
         if: runner.os != 'Windows'
         run: |
           make all
-          /* make cli */
 
       - name: Run tests
         if: runner.os != 'Windows'
